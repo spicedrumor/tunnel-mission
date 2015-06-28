@@ -1,0 +1,42 @@
+<HTML>
+<HEAD>
+<TITLE> Tunnel Mission </TITLE>
+</HEAD>
+<BODY>
+
+<script language="Javascript">
+  var map;
+  var mapString;
+
+  map = [
+    [1, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0],
+  ];
+
+  function mapToString(map)
+  {
+    var i;
+	var j;
+	var result;
+
+    result = "";
+	for (i = 0; i < map.length; i++)
+	{
+      for (j = 0; j < map[0].length; j++)
+	  {
+        result += map[i][j];
+	  }
+
+	  result += "<br>";
+	}
+
+    return result;
+  }
+
+  mapString = mapToString(map);
+  document.body.innerHTML += mapString;
+</script>
+
+</BODY>
+</HTML>
