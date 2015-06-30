@@ -7,12 +7,73 @@
 <script language="Javascript">
   var map;
   var mapString;
+  var xPos;
+  var yPos;
+
+  xPos = 0;
+  yPos = 0;
 
   map = [
     [1, 0, 0],
     [0, 0, 0],
     [0, 0, 0],
   ];
+
+  function move(direction)
+  {
+    var offsetX;
+	var offsetY;
+
+	offsetX = 0;
+	offsetY = 0;
+
+	if (direction === "n")
+	{
+	  offsetY = -1;
+	}
+	else if (direction === "e")
+	{
+	  offsetX = 1;
+	}
+	else if (direction === "s")
+	{
+	  offsetY = 1;
+	}
+	else if (direction === "w")
+	{
+	  offsetX = -1;
+	}
+	map[yPos][xPos] = 0;
+	xPos += offsetX;
+	yPos += offsetY;
+	map[yPos][xPos] = 1;
+  }
+
+window.onkeyup = function(e)
+{
+  var key = e.keyCode ? e.keyCode : e.which;
+        
+  if (key == 38)
+  {
+    move("n");
+  }
+  if (key == 39)
+  {
+    move("e");
+  }
+  else if (key == 40)
+  {
+    move("s");
+  }
+  if (key == 37)
+  {
+    move("w");
+  }
+        
+  mapString = mapToString(map);
+  document.body.innerHTML += mapString;
+  document.body.innerHTML += "-------------------<br>";
+}
 
   function mapToString(map)
   {
