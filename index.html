@@ -19,6 +19,35 @@
     [0, 0, 0],
   ];
 
+  function validMove(newX, newY)
+  {
+    var result;
+    var mapWidth;
+	var mapHeight;
+	var notTooSmall;
+	var notTooBig;
+
+    result = false;
+	mapWidth = map[0].length;
+	mapHeight = map.length;
+
+	if (newX >= 0 && newY >= 0)
+	{
+      notTooSmall = true;
+	}
+	if (newX < mapWidth && newY < mapHeight)
+	{
+	  notTooBig = true;
+	}
+
+	if (notTooSmall && notTooBig)
+	{
+      result = true;
+	}
+
+	return result;
+  }
+
   function move(direction)
   {
     var offsetX;
@@ -43,10 +72,17 @@
 	{
 	  offsetX = -1;
 	}
-	map[yPos][xPos] = 0;
-	xPos += offsetX;
-	yPos += offsetY;
-	map[yPos][xPos] = 1;
+
+	if (validMove(xPos + offsetX, yPos + offsetY))
+	{
+	  map[yPos][xPos] = 0;
+	  xPos += offsetX;
+	  yPos += offsetY;
+	  map[yPos][xPos] = 1;
+	}
+	else
+	{
+	}
   }
 
 window.onkeyup = function(e)
