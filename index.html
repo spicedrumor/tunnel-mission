@@ -5,6 +5,10 @@
 <BODY>
 
 <script language="Javascript">
+  var KEY_CODE_W = 87;
+  var KEY_CODE_A = 65;
+  var KEY_CODE_S = 83;
+  var KEY_CODE_D = 68;
   var map;
   var mapString;
   var xPos;
@@ -14,9 +18,19 @@
   yPos = 0;
 
   map = [
-    [1, 0, 0],
-    [0, 0, 0],
-    [0, 0, 0],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   ];
 
   function validMove(newX, newY)
@@ -89,26 +103,25 @@ window.onkeyup = function(e)
 {
   var key = e.keyCode ? e.keyCode : e.which;
         
-  if (key == 38)
+  if (key == KEY_CODE_W)
   {
     move("n");
   }
-  if (key == 39)
+  if (key == KEY_CODE_D)
   {
     move("e");
   }
-  else if (key == 40)
+  else if (key == KEY_CODE_S)
   {
     move("s");
   }
-  if (key == 37)
+  if (key == KEY_CODE_A)
   {
     move("w");
   }
         
   mapString = mapToString(map);
-  document.body.innerHTML += mapString;
-  document.body.innerHTML += "-------------------<br>";
+  document.body.innerHTML = mapString;
 }
 
   function mapToString(map)
@@ -117,17 +130,28 @@ window.onkeyup = function(e)
 	var j;
 	var result;
 
-    result = "";
+    result = "<h2><code>";
 	for (i = 0; i < map.length; i++)
 	{
       for (j = 0; j < map[0].length; j++)
 	  {
-        result += map[i][j];
+        if (map[i][j] == 1)
+		{
+		  result += "@";
+		}
+		else if (map[i][j] == 0)
+		{
+		  result += ".";
+		}
+		else
+		{
+		  result += map[i][j];
+		}
 	  }
-
-	  result += "<br>";
+      result += "<br>";
 	}
 
+	result += "</code></h2><br>";
     return result;
   }
 
