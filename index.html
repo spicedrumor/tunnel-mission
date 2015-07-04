@@ -9,6 +9,7 @@
   var KEY_CODE_A = 65;
   var KEY_CODE_S = 83;
   var KEY_CODE_D = 68;
+  var MAP_VAL_PLAYER = 1;
   var map;
   var mapString;
   var xPos;
@@ -20,7 +21,7 @@
   map = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -56,16 +57,26 @@
 
 	if (notTooSmall && notTooBig)
 	{
-      result = true;
+	  if (map[newY][newX] == 0)
+	  {
+        result = true;
+	  }
 	}
 
 	return result;
   }
 
-  function move(direction)
+  function move(direction, originX, originY, value)
   {
+    var result;
     var offsetX;
 	var offsetY;
+	var newX;
+	var newY;
+    
+    result = [];
+	result[0] = originX;
+	result[1] = originY;
 
 	offsetX = 0;
 	offsetY = 0;
@@ -87,42 +98,60 @@
 	  offsetX = -1;
 	}
 
-	if (validMove(xPos + offsetX, yPos + offsetY))
+	newX = originX + offsetX;
+	newY = originY + offsetY;
+
+	if (validMove(newX, newY))
 	{
-	  map[yPos][xPos] = 0;
-	  xPos += offsetX;
-	  yPos += offsetY;
-	  map[yPos][xPos] = 1;
+	  map[originY][originX] = 0;
+	  map[newY][newX] = value;
+	  result[0] = newX;
+	  result[1] = newY;
 	}
 	else
 	{
 	}
+
+	return result;
   }
 
-window.onkeyup = function(e)
-{
-  var key = e.keyCode ? e.keyCode : e.which;
-        
-  if (key == KEY_CODE_W)
+  window.onkeyup = function(e)
   {
-    move("n");
+    var direction;
+	var newCoords;
+    var key = e.keyCode ? e.keyCode : e.which;
+          
+    direction = "";
+    if (key == KEY_CODE_W)
+    {
+      direction = "n";
+    }
+    else if (key == KEY_CODE_D)
+    {
+      direction = "e";
+    }
+    else if (key == KEY_CODE_S)
+    {
+      direction = "s";
+    }
+    else if (key == KEY_CODE_A)
+    {
+      direction = "w";
+    }
+
+	if (direction === "")
+	{
+	}
+	else
+	{
+      newCoords = move(direction, xPos, yPos, MAP_VAL_PLAYER);
+	  xPos = newCoords[0];
+	  yPos = newCoords[1];
+	}
+
+    mapString = mapToString(map);
+    document.body.innerHTML = mapString;
   }
-  if (key == KEY_CODE_D)
-  {
-    move("e");
-  }
-  else if (key == KEY_CODE_S)
-  {
-    move("s");
-  }
-  if (key == KEY_CODE_A)
-  {
-    move("w");
-  }
-        
-  mapString = mapToString(map);
-  document.body.innerHTML = mapString;
-}
 
   function mapToString(map)
   {
