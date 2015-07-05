@@ -34,8 +34,15 @@
     [0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 3],
     [0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   ];
-
-  function validMove(newX, newY)
+/*
+  map = [
+    [1, 0, 0, 0],
+    [3, 0, 0, 0],
+    [3, 0, 0, 0],
+    [3, 0, 0, 0],
+  ];
+*/
+  function validTile(newX, newY)
   {
     var result;
     var mapWidth;
@@ -57,6 +64,19 @@
 	}
 
 	if (notTooSmall && notTooBig)
+	{
+	  result = true;
+	}
+
+	return result;
+  }
+
+  function validMove(newX, newY)
+  {
+    var result;
+
+	result = false;
+	if (validTile(newX, newY))
 	{
 	  if (map[newY][newX] == 0)
 	  {
@@ -210,8 +230,39 @@
     setTimeout(drawMap, 25);
   }
 
-  setTimeout(moveRandomMob, 5);
+  function playerInteractions()
+  {
+    var i;
+	var j;
+    for (i = -1; i < 2; i++)
+	{
+      for (j = -1; j < 2; j++)
+	  {
+        if (validTile(xPos + j, yPos + i))
+		{
+          playerInteract(map[yPos + i][xPos + j]);
+		}
+	  }
+	}
+    setTimeout(playerInteractions, 25);
+  }
+
+  function playerInteract(value)
+  {
+    if (value == 3)
+	{
+      map[0][0] = 3;
+	}
+  }
+
+  Blast = function(direction)
+  {
+    this.direction = direction;
+  }
+
+  setTimeout(moveRandomMob, 25);
   setTimeout(drawMap, 25);
+  setTimeout(playerInteractions, 25);
   mapString = mapToString(map);
   document.body.innerHTML += mapString;
 </script>
