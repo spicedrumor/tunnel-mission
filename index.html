@@ -10,6 +10,7 @@
   var KEY_CODE_S = 83;
   var KEY_CODE_D = 68;
   var MAP_VAL_PLAYER = 1;
+  var MAP_VAL_MOB = 3;
   var map;
   var mapString;
   var xPos;
@@ -20,18 +21,18 @@
 
   map = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3],
+    [0, 0, 3, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0],
+    [0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 3],
+    [0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   ];
 
   function validMove(newX, newY)
@@ -64,6 +65,27 @@
 	}
 
 	return result;
+  }
+
+  function moveRandomMob()
+  {
+    var randomX;
+	var randomY;
+    var randomDirection;
+    var directions;
+
+	randomX = Math.floor(Math.random() * map[0].length);
+	randomY = Math.floor(Math.random() * map.length);
+    
+	directions = ["n", "s", "e", "w"];
+    randomDirection = directions[Math.floor(Math.random() * 4)];
+
+	if (map[randomY][randomX] == MAP_VAL_MOB)
+	{
+      move(randomDirection, randomX, randomY, MAP_VAL_MOB);
+	}
+
+    setTimeout(moveRandomMob, 5);
   }
 
   function move(direction, originX, originY, value)
@@ -115,7 +137,7 @@
 	return result;
   }
 
-  window.onkeyup = function(e)
+  document.onkeyup = function(e)
   {
     var direction;
 	var newCoords;
@@ -148,9 +170,6 @@
 	  xPos = newCoords[0];
 	  yPos = newCoords[1];
 	}
-
-    mapString = mapToString(map);
-    document.body.innerHTML = mapString;
   }
 
   function mapToString(map)
@@ -159,7 +178,7 @@
 	var j;
 	var result;
 
-    result = "<h2><code>";
+    result = "<h1><code>";
 	for (i = 0; i < map.length; i++)
 	{
       for (j = 0; j < map[0].length; j++)
@@ -180,10 +199,19 @@
       result += "<br>";
 	}
 
-	result += "</code></h2><br>";
+	result += "</code></h1><br>";
     return result;
   }
+  
+  function drawMap()
+  {
+    mapString = mapToString(map);
+    document.body.innerHTML = mapString;
+    setTimeout(drawMap, 25);
+  }
 
+  setTimeout(moveRandomMob, 5);
+  setTimeout(drawMap, 25);
   mapString = mapToString(map);
   document.body.innerHTML += mapString;
 </script>
