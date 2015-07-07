@@ -9,30 +9,41 @@
   var KEY_CODE_A = 65;
   var KEY_CODE_S = 83;
   var KEY_CODE_D = 68;
+  var MAP_VAL_EMPTY = 0;
   var MAP_VAL_PLAYER = 1;
   var MAP_VAL_MOB = 3;
   var map;
   var mapString;
   var xPos;
   var yPos;
+  var directions;
+  
+  directions = ["n", "s", "e", "w"];
 
   xPos = 0;
   yPos = 0;
 
   map = [
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3],
-    [0, 0, 3, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0],
-    [0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 3],
-    [0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0],
+    [0,0,3,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,3,0,0,0,0,0,3,4,4,4,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,4,4,4,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,3,0,0,9,3,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,9,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0],
+    [0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,3,0,0,0,0,0,0,0,3,0,0,3,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,3,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,3,0,0,0,0,6,0,0,0,0,0,0,0,0,0,7,0,0],
+    [0,0,0,6,0,0,3,0,5,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0],
+    [0,0,0,0,0,0,3,0,0,0,0,0,5,0,0,0,0,0,0,0,0,6,0,0],
+    [0,0,0,0,0,0,3,0,0,0,0,9,0,0,0,0,0,0,0,9,0,0,0,2],
+    [0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,9,9,0,0,9,9],
+    [0,0,0,0,0,0,3,0,0,0,0,7,0,0,0,0,0,0,0,0,0,0,9,9],
   ];
 /*
   map = [
@@ -92,17 +103,17 @@
     var randomX;
 	var randomY;
     var randomDirection;
-    var directions;
+	var destination;
 
 	randomX = Math.floor(Math.random() * map[0].length);
 	randomY = Math.floor(Math.random() * map.length);
     
-	directions = ["n", "s", "e", "w"];
     randomDirection = directions[Math.floor(Math.random() * 4)];
-
-	if (map[randomY][randomX] == MAP_VAL_MOB)
+    
+	destination = map[randomY][randomX];
+	if (destination > 2) 
 	{
-      move(randomDirection, randomX, randomY, MAP_VAL_MOB);
+      move(randomDirection, randomX, randomY, map[randomY][randomX]);
 	}
 
     setTimeout(moveRandomMob, 5);
@@ -227,7 +238,7 @@
   {
     mapString = mapToString(map);
     document.body.innerHTML = mapString;
-    setTimeout(drawMap, 25);
+    setTimeout(drawMap, 50);
   }
 
   function playerInteractions()
@@ -244,15 +255,70 @@
 		}
 	  }
 	}
-    setTimeout(playerInteractions, 25);
+
+    setTimeout(playerInteractions, 250);
   }
 
   function playerInteract(value)
   {
+    var random;
+
+    if (value == 2)
+	{
+      document.write("You win!");
+	}
     if (value == 3)
 	{
-      map[0][0] = 3;
+	  random = Math.floor(Math.random() * 3);
+	  if (random == 0)
+	  {
+        map[0][0] = 7;
+	  }
+	  else if (random == 1)
+	  {
+        map[0][map[0].length - 1] = 7;
+	  }
+	  else if (random == 2)
+	  {
+        map[map.length - 1][0] = 7;
+	  }
 	}
+    if (value == 4)
+	{
+      map[0][0] = 5;
+      map[0][map[0].length - 1] = 5;
+	}
+    if (value == 5)
+	{
+      map[0][0] = 6;
+      map[0][map[0].length - 1] = 6;
+      map[map.length - 1][0] = 6;
+      map[map.length - 1][map[0].length - 1] = 6;
+	}
+    if (value == 6)
+	{
+	  random = randomTile();
+	  map[random[1]][random[0]] = 7;
+	}
+    if (value == 7)
+	{
+	  document.write("Game over: 7 8 u.");
+	}
+  }
+
+  function randomTile()
+  {
+    var randomX;
+	var randomY;
+	var result;
+
+	result = [];
+	randomX = Math.floor(Math.random() * map[0].length);
+	randomY = Math.floor(Math.random() * map.length);
+    result[0] = randomX;
+    result[1] = randomY;
+
+	return result;
   }
 
   Blast = function(direction)
