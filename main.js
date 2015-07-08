@@ -24,6 +24,8 @@ var directions;
 var currentMessage;
 var life;
 var hitSound;
+var timer;
+var timerBit;
 
 hitSound = new Audio(HIT_SOUND_FILENAME);
 deathSound = new Audio(DEATH_SOUND_FILENAME);
@@ -34,38 +36,13 @@ currentMessage = '<font color="' + "lime" + '">Objective: Save the '+ '</font><f
 
 
 life = 64;
+timer = 128;
+timerBit = false;
 
 directions = ["n", "s", "e", "w"];
 
 xPos = 0;
 yPos = 0;
-
-map = [
-[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,8,0,0,0,0,0,0,0,0,0,3,0,0,0,0,8,0,0,0,3,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,8,0,0,0,0],
-[0,0,3,0,0,0,0,0,0,0,3,0,0,0,0,3,0,0,0,0,0,4,4,4,4,0,8,0,0,0,0,0,0],
-[0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,4,4,4,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,7,0,0,0,0,4,4,0,0,0,0,9,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0],
-[0,0,0,0,0,0,7,0,0,0,0,4,4,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,5,0,5,0,0],
-[0,0,0,7,0,0,7,0,0,0,0,3,0,0,9,3,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,5,0],
-[0,0,8,0,0,0,0,0,0,0,0,0,0,8,0,0,0,9,0,0,0,0,0,0,0,8,0,0,0,0,6,0,0],
-[0,0,0,0,0,0,7,0,0,0,3,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,3,0,0,3,0,0,0,0,0,0,0,0],
-[7,0,0,7,0,0,8,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0],
-[0,0,0,0,0,0,0,0,4,4,0,0,0,0,0,3,0,0,0,0,0,4,4,0,0,0,0,0,5,5,5,2,0],
-[0,7,0,7,0,0,0,0,4,4,0,0,0,0,0,3,0,0,0,0,6,4,4,0,0,0,0,0,0,5,7,9,9],
-[0,7,0,0,0,0,0,0,0,0,0,0,6,0,0,3,0,5,0,0,0,0,0,0,0,0,7,0,0,0,0,9,9],
-];
-/*
-map = [
-    [1, 0, 0, 0],
-    [3, 0, 0, 0],
-    [3, 0, 0, 0],
-    [3, 0, 0, 0],
-];
-*/
 
 map = generateMap();
 
@@ -80,7 +57,7 @@ function generateMap()
     var random;
 
     width = 38;
-    height = 22;
+    height = 20;
     newMap = [];
     
 
@@ -478,7 +455,25 @@ function heartBeat()
         document.write('Game over: You collapsed.');
         deathSound.play();
     }
-    document.getElementById("right").innerHTML = "<h2><3: " + life + "</h2><br>";
+    if (timer < 1)
+    {
+        document.write("Game over: You didn't make it in time.");
+        deathSound.play();
+    }
+    else
+    {
+        if (timerBit)
+        {
+            timer -= 1;
+            timerBit = false;
+        }
+        else
+        {
+            timerBit = true;
+        }
+    }
+    document.getElementById("right").innerHTML = "<h2>Health: " + life + "</h2><br>";
+    document.getElementById("right").innerHTML += "<h2>Time: " + timer + "</h2><br>";
     document.getElementById("right").innerHTML += ("<h2>" + currentMessage + "</h2>");
     setTimeout(heartBeat, 500);
 }
