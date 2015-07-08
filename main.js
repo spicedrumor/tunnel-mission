@@ -7,6 +7,7 @@ TODO
 var HIT_SOUND_FILENAME = "augh.wav";
 var DEATH_SOUND_FILENAME = "death.wav";
 var WIN_SOUND_FILENAME = "woohoo.wav";
+var EAT_SOUND_FILENAME = "omnom.wav";
 var KEY_CODE_W = 87;
 var KEY_CODE_A = 65;
 var KEY_CODE_S = 83;
@@ -27,8 +28,10 @@ var hitSound;
 hitSound = new Audio(HIT_SOUND_FILENAME);
 deathSound = new Audio(DEATH_SOUND_FILENAME);
 winSound = new Audio(WIN_SOUND_FILENAME);
+eatSound = new Audio(EAT_SOUND_FILENAME);
 
-currentMessage = '<font color="' + "lime" + '">Objective: Save the '+ '</font><font color="' + COLOR_PINK + '">!</font>';
+currentMessage += '<span class="blink">' + '<font color="' + "lime" + '">Objective: Save the '+ '</font><font color="' + COLOR_PINK + '">!</font>' + '</span>';
+
 
 life = 64;
 
@@ -115,6 +118,10 @@ function generateMap()
 
     newMap[0][0] = 1;
     newMap[height - 2][width - 2] = 2;
+    //ensure player isn't instagib'd at start
+    newMap[0][1] = 0;
+    newMap[1][0] = 0;
+    newMap[1][1] = 0;
 
     return newMap;
 }
@@ -163,7 +170,7 @@ function validMove(newX, newY)
 
     return result;
 }
-'<font color="#FF66FF">!</font>'
+
 function moveRandomMob()
 {
     var randomX;
@@ -178,7 +185,7 @@ function moveRandomMob()
     randomDirection = directions[Math.floor(Math.random() * 4)];
     
     mover = map[randomY][randomX];
-    if (mover > 2) 
+    if (mover > 2 && mover < 10) 
     {
         if (mover != 7)
         {
@@ -333,7 +340,8 @@ function mapToString(map)
             }
             else if (map[i][j] == 10)
             {
-                result += '#CC33FF">m';
+                result += '#CC33FF">';
+                result += '<img src="trans_mushroom.png" alt="mushroom" height="20" width="15">'
             }
             else
             {
@@ -353,8 +361,6 @@ function drawMap()
 {
     mapString = mapToString(map);
     document.getElementById("left").innerHTML = mapString;
-    document.getElementById("right").innerHTML = "<h2><3: " + life + "</h2><br>";
-    document.getElementById("right").innerHTML += ("<h2>" + currentMessage + "</h2>");
     setTimeout(drawMap, 50);
 }
 
@@ -443,6 +449,7 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value == 10)
     {
+        eatSound.play();
         currentMessage = "You pick up a curious looking mushroom.";
         map[valueY][valueX] = 0;
         life += 5;
@@ -468,9 +475,11 @@ function heartBeat()
 {
     if (life < 1)
     {
-        document.write("Game over: You collapsed.");
+        document.write('Game over: You collapsed.');
         deathSound.play();
     }
+    document.getElementById("right").innerHTML = "<h2><3: " + life + "</h2><br>";
+    document.getElementById("right").innerHTML += ("<h2>" + currentMessage + "</h2>");
     setTimeout(heartBeat, 500);
 }
 
