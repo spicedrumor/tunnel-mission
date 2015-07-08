@@ -30,7 +30,7 @@ deathSound = new Audio(DEATH_SOUND_FILENAME);
 winSound = new Audio(WIN_SOUND_FILENAME);
 eatSound = new Audio(EAT_SOUND_FILENAME);
 
-currentMessage += '<span class="blink">' + '<font color="' + "lime" + '">Objective: Save the '+ '</font><font color="' + COLOR_PINK + '">!</font>' + '</span>';
+currentMessage = '<font color="' + "lime" + '">Objective: Save the '+ '</font><font color="' + COLOR_PINK + '">!</font>';
 
 
 life = 64;
