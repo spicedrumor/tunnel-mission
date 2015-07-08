@@ -4,12 +4,19 @@
 </HEAD>
 <BODY>
 <body bgcolor="#000000">
-<input id="my-input" type="text" />
 
+<!-- iPhone input hack -->
+<p id="p1"></p>
 <script type="text/javascript">
-    var textbox = document.getElementById('my-input');
-    textbox.select();
+    if (navigator.userAgent.toLowerCase().indexOf("iphone") != -1)
+    {
+        var textboxString = '<p id="p1">Hello World!</p>';
+        document.getElementById("p1").innerHTML = textboxString;
+        var textbox = document.getElementById('my-input');
+        textbox.select();
+    }
 </script>
+
 <div id ="left" style ="float:left;width:50%"></div>
 <div id ="right" style ="float:left;"></div>
 
