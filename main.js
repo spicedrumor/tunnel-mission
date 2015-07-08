@@ -89,7 +89,20 @@ function generateMap()
             random = Math.floor(Math.random() * 6);
             if (random == 0)
             {
-                row[j] = Math.floor(Math.random() * 7 + 3);
+                row[j] = Math.floor(Math.random() * 7) + 3;
+            }
+            else if (random == 1)
+            {
+                random = Math.floor(Math.random() * 9);
+
+                if (random == 0)
+                {
+                    row[j] = 10;
+                }
+                else
+                {
+                    row[j] = 0;
+                }
             }
             else
             {
@@ -318,6 +331,10 @@ function mapToString(map)
             {
                 result += '#9900FF">9';
             }
+            else if (map[i][j] == 10)
+            {
+                result += '#CC33FF">m';
+            }
             else
             {
                 result += 'blue">';
@@ -350,16 +367,16 @@ function playerInteractions()
         for (j = -1; j < 2; j++)
         {
             if (validTile(xPos + j, yPos + i))
-        {
-            playerInteract(map[yPos + i][xPos + j]);
-        }
+            {
+                playerInteract(map[yPos + i][xPos + j], xPos + j, yPos + i);
+            }
         }
     }
 
     setTimeout(playerInteractions, 500);
 }
 
-function playerInteract(value)
+function playerInteract(value, valueX, valueY)
 {
     var random;
 
@@ -424,6 +441,12 @@ function playerInteract(value)
         deathSound.play();
         document.write("Game over: 7 8 u.");
     }
+    else if (value == 10)
+    {
+        currentMessage = "You pick up a curious looking mushroom.";
+        map[valueY][valueX] = 0;
+        life += 5;
+    }    
 }
 
 function randomTile()
