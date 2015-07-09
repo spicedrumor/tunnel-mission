@@ -348,13 +348,19 @@ function playerInteractions()
 {
     var i;
     var j;
+    var current;
+
     for (i = -1; i < 2; i++)
     {
         for (j = -1; j < 2; j++)
         {
             if (validTile(xPos + j, yPos + i))
             {
-                playerInteract(map[yPos + i][xPos + j], xPos + j, yPos + i);
+                current = map[yPos + i][xPos + j];
+                if (current > 1)
+                {
+                    playerInteract(current, xPos + j, yPos + i);
+                }
             }
         }
     }
