@@ -72,7 +72,7 @@ function generateMap()
             random = Math.floor(Math.random() * 6);
             if (random == 0)
             {
-                row[j] = Math.floor(Math.random() * 7) + 3;
+                row[j] = Math.floor(Math.random() * 6) + 3;
             }
             else if (random == 1)
             {
@@ -413,7 +413,7 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value == 7)
     {
-        gameOver("7 8 u :(");
+        gameOver("7 8 u  :(");
     }
     else if (value == 10)
     {
@@ -427,7 +427,14 @@ function playerInteract(value, valueX, valueY)
 function gameOver(message)
 {
     deathSound.play();
-    document.write("Game Over: " + message);
+    document.write("Game Over: " + message + "<br>");
+    endGame();
+}
+
+function endGame()
+{
+    alert("Play Again?");
+     history.back();
 }
 
 function randomTile()
