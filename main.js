@@ -8,11 +8,11 @@ TODO
 {
 
 var MESSAGE_QUEUE_MAX = 5;
-var HIT_SOUND_FILENAME = "augh.wav";
-var DEATH_SOUND_FILENAME = "death.wav";
-var WIN_SOUND_FILENAME = "woohoo.wav";
-var EAT_SOUND_FILENAME = "omnom.wav";
-var EXPLODE_SOUND_FILENAME = "explosion.wav";
+var HIT_SOUND_FILENAME = "res/augh.wav";
+var DEATH_SOUND_FILENAME = "res/death.wav";
+var WIN_SOUND_FILENAME = "res/woohoo.wav";
+var EAT_SOUND_FILENAME = "res/omnom.wav";
+var EXPLODE_SOUND_FILENAME = "res/explosion.wav";
 var KEY_CODE_W = 87;
 var KEY_CODE_A = 65;
 var KEY_CODE_S = 83;
@@ -339,7 +339,7 @@ function mapToString(map)
             else if (map[i][j] == 10)
             {
                 result += '#CC33FF">';
-                result += '<img src="trans_mushroom.png" alt="mushroom" height="20" width="15">';
+                result += '<img src="res/trans_mushroom.png" alt="mushroom" height="20" width="15">';
             }
             else if (map[i][j] == 11)
             {
@@ -462,6 +462,10 @@ function playerInteract(value, valueX, valueY)
         newMessage("You light the fuse...");
         setTimeout(function(){explosion(valueX, valueY)}, 5000);
     }    
+    else if (value == 13)
+    {
+        //reserved
+    }    
 }
 
 function explosion(bombX, bombY)
@@ -532,8 +536,8 @@ function gameOver(message)
 
 function endGame()
 {
-    alert("Play Again?");
-     history.back();
+    window.alert("Play Again?");
+    history.go(-1);
 }
 
 function randomTile()
