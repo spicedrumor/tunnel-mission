@@ -9,6 +9,7 @@ var HIT_SOUND_FILENAME = "augh.wav";
 var DEATH_SOUND_FILENAME = "death.wav";
 var WIN_SOUND_FILENAME = "woohoo.wav";
 var EAT_SOUND_FILENAME = "omnom.wav";
+var EXPLODE_SOUND_FILENAME = "explosion.wav";
 var KEY_CODE_W = 87;
 var KEY_CODE_A = 65;
 var KEY_CODE_S = 83;
@@ -34,6 +35,7 @@ hitSound = new Audio(HIT_SOUND_FILENAME);
 deathSound = new Audio(DEATH_SOUND_FILENAME);
 winSound = new Audio(WIN_SOUND_FILENAME);
 eatSound = new Audio(EAT_SOUND_FILENAME);
+explodeSound = new Audio(EXPLODE_SOUND_FILENAME);
 
 currentMessage = '<font color="' + "lime" + '">Objective: Rescue the '+ '</font><font color="' + COLOR_PINK + '">!</font>';
 
@@ -69,7 +71,7 @@ function generateMap()
         row = [];
         for (j = 0; j < width; j++)
         {
-            random = Math.floor(Math.random() * 6);
+            random = Math.floor(Math.random() * 7);
             if (random == 0)
             {
                 row[j] = Math.floor(Math.random() * 6) + 3;
@@ -81,6 +83,19 @@ function generateMap()
                 if (random == 0)
                 {
                     row[j] = 10;
+                }
+                else if (random == 1)
+                {
+                    random = Math.floor(Math.random() * 3);
+                    if (random == 0)
+                    {
+                        row[j] = 11;
+                    }
+                    else
+                    {
+                        row[j] = 0;
+                    }
+
                 }
                 else
                 {
@@ -321,7 +336,12 @@ function mapToString(map)
             else if (map[i][j] == 10)
             {
                 result += '#CC33FF">';
-                result += '<img src="trans_mushroom.png" alt="mushroom" height="20" width="15">'
+                result += '<img src="trans_mushroom.png" alt="mushroom" height="20" width="15">';
+            }
+            else if (map[i][j] == 11)
+            {
+                result += 'red">';
+                result += 'o';
             }
             else
             {
@@ -429,6 +449,70 @@ function playerInteract(value, valueX, valueY)
         map[valueY][valueX] = 0;
         life += 5;
     }    
+    else if (value == 11)
+    {
+        newMessage("You light the fuse...");
+        setTimeout(function(){explosion(valueX, valueY)}, 5000);
+    }    
+}
+
+function explosion(bombX, bombY)
+{
+    var output;
+    
+    output = 11;
+
+    newMessage("Giant explosion!");
+    explodeSound.play();
+    map[bombY][bombX] = 0;
+    if (validTile(bombX, bombY - 1))
+    {
+        map[bombY - 1][bombX] = output;
+        if (validTile(bombX, bombY - 2))
+        {
+            map[bombY - 2][bombX] = output;
+            if (validTile(bombX, bombY - 3))
+            {
+                map[bombY - 3][bombX] = output;
+            }
+        }
+    }
+    if (validTile(bombX + 1, bombY))
+    {
+        map[bombY][bombX + 1] = output;
+        if (validTile(bombX + 2, bombY))
+        {
+            map[bombY][bombX + 2] = output;
+            if (validTile(bombX + 3, bombY))
+            {
+                map[bombY][bombX + 3] = output;
+            }
+        }
+    }
+    if (validTile(bombX, bombY + 1))
+    {
+        map[bombY + 1][bombX] = output;
+        if (validTile(bombX, bombY + 2))
+        {
+            map[bombY + 2][bombX] = output;
+            if (validTile(bombX, bombY + 3))
+            {
+                map[bombY + 3][bombX] = output;
+            }
+        }
+    }
+    if (validTile(bombX - 1, bombY))
+    {
+        map[bombY][bombX - 1] = output;
+        if (validTile(bombX - 2, bombY))
+        {
+            map[bombY][bombX - 2] = output;
+            if (validTile(bombX - 3, bombY))
+            {
+                map[bombY][bombX - 3] = output;
+            }
+        }
+    }
 }
 
 function gameOver(message)
@@ -459,6 +543,19 @@ function randomTile()
     return result;
 }
 
+function doIExist()
+{
+    if (map[yPos][xPos] != 1)
+    {
+        gameOver("You (violently) ceased to exist.");
+    }
+    else
+    {
+    }
+
+    setTimeout(doIExist, 50);
+}
+
 function heartBeat()
 {
     if (life < 1)
@@ -481,11 +578,20 @@ function heartBeat()
             timerBit = true;
         }
     }
-    document.getElementById("right").innerHTML = '<font color="green">' + "<h2>Health: " + life + "</h2></font><br>";
-    document.getElementById("right").innerHTML += '<font color="red">' + "<h2>Time: " + timer + "</h2></font><br>";
-    document.getElementById("right").innerHTML += '</font>';
-    document.getElementById("right").innerHTML += ("<h2>" + currentMessage + "</h2>");
+    updateStatusPane();
     setTimeout(heartBeat, 500);
+}
+
+function updateStatusPane()
+{
+    var rightPane;
+
+    rightPane = document.getElementById("right");
+    rightPane.innerHTML = "";
+    rightPane.innerHTML += '<font color="green">' + "<h2>Health: " + life + "</h2></font><br>";
+    rightPane.innerHTML += '<font color="red">' + "<h2>Time: " + timer + "</h2></font><br>";
+    rightPane.innerHTML += '</font>';
+    document.getElementById("right").innerHTML += ("<h2>" + currentMessage + "</h2>");
 }
 
 function newMessage(message)
@@ -503,6 +609,7 @@ Blast = function(direction)
 setTimeout(moveRandomMob, 25);
 setTimeout(drawMap, 25);
 setTimeout(playerInteractions, 25);
+setTimeout(doIExist, 50);
 setTimeout(heartBeat, 500);
 
 }());
