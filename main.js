@@ -1,5 +1,8 @@
 /*
 TODO
+    char select
+        pink can light fuses
+
 */
 (function TMGame ()
 {
@@ -343,6 +346,11 @@ function mapToString(map)
                 result += 'red">';
                 result += 'o';
             }
+            else if (map[i][j] == 12)
+            {
+                result += 'grey">';
+                result += '#';
+            }
             else
             {
                 result += 'blue">';
@@ -460,7 +468,7 @@ function explosion(bombX, bombY)
 {
     var output;
     
-    output = 11;
+    output = 12;
 
     newMessage("Giant explosion!");
     explodeSound.play();
