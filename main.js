@@ -33,6 +33,9 @@ var life;
 var hitSound;
 var timer;
 var timerBit;
+var blueBit;
+
+blueBit = true;
 
 hitSound = new Audio(HIT_SOUND_FILENAME);
 deathSound = new Audio(DEATH_SOUND_FILENAME);
@@ -89,7 +92,7 @@ function generateMap()
                 }
                 else if (random == 1)
                 {
-                    random = Math.floor(Math.random() * 3);
+                    random = Math.floor(Math.random() * 2);
                     if (random == 0)
                     {
                         row[j] = 11;
@@ -301,7 +304,15 @@ function mapToString(map)
             }
             else if (map[i][j] == 1)
             {
-                result += '#00FFFF">@';
+                if (blueBit)
+                {
+                    result += '#00FFFF">@';
+                }
+                else
+                {
+                    result += COLOR_PINK;
+                    result += '">@';
+                }
             }
             else if (map[i][j] == 2)
             {
@@ -369,7 +380,7 @@ function drawMap()
 {
     mapString = mapToString(map);
     document.getElementById("left").innerHTML = mapString;
-    setTimeout(drawMap, 50);
+    setTimeout(drawMap, 100);
 }
 
 function playerInteractions()
@@ -408,9 +419,21 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value == 3)
     {
-        hitSound.play();
-        newMessage("3 bites you with glee!");
-        life -= 3;
+        random = 1;
+        if (blueBit)
+        {
+            random = Math.floor(Math.random() * 5);
+        }
+        if (random != 0)
+        {
+            hitSound.play();
+            newMessage("3 bites you with glee!");
+            life -= 3;
+        }
+        else
+        {
+            newMessage("You narrowly evade 3's attack!");
+        }
     }
     else if (value == 4)
     {
@@ -422,9 +445,22 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value == 5)
     {
-        hitSound.play();
-        newMessage("5 smacks you around like a rag doll!");
-        life -= 25;
+        random = 1;
+        if (blueBit)
+        {
+            random = Math.floor(Math.random() * 5);
+        }
+        if (random != 0)
+        {
+            hitSound.play();
+            newMessage("5 smacks you around like a rag doll!");
+            random = Math.floor(Math.random() * 21) + 5;
+            life -= random;
+        }
+        else
+        {
+            newMessage("You narrowly evade 5's attack!");
+        }
     }
     else if (value == 6)
     {
@@ -459,8 +495,11 @@ function playerInteract(value, valueX, valueY)
     }    
     else if (value == 11)
     {
-        newMessage("You light the fuse...");
-        setTimeout(function(){explosion(valueX, valueY)}, 5000);
+        if (!blueBit)
+        {
+            newMessage("You light the fuse...");
+            setTimeout(function(){explosion(valueX, valueY)}, 5000);
+        }
     }    
     else if (value == 13)
     {
@@ -618,10 +657,35 @@ Blast = function(direction)
     this.direction = direction;
 }
 
-setTimeout(moveRandomMob, 25);
-setTimeout(drawMap, 25);
-setTimeout(playerInteractions, 25);
-setTimeout(doIExist, 50);
-setTimeout(heartBeat, 500);
+function startGame()
+{
+    var input;
+    var done;
+
+    done = false;
+    
+    while (!done)
+    {
+        input = window.prompt("Select Player: (type b for blue or p for pink)");
+        if (input === "b")
+        {
+            blueBit = true;
+            done = true;
+        }
+        else if (input === "p") 
+        {
+            blueBit = false;
+            done = true;
+        }
+    }
+
+    setTimeout(moveRandomMob, 25);
+    setTimeout(drawMap, 25);
+    setTimeout(playerInteractions, 25);
+    setTimeout(doIExist, 50);
+    setTimeout(heartBeat, 500);
+}
+
+startGame();
 
 }());
