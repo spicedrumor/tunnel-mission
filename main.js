@@ -370,16 +370,17 @@ function playerInteract(value, valueX, valueY)
     {
         winSound.play();
         document.write("You win!");
+        endGame();
     }
     else if (value == 3)
     {
         hitSound.play();
-        currentMessage = "3 bites you with glee!";
+        newMessage("3 bites you with glee!");
         life -= 3;
     }
     else if (value == 4)
     {
-        currentMessage = "4 propagates.";
+        newMessage("4 propagates.");
         map[0][0] = 4;
         map[0][map[0].length - 1] = 4;
         map[map.length - 1][0] = 4;
@@ -388,12 +389,12 @@ function playerInteract(value, valueX, valueY)
     else if (value == 5)
     {
         hitSound.play();
-        currentMessage = "5 smacks you around like a rag doll!";
+        newMessage("5 smacks you around like a rag doll!");
         life -= 25;
     }
     else if (value == 6)
     {
-        currentMessage = "6 whistles a funeral dirge.";
+        newMessage("6 whistles a funeral dirge.");
         random = randomTile();
         map[random[1]][random[0]] = 7;
         random = randomTile();
@@ -409,7 +410,7 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value == 8)
     {
-        currentMessage = "8 grins mischievously.";
+        newMessage("8 grins mischievously.");
     }
     else if (value == 7)
     {
@@ -418,7 +419,7 @@ function playerInteract(value, valueX, valueY)
     else if (value == 10)
     {
         eatSound.play();
-        currentMessage = "You devour a curious looking mushroom.";
+        newMessage("You devour a curious looking mushroom.");
         map[valueY][valueX] = 0;
         life += 5;
     }    
@@ -474,14 +475,18 @@ function heartBeat()
             timerBit = true;
         }
     }
-    document.getElementById("right").innerHTML = "<h2>Health: " + life + "</h2><br>";
-    document.getElementById("right").innerHTML += "<h2>Time: " + timer + "</h2><br>";
+    document.getElementById("right").innerHTML = '<font color="green">' + "<h2>Health: " + life + "</h2></font><br>";
+    document.getElementById("right").innerHTML += '<font color="red">' + "<h2>Time: " + timer + "</h2></font><br>";
+    document.getElementById("right").innerHTML += '</font>';
     document.getElementById("right").innerHTML += ("<h2>" + currentMessage + "</h2>");
     setTimeout(heartBeat, 500);
 }
 
 function newMessage(message)
 {
+    currentMessage = '<font color="blue">';
+    currentMessage += message;
+    currentMessage += '</font>';
 }
 
 Blast = function(direction)
