@@ -4,6 +4,7 @@ TODO
 (function TMGame ()
 {
 
+var MESSAGE_QUEUE_MAX = 5;
 var HIT_SOUND_FILENAME = "augh.wav";
 var DEATH_SOUND_FILENAME = "death.wav";
 var WIN_SOUND_FILENAME = "woohoo.wav";
@@ -22,6 +23,8 @@ var xPos;
 var yPos;
 var directions;
 var currentMessage;
+var messageQueue;
+var messageQueuePosition;
 var life;
 var hitSound;
 var timer;
@@ -32,7 +35,7 @@ deathSound = new Audio(DEATH_SOUND_FILENAME);
 winSound = new Audio(WIN_SOUND_FILENAME);
 eatSound = new Audio(EAT_SOUND_FILENAME);
 
-currentMessage = '<font color="' + "lime" + '">Objective: Save the '+ '</font><font color="' + COLOR_PINK + '">!</font>';
+currentMessage = '<font color="' + "lime" + '">Objective: Rescue the '+ '</font><font color="' + COLOR_PINK + '">!</font>';
 
 
 life = 64;
@@ -95,7 +98,7 @@ function generateMap()
 
     newMap[0][0] = 1;
     newMap[height - 2][width - 2] = 2;
-    //ensure player isn't instagib'd at start
+    //ensure player isn't instagib'd at start:
     newMap[0][1] = 0;
     newMap[1][0] = 0;
     newMap[1][1] = 0;
@@ -372,26 +375,11 @@ function playerInteract(value, valueX, valueY)
     {
         hitSound.play();
         currentMessage = "3 bites you with glee!";
-        life -= 1;
-        random = Math.floor(Math.random() * 3);
-        if (random == 0)
-        {
-            map[0][0] = 3;
-        }
-        else if (random == 1)
-        {
-            map[0][map[0].length - 1] = 3;
-        }
-        else if (random == 2)
-        {
-            map[map.length - 1][0] = 3;
-        }
+        life -= 3;
     }
     else if (value == 4)
     {
-        hitSound.play();
-        currentMessage = "4 roars with rage and smashes into you!";
-        life -= 4;
+        currentMessage = "4 propagates.";
         map[0][0] = 4;
         map[0][map[0].length - 1] = 4;
         map[map.length - 1][0] = 4;
@@ -401,7 +389,7 @@ function playerInteract(value, valueX, valueY)
     {
         hitSound.play();
         currentMessage = "5 smacks you around like a rag doll!";
-        life -= 16;
+        life -= 25;
     }
     else if (value == 6)
     {
@@ -419,18 +407,27 @@ function playerInteract(value, valueX, valueY)
         random = randomTile();
         map[random[1]][random[0]] = 7;
     }
+    else if (value == 8)
+    {
+        currentMessage = "8 grins mischievously.";
+    }
     else if (value == 7)
     {
-        deathSound.play();
-        document.write("Game over: 7 8 u.");
+        gameOver("7 8 u :(");
     }
     else if (value == 10)
     {
         eatSound.play();
-        currentMessage = "You pick up a curious looking mushroom.";
+        currentMessage = "You devour a curious looking mushroom.";
         map[valueY][valueX] = 0;
         life += 5;
     }    
+}
+
+function gameOver(message)
+{
+    deathSound.play();
+    document.write("Game Over: " + message);
 }
 
 function randomTile()
@@ -452,13 +449,11 @@ function heartBeat()
 {
     if (life < 1)
     {
-        document.write('Game over: You collapsed.');
-        deathSound.play();
+        gameOver('You collapsed.');
     }
     if (timer < 1)
     {
-        document.write("Game over: You didn't make it in time.");
-        deathSound.play();
+        gameOver("You didn't make it in time.");
     }
     else
     {
@@ -476,6 +471,10 @@ function heartBeat()
     document.getElementById("right").innerHTML += "<h2>Time: " + timer + "</h2><br>";
     document.getElementById("right").innerHTML += ("<h2>" + currentMessage + "</h2>");
     setTimeout(heartBeat, 500);
+}
+
+function newMessage(message)
+{
 }
 
 Blast = function(direction)
