@@ -215,7 +215,7 @@ function moveRandomMob()
         }
     }
 
-    setTimeout(moveRandomMob, 5);
+    setTimeout(moveRandomMob, 500);
 }
 
 function move(direction, originX, originY, value)
