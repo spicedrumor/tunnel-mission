@@ -5,7 +5,7 @@ TODO
 (function TMGame ()
 {
 
-var MESSAGE_QUEUE_MAX = 5;
+var MESSAGE_QUEUE_MAX = 8;
 var HIT_SOUND_FILENAME = "res/augh.wav";
 var DEATH_SOUND_FILENAME = "res/death.wav";
 var WIN_SOUND_FILENAME = "res/woohoo.wav";
@@ -26,9 +26,7 @@ var mapString;
 var xPos;
 var yPos;
 var directions;
-var currentMessage;
 var messageQueue;
-var messageQueuePosition;
 var life;
 var hitSound;
 var timer;
@@ -44,11 +42,15 @@ winSound = new Audio(WIN_SOUND_FILENAME);
 eatSound = new Audio(EAT_SOUND_FILENAME);
 explodeSound = new Audio(EXPLODE_SOUND_FILENAME);
 
-currentMessage = '<font color="' + "lime" + '">Objective: Rescue the '+ '</font><font color="' + COLOR_PINK + '">!</font>';
-
+messageQueue = [];
+for (var i = 0; i < MESSAGE_QUEUE_MAX; i++)
+{
+    newMessage("");
+}
+newMessage('<font color="' + "lime" + '">Objective: Rescue the '+ '</font><font color="' + COLOR_PINK + '">!</font>');
 
 life = 64;
-timer = 128;
+timer = 256;
 timerBit = false;
 
 directions = ["n", "s", "e", "w"];
@@ -662,20 +664,36 @@ function heartBeat()
 function updateStatusPane()
 {
     var rightPane;
+    var i;
 
     rightPane = document.getElementById("right");
     rightPane.innerHTML = "";
     rightPane.innerHTML += '<font color="green">' + "<h2>Health: " + life + "</h2></font><br>";
     rightPane.innerHTML += '<font color="red">' + "<h2>Time: " + timer + "</h2></font><br>";
     rightPane.innerHTML += '</font>';
-    document.getElementById("right").innerHTML += ("<h2>" + currentMessage + "</h2>");
+    for (i = 0; i < MESSAGE_QUEUE_MAX; i++)
+    {
+        if (i != 0)
+        {
+            rightPane.innerHTML += "<h3>" + messageQueue[i] + "</h4>";
+        }
+        else
+        {
+            rightPane.innerHTML += "<h2>" + messageQueue[i] + "</h2>";
+        }
+    }
 }
 
 function newMessage(message)
 {
-    currentMessage = '<font color="blue">';
-    currentMessage += message;
-    currentMessage += '</font>';
+    var i;
+
+    for (i = MESSAGE_QUEUE_MAX - 1; i > 0; i--)
+    {
+        messageQueue[i] = messageQueue[i - 1];
+    }
+
+    messageQueue[0] = message;
 }
 
 var Blast = function(direction)
