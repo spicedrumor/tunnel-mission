@@ -1,7 +1,5 @@
 /*
 TODO
-    char select
-        pink can light fuses
 
 */
 (function TMGame ()
@@ -22,6 +20,8 @@ var MAP_VAL_PLAYER = 1;
 var MAP_VAL_MOB = 3;
 var COLOR_PINK = "#FF66FF";
 var map;
+var mapWidth;
+var mapHeight;
 var mapString;
 var xPos;
 var yPos;
@@ -34,6 +34,7 @@ var hitSound;
 var timer;
 var timerBit;
 var blueBit;
+var mobList;
 
 blueBit = true;
 
@@ -56,6 +57,8 @@ xPos = 0;
 yPos = 0;
 
 map = generateMap();
+mapWidth = map[0].length;
+mapHeight = map.length;
 
 function generateMap()
 {
@@ -130,14 +133,10 @@ function generateMap()
 function validTile(newX, newY)
 {
     var result;
-    var mapWidth;
-    var mapHeight;
     var notTooSmall;
     var notTooBig;
 
     result = false;
-    mapWidth = map[0].length;
-    mapHeight = map.length;
 
     if (newX >= 0 && newY >= 0)
     {
@@ -156,14 +155,29 @@ function validTile(newX, newY)
     return result;
 }
 
+function emptyTile(tileX, tileY)
+{
+    return (map[tileY][tileX] == 0);
+}
+
+function safeTile(tileX, tileY)
+{
+    var value;
+
+    value = map[tileY][tileX];
+
+    return (value != 1 && value != 2);
+}
+
 function validMove(newX, newY)
 {
     var result;
 
     result = false;
+
     if (validTile(newX, newY))
     {
-        if (map[newY][newX] == 0)
+        if (emptyTile(newX, newY))
         {
             result = true;
         }
@@ -410,6 +424,7 @@ function playerInteractions()
 function playerInteract(value, valueX, valueY)
 {
     var random;
+    var i;
 
     if (value == 2)
     {
@@ -438,10 +453,22 @@ function playerInteract(value, valueX, valueY)
     else if (value == 4)
     {
         newMessage("4 propagates.");
-        map[0][0] = 4;
-        map[0][map[0].length - 1] = 4;
-        map[map.length - 1][0] = 4;
-        map[map.length - 1][map[0].length - 1] = 4;
+        if (safeTile(0, 0))
+        {
+            map[0][0] = 4;
+        }
+        if (safeTile(mapWidth - 1, 0))
+        {
+            map[0][mapWidth - 1] = 4;
+        }
+        if (safeTile(0, mapHeight - 1))
+        {
+            map[mapHeight - 1][0] = 4;
+        }
+        if (safeTile(mapWidth - 1, mapHeight - 1))
+        {
+            map[mapHeight - 1][mapWidth - 1] = 4;
+        }
     }
     else if (value == 5)
     {
@@ -465,18 +492,17 @@ function playerInteract(value, valueX, valueY)
     else if (value == 6)
     {
         newMessage("6 whistles a funeral dirge.");
-        random = randomTile();
-        map[random[1]][random[0]] = 7;
-        random = randomTile();
-        map[random[1]][random[0]] = 7;
-        random = randomTile();
-        map[random[1]][random[0]] = 7;
-        random = randomTile();
-        map[random[1]][random[0]] = 7;
-        random = randomTile();
-        map[random[1]][random[0]] = 7;
-        random = randomTile();
-        map[random[1]][random[0]] = 7;
+        i = 0;
+
+        while (i < 6)
+        {
+            random = randomTile();
+            if (safeTile(random[0], random[1]))
+            {
+                map[random[1]][random[0]] = 7;
+                i += 1;
+            }
+        }
     }
     else if (value == 8)
     {
@@ -652,15 +678,20 @@ function newMessage(message)
     currentMessage += '</font>';
 }
 
-Blast = function(direction)
+var Blast = function(direction)
 {
     this.direction = direction;
-}
+};
 
 function startGame()
 {
     var input;
     var done;
+
+    if (map.length < 5 || map[0].length < 5)
+    {
+        throw new Error("Illegal map dimensions.");
+    }
 
     done = false;
     
