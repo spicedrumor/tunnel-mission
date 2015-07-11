@@ -491,7 +491,7 @@ function playerInteract(value, valueX, valueY)
         if (random != 0)
         {
             hitSound.play();
-            newMessage("5 smacks you around like a rag doll!");
+            newMessage("5 shatters in your general direction!");
             random = Math.floor(Math.random() * 21) + 5;
             life -= random;
             map[valueY][valueX] = 0;
@@ -503,7 +503,7 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value == 6)
     {
-        newMessage("6 whistles a funeral dirge.");
+        newMessage("6 whistles a funeral dirge and evaporates.");
         i = 0;
 
         while (i < 6)
