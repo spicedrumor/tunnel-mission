@@ -87,7 +87,7 @@ function generateMap()
                     random = Math.floor(Math.random() * 2);
                     if (random == 0)
                     {
-                        row[j] = 11;
+                        row[j] = 14;
                     }
                     else
                     {
@@ -355,15 +355,20 @@ function mapToString(map)
                 result += '#CC33FF">';
                 result += '<img src="res/trans_mushroom.png" alt="mushroom" height="20" width="15">';
             }
-            else if (map[i][j] == 11)
-            {
-                result += 'red">';
-                result += 'o';
-            }
             else if (map[i][j] == 12)
             {
                 result += 'grey">';
                 result += '#';
+            }
+            else if (map[i][j] == 14)
+            {
+                result += 'red">';
+                result += 'o';
+            }
+            else if (map[i][j] == 15)
+            {
+                result += 'red">';
+                result += 'o';
             }
             else
             {
@@ -441,11 +446,12 @@ function playerInteract(value, valueX, valueY)
         {
             random = Math.floor(Math.random() * 5);
         }
+
         if (random != 0)
         {
             hitSound.play();
             newMessage("3 bites you with glee!");
-            life -= 3;
+            life -= 1;
         }
         else
         {
@@ -522,20 +528,21 @@ function playerInteract(value, valueX, valueY)
         eatSound.play();
         newMessage("You devour a curious looking mushroom.");
         map[valueY][valueX] = 0;
-        life += 5;
-    }    
-    else if (value == 11)
-    {
-        if (!blueBit)
-        {
-            newMessage("You light the fuse...");
-            setTimeout(function(){explosion(valueX, valueY)}, 5000);
-        }
+        life += 6;
     }    
     else if (value == 13)
     {
         //reserved
     }
+    else if (value == 14)
+    {
+        if (!blueBit)
+        {
+            newMessage("You light the fuse...");
+            map[valueY][valueX] = 15;
+            setTimeout(function(){explosion(valueX, valueY)}, 5000);
+        }
+    }    
 
     return result;
 }
