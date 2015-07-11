@@ -616,7 +616,12 @@ function explosion(bombX, bombY, roundCount)
 function gameOver(message)
 {
     deathSound.play();
-    drawMap(); //just in case player was ninja'd
+
+    //just in case player was ninja'd:
+    clearTimeout(timerDraw);
+    drawMap();
+    updateStatusPane();
+
     window.alert("Game Over: " + message);
     endGame();
 }
