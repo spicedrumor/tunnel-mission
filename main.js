@@ -39,6 +39,7 @@ var timerMoveMob;
 var timerDraw;
 var timerInteractions;
 var currentRoundCount;
+var playerAlive;
 
 currentRoundCount = 0;
 blueBit = true;
@@ -522,6 +523,7 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value == 7)
     {
+        newMessage("7 touches base with you.");
         gameOver("7 8 u  :(");
         result = -1;
     }
@@ -549,11 +551,11 @@ function playerInteract(value, valueX, valueY)
     return result;
 }
 
-function explosion(bombX, bombY, roundCount)
+function explosion(ballX, ballY, roundCount)
 {
     var output;
     
-    if (roundCount != currentRoundCount)
+    if (!playerAlive || roundCount != currentRoundCount)
     {
         return;
     }
@@ -562,52 +564,52 @@ function explosion(bombX, bombY, roundCount)
 
     newMessage("Giant explosion!");
     explodeSound.play();
-    map[bombY][bombX] = 0;
-    if (validTile(bombX, bombY - 1))
+    map[ballY][ballX] = 0;
+    if (validTile(ballX, ballY - 1))
     {
-        map[bombY - 1][bombX] = output;
-        if (validTile(bombX, bombY - 2))
+        map[ballY - 1][ballX] = output;
+        if (validTile(ballX, ballY - 2))
         {
-            map[bombY - 2][bombX] = output;
-            if (validTile(bombX, bombY - 3))
+            map[ballY - 2][ballX] = output;
+            if (validTile(ballX, ballY - 3))
             {
-                map[bombY - 3][bombX] = output;
+                map[ballY - 3][ballX] = output;
             }
         }
     }
-    if (validTile(bombX + 1, bombY))
+    if (validTile(ballX + 1, ballY))
     {
-        map[bombY][bombX + 1] = output;
-        if (validTile(bombX + 2, bombY))
+        map[ballY][ballX + 1] = output;
+        if (validTile(ballX + 2, ballY))
         {
-            map[bombY][bombX + 2] = output;
-            if (validTile(bombX + 3, bombY))
+            map[ballY][ballX + 2] = output;
+            if (validTile(ballX + 3, ballY))
             {
-                map[bombY][bombX + 3] = output;
+                map[ballY][ballX + 3] = output;
             }
         }
     }
-    if (validTile(bombX, bombY + 1))
+    if (validTile(ballX, ballY + 1))
     {
-        map[bombY + 1][bombX] = output;
-        if (validTile(bombX, bombY + 2))
+        map[ballY + 1][ballX] = output;
+        if (validTile(ballX, ballY + 2))
         {
-            map[bombY + 2][bombX] = output;
-            if (validTile(bombX, bombY + 3))
+            map[ballY + 2][ballX] = output;
+            if (validTile(ballX, ballY + 3))
             {
-                map[bombY + 3][bombX] = output;
+                map[ballY + 3][ballX] = output;
             }
         }
     }
-    if (validTile(bombX - 1, bombY))
+    if (validTile(ballX - 1, ballY))
     {
-        map[bombY][bombX - 1] = output;
-        if (validTile(bombX - 2, bombY))
+        map[ballY][ballX - 1] = output;
+        if (validTile(ballX - 2, ballY))
         {
-            map[bombY][bombX - 2] = output;
-            if (validTile(bombX - 3, bombY))
+            map[ballY][ballX - 2] = output;
+            if (validTile(ballX - 3, ballY))
             {
-                map[bombY][bombX - 3] = output;
+                map[ballY][ballX - 3] = output;
             }
         }
     }
@@ -616,6 +618,7 @@ function explosion(bombX, bombY, roundCount)
 function gameOver(message)
 {
     deathSound.play();
+    playerAlive = false;
 
     //just in case player was ninja'd:
     clearTimeout(timerDraw);
@@ -633,7 +636,7 @@ function endGame()
     clearTimeout(timerMoveMob);
     clearTimeout(timerDraw);
     clearTimeout(timerInteractions);
-    startGame();
+    setTimeout(startGame, 1000);
 }
 
 function randomTile()
@@ -656,9 +659,6 @@ function doIExist()
     if (map[yPos][xPos] != 1)
     {
         gameOver("You (violently) ceased to exist.");
-    }
-    else
-    {
     }
 
     timerExist = setTimeout(doIExist, 50);
@@ -734,6 +734,7 @@ function newGame()
 {
     xPos = 0;
     yPos = 0;
+    playerAlive = true;
 
     currentRoundCount += 1;
 
@@ -749,7 +750,7 @@ function newGame()
     newMessage('<font color="' + "lime" + '">Objective: Rescue the '+ '</font><font color="' + COLOR_PINK + '">!</font>');
 
     life = 64;
-    timer = 1024;
+    timer = 512;
     timerBit = false;
 }
 
