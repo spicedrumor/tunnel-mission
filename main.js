@@ -33,6 +33,11 @@ var timer;
 var timerBit;
 var blueBit;
 var mobList;
+var timerHeart;
+var timerExist;
+var timerMoveMob;
+var timerDraw;
+var timerInteractions;
 
 blueBit = true;
 
@@ -42,25 +47,7 @@ winSound = new Audio(WIN_SOUND_FILENAME);
 eatSound = new Audio(EAT_SOUND_FILENAME);
 explodeSound = new Audio(EXPLODE_SOUND_FILENAME);
 
-messageQueue = [];
-for (var i = 0; i < MESSAGE_QUEUE_MAX; i++)
-{
-    newMessage("");
-}
-newMessage('<font color="' + "lime" + '">Objective: Rescue the '+ '</font><font color="' + COLOR_PINK + '">!</font>');
-
-life = 64;
-timer = 256;
-timerBit = false;
-
 directions = ["n", "s", "e", "w"];
-
-xPos = 0;
-yPos = 0;
-
-map = generateMap();
-mapWidth = map[0].length;
-mapHeight = map.length;
 
 function generateMap()
 {
@@ -215,7 +202,7 @@ function moveRandomMob()
         }
     }
 
-    setTimeout(moveRandomMob, 5);
+    timerMoveMob = setTimeout(moveRandomMob, 25);
 }
 
 function move(direction, originX, originY, value)
@@ -396,7 +383,7 @@ function drawMap()
 {
     mapString = mapToString(map);
     document.getElementById("left").innerHTML = mapString;
-    setTimeout(drawMap, 100);
+    timerDraw = setTimeout(drawMap, 25);
 }
 
 function playerInteractions()
@@ -404,34 +391,47 @@ function playerInteractions()
     var i;
     var j;
     var current;
+    var rc;
+    var tileX;
+    var tileY;
 
     for (i = -1; i < 2; i++)
     {
         for (j = -1; j < 2; j++)
         {
-            if (validTile(xPos + j, yPos + i))
+            tileX = xPos + j;
+            tileY = yPos + i;
+            if (validTile(tileX, tileY))
             {
-                current = map[yPos + i][xPos + j];
+                current = map[tileY][tileX];
                 if (current > 1)
                 {
-                    playerInteract(current, xPos + j, yPos + i);
+                    rc = playerInteract(current, tileX, tileY);
                 }
+            }
+
+            if (rc == -1)
+            {
+                return;
             }
         }
     }
 
-    setTimeout(playerInteractions, 500);
+    timerInteractions = setTimeout(playerInteractions, 500);
 }
 
 function playerInteract(value, valueX, valueY)
 {
     var random;
     var i;
+    var result;
+
+    result = 0;
 
     if (value == 2)
     {
         winSound.play();
-        document.write("You win!");
+        window.alert("You win! Good job!");
         endGame();
     }
     else if (value == 3)
@@ -485,6 +485,7 @@ function playerInteract(value, valueX, valueY)
             newMessage("5 smacks you around like a rag doll!");
             random = Math.floor(Math.random() * 21) + 5;
             life -= random;
+            map[valueY][valueX] = 0;
         }
         else
         {
@@ -505,6 +506,7 @@ function playerInteract(value, valueX, valueY)
                 i += 1;
             }
         }
+        map[valueY][valueX] = 0;
     }
     else if (value == 8)
     {
@@ -513,6 +515,7 @@ function playerInteract(value, valueX, valueY)
     else if (value == 7)
     {
         gameOver("7 8 u  :(");
+        result = -1;
     }
     else if (value == 10)
     {
@@ -532,7 +535,9 @@ function playerInteract(value, valueX, valueY)
     else if (value == 13)
     {
         //reserved
-    }    
+    }
+
+    return result;
 }
 
 function explosion(bombX, bombY)
@@ -597,14 +602,19 @@ function explosion(bombX, bombY)
 function gameOver(message)
 {
     deathSound.play();
-    document.write("Game Over: " + message + "<br>");
+    drawMap(); //just in case player was ninja'd
+    window.alert("Game Over: " + message);
     endGame();
 }
 
 function endGame()
 {
-    window.alert("Play Again?");
-    history.go(-1);
+    clearTimeout(timerHeart);
+    clearTimeout(timerExist);
+    clearTimeout(timerMoveMob);
+    clearTimeout(timerDraw);
+    clearTimeout(timerInteractions);
+    startGame();
 }
 
 function randomTile()
@@ -632,7 +642,7 @@ function doIExist()
     {
     }
 
-    setTimeout(doIExist, 50);
+    timerExist = setTimeout(doIExist, 50);
 }
 
 function heartBeat()
@@ -658,7 +668,7 @@ function heartBeat()
         }
     }
     updateStatusPane();
-    setTimeout(heartBeat, 500);
+    timerHeart = setTimeout(heartBeat, 500);
 }
 
 function updateStatusPane()
@@ -701,10 +711,34 @@ var Blast = function(direction)
     this.direction = direction;
 };
 
+function newGame()
+{
+    xPos = 0;
+    yPos = 0;
+
+    map = generateMap();
+    mapWidth = map[0].length;
+    mapHeight = map.length;
+
+    messageQueue = [];
+    for (var i = 0; i < MESSAGE_QUEUE_MAX; i++)
+    {
+        newMessage("");
+    }
+    newMessage('<font color="' + "lime" + '">Objective: Rescue the '+ '</font><font color="' + COLOR_PINK + '">!</font>');
+
+    life = 64;
+    timer = 1024;
+    timerBit = false;
+}
+
 function startGame()
 {
     var input;
     var done;
+    var preset;
+
+    newGame();
 
     if (map.length < 5 || map[0].length < 5)
     {
@@ -715,7 +749,16 @@ function startGame()
     
     while (!done)
     {
-        input = window.prompt("Select Player: (type b for blue or p for pink)");
+        if (blueBit)
+        {
+            preset = "b";
+        }
+        else
+        {
+            preset = "p";
+        }
+
+        input = window.prompt("Select Player: (type b for blue or p for pink)", preset);
         if (input === "b")
         {
             blueBit = true;
@@ -727,14 +770,15 @@ function startGame()
             done = true;
         }
     }
-
-    setTimeout(moveRandomMob, 25);
-    setTimeout(drawMap, 25);
-    setTimeout(playerInteractions, 25);
-    setTimeout(doIExist, 50);
-    setTimeout(heartBeat, 500);
+    
+    timerHeart = setTimeout(heartBeat, 500);
+    timerExist = setTimeout(doIExist, 50);
+    timerMoveMob = setTimeout(moveRandomMob, 25);
+    timerDraw = setTimeout(drawMap, 25);
+    timerInteractions = setTimeout(playerInteractions, 25);
 }
 
 startGame();
 
 }());
+//601
