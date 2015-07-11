@@ -38,7 +38,9 @@ var timerExist;
 var timerMoveMob;
 var timerDraw;
 var timerInteractions;
+var currentRoundCount;
 
+currentRoundCount = 0;
 blueBit = true;
 
 hitSound = new Audio(HIT_SOUND_FILENAME);
@@ -540,17 +542,22 @@ function playerInteract(value, valueX, valueY)
         {
             newMessage("You light the fuse...");
             map[valueY][valueX] = 15;
-            setTimeout(function(){explosion(valueX, valueY)}, 5000);
+            setTimeout(function(){explosion(valueX, valueY, currentRoundCount)}, 5000);
         }
     }    
 
     return result;
 }
 
-function explosion(bombX, bombY)
+function explosion(bombX, bombY, roundCount)
 {
     var output;
     
+    if (roundCount != currentRoundCount)
+    {
+        return;
+    }
+
     output = 12;
 
     newMessage("Giant explosion!");
@@ -722,6 +729,8 @@ function newGame()
 {
     xPos = 0;
     yPos = 0;
+
+    currentRoundCount += 1;
 
     map = generateMap();
     mapWidth = map[0].length;
