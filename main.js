@@ -441,6 +441,7 @@ function playerInteract(value, valueX, valueY)
         winSound.play();
         window.alert("You win! Good job!");
         endGame();
+        result = -1;
     }
     else if (value == 3)
     {
@@ -455,6 +456,11 @@ function playerInteract(value, valueX, valueY)
             hitSound.play();
             newMessage("3 bites you with glee!");
             life -= 1;
+
+            if (life < 1)
+            {
+                result = -1;
+            }
         }
         else
         {
@@ -495,6 +501,11 @@ function playerInteract(value, valueX, valueY)
             random = Math.floor(Math.random() * 21) + 5;
             life -= random;
             map[valueY][valueX] = 0;
+
+            if (life < 1)
+            {
+                result = -1;
+            }
         }
         else
         {
