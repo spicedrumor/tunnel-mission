@@ -432,7 +432,9 @@ function playerInteract(value, valueX, valueY)
 {
     var random;
     var i;
+    var j;
     var result;
+    var message;
 
     result = 0;
 
@@ -470,21 +472,35 @@ function playerInteract(value, valueX, valueY)
     else if (value == 4)
     {
         newMessage("4 propagates.");
-        if (safeTile(0, 0))
+        i = 0;
+        j = 0;
+
+        while (i < 4)
         {
-            map[0][0] = 4;
+            random = randomTile();
+            if (safeTile(random[0], random[1]))
+            {
+                map[random[1]][random[0]] = 4;
+                j += 1;
+            }
+
+            i += 1;
         }
-        if (safeTile(mapWidth - 1, 0))
+
+        if (j == 0)
         {
-            map[0][mapWidth - 1] = 4;
+            newMessage("4 failed to propagate!");
         }
-        if (safeTile(0, mapHeight - 1))
+
+        random = Math.floor(Math.random() * 2);
+        if (random == 0)
         {
-            map[mapHeight - 1][0] = 4;
+            map[valueY][valueX] = 0;
         }
-        if (safeTile(mapWidth - 1, mapHeight - 1))
+        else
         {
-            map[mapHeight - 1][mapWidth - 1] = 4;
+            newMessage("4 metamorphosizes into 8!");
+            map[valueY][valueX] = 8;
         }
     }
     else if (value == 5)
@@ -523,14 +539,22 @@ function playerInteract(value, valueX, valueY)
             if (safeTile(random[0], random[1]))
             {
                 map[random[1]][random[0]] = 7;
-                i += 1;
             }
+
+            i += 1;
         }
         map[valueY][valueX] = 0;
     }
     else if (value == 8)
     {
-        newMessage("8 grins mischievously.");
+        message = "8 grins mischievously.";
+        if (messageQueue[0] === message)
+        {
+        }
+        else
+        {
+            newMessage(message);
+        }
     }
     else if (value == 7)
     {
