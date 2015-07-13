@@ -11,6 +11,7 @@ var DEATH_SOUND_FILENAME = "res/death.wav";
 var WIN_SOUND_FILENAME = "res/woohoo.wav";
 var EAT_SOUND_FILENAME = "res/omnom.wav";
 var EXPLODE_SOUND_FILENAME = "res/explosion.wav";
+var MAGIC_SOUND_FILENAME = "res/whoosh.wav";
 var KEY_CODE_W = 87;
 var KEY_CODE_A = 65;
 var KEY_CODE_S = 83;
@@ -49,6 +50,7 @@ deathSound = new Audio(DEATH_SOUND_FILENAME);
 winSound = new Audio(WIN_SOUND_FILENAME);
 eatSound = new Audio(EAT_SOUND_FILENAME);
 explodeSound = new Audio(EXPLODE_SOUND_FILENAME);
+magicSound = new Audio(MAGIC_SOUND_FILENAME);
 
 directions = ["n", "s", "e", "w"];
 
@@ -96,7 +98,18 @@ function generateMap()
                     {
                         row[j] = 0;
                     }
-
+                }
+                else if (random == 2)
+                {
+                    random = Math.floor(Math.random() * 8);
+                    if (random == 0)
+                    {
+                        row[j] = 16;
+                    }
+                    else
+                    {
+                        row[j] = 0;
+                    }
                 }
                 else
                 {
@@ -257,6 +270,39 @@ function move(direction, originX, originY, value)
     return result;
 }
 
+function spell()
+{
+    var i;
+    var j;
+    var k;
+    var tileX;
+    var tileY;
+    var value;
+
+    newMessage("You cast a spell!");
+    magicSound.play();
+
+    for (i = -1; i < 2; i++)
+    {
+        for (j = -1; j < 2; j++)
+        {
+            tileX = xPos + j;
+            tileY = yPos + i;
+            value = map[tileY][tileX];
+            if (validTile(tileX, tileY) && value > 2)
+            {
+                map[tileY][tileX] = 0;
+                k += 1;
+            }
+        }
+    }
+
+    if (k ==0)
+    {
+        newMessage("Nothing happened...");
+    }
+}
+
 document.onkeyup = function(e)
 {
     var direction;
@@ -279,6 +325,18 @@ document.onkeyup = function(e)
     else if (key == KEY_CODE_A)
     {
         direction = "w";
+    }
+    else if (key == 81)
+    {
+        if (life > 50)
+        {
+            life -= 50;
+            spell();
+        }
+        else
+        {
+            newMessage("You feel too weak for that.");
+        }
     }
 
     if (direction === "")
@@ -372,6 +430,11 @@ function mapToString(map)
             {
                 result += 'red">';
                 result += 'o';
+            }
+            else if (map[i][j] == 16)
+            {
+                result += '#000A00">';
+                result += '*';
             }
             else
             {
@@ -545,6 +608,12 @@ function playerInteract(value, valueX, valueY)
         }
         map[valueY][valueX] = 0;
     }
+    else if (value == 7)
+    {
+        newMessage("7 touches base with you.");
+        gameOver("7 8 u  :(");
+        result = -1;
+    }
     else if (value == 8)
     {
         message = "8 grins mischievously.";
@@ -555,12 +624,6 @@ function playerInteract(value, valueX, valueY)
         {
             newMessage(message);
         }
-    }
-    else if (value == 7)
-    {
-        newMessage("7 touches base with you.");
-        gameOver("7 8 u  :(");
-        result = -1;
     }
     else if (value == 10)
     {
@@ -582,6 +645,19 @@ function playerInteract(value, valueX, valueY)
             setTimeout(function(){explosion(valueX, valueY, currentRoundCount)}, 5000);
         }
     }    
+    else if (value == 16)
+    {
+        newMessage("You are drawn into the event horizon.");
+        random = randomTile();
+        if (emptyTile(random[0], random[1]))
+        {
+            map[valueY][valueX] = 0;
+            map[yPos][xPos] = 0;
+            xPos = random[0];
+            yPos = random[1];
+            map[random[1]][random[0]] = 1;
+        }
+    }
 
     return result;
 }
@@ -695,8 +771,10 @@ function doIExist()
     {
         gameOver("You (violently) ceased to exist.");
     }
-
-    timerExist = setTimeout(doIExist, 50);
+    else
+    {
+        timerExist = setTimeout(doIExist, 50);
+    }
 }
 
 function heartBeat()
@@ -838,4 +916,3 @@ function startGame()
 startGame();
 
 }());
-//601
