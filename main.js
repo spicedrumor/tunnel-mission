@@ -38,6 +38,7 @@ var timerHeart;
 var timerExist;
 var timerMoveMob;
 var timerDraw;
+var timerMushroom;
 var timerInteractions;
 var currentRoundCount;
 var playerAlive;
@@ -662,6 +663,23 @@ function playerInteract(value, valueX, valueY)
     return result;
 }
 
+function randomMush()
+{
+    var millisecs;
+    var random;
+
+    millisecs = (Math.floor(Math.random() * 5) + 15) * 1000;
+
+    random = randomTile();
+
+    if (emptyTile(random[0], random[1]))
+    {
+        map[random[1]][random[0]] = 10;
+    }
+
+    setTimeout(randomMush, millisecs);
+}
+
 function explosion(ballX, ballY, roundCount)
 {
     var output;
@@ -747,6 +765,7 @@ function endGame()
     clearTimeout(timerMoveMob);
     clearTimeout(timerDraw);
     clearTimeout(timerInteractions);
+    clearTimeout(timerMushroom);
     setTimeout(startGame, 1000);
 }
 
@@ -911,6 +930,7 @@ function startGame()
     timerMoveMob = setTimeout(moveRandomMob, 25);
     timerDraw = setTimeout(drawMap, 25);
     timerInteractions = setTimeout(playerInteractions, 25);
+    timerMushroom = setTimeout(randomMush, 30);//TODO
 }
 
 startGame();
