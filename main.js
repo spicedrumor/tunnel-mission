@@ -614,13 +614,20 @@ function doIExist()
 
 function heartBeat()
 {
+    var dead;
+
+    dead = false;
+
     if (life < 1)
     {
         gameOver('You collapsed.');
+        dead = true;
     }
+
     if (timer < 1)
     {
         gameOver("You didn't make it in time.");
+        dead = true;
     }
     else
     {
@@ -634,8 +641,12 @@ function heartBeat()
             timerBit = true;
         }
     }
+
     updateStatusPane();
-    timerHeart = setTimeout(heartBeat, 500);
+    if (!dead)
+    {
+        timerHeart = setTimeout(heartBeat, 500);
+    }
 }
 
 function updateStatusPane()
