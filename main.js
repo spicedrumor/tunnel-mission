@@ -757,7 +757,7 @@ function startGame()
     timerMoveMob = setTimeout(moveRandomMob, 25);
     timerDraw = setTimeout(drawMap, 25);
     timerInteractions = setTimeout(playerInteractions, 25);
-    timerMushroom = setTimeout(randomMush, 30);//TODO
+    timerMushroom = setTimeout(randomMush, 30);
 }
 
 startGame();
