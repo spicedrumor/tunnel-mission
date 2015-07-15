@@ -493,7 +493,7 @@ function randomMush()
         map[random[1]][random[0]] = 10;
     }
 
-    setTimeout(randomMush, millisecs);
+    timerMushroom = setTimeout(randomMush, millisecs);
 }
 
 function explosion(ballX, ballY, roundCount)
