@@ -55,6 +55,10 @@ var tmiss_generate = {
                             row[j] = 0;
                         }
                     }
+                    else if (random == 3 || random == 4)
+                    {
+                        row[j] = 12;
+                    }
                     else
                     {
                         row[j] = 0;

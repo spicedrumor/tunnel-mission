@@ -1,5 +1,5 @@
 var tmiss_draw = {
-    mapToString: function(map, blueBit)
+    mapToString: function(map, blueBit, pinkBit, greenBit)
     {
         var MAP_VAL_EMPTY = 0;
         var MAP_VAL_PLAYER = 1;
@@ -25,10 +25,18 @@ var tmiss_draw = {
                     {
                         result += '#00FFFF">@';
                     }
-                    else
+                    else if (pinkBit)
                     {
                         result += COLOR_PINK;
                         result += '">@';
+                    }
+                    else if (greenBit)
+                    {
+                        result += '#00FF00">@';
+                    }
+                    else
+                    {
+                        result += 'white">@';
                     }
                 }
                 else if (map[i][j] == 2)

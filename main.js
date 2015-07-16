@@ -29,6 +29,8 @@ var hitSound;
 var timer;
 var timerBit;
 var blueBit;
+var pinkBit;
+var greenBit;
 var mobList;
 var timerHeart;
 var timerExist;
@@ -41,6 +43,8 @@ var playerAlive;
 
 currentRoundCount = 0;
 blueBit = true;
+pinkBit = false;
+greenBit = false;
 
 hitSound = new Audio(HIT_SOUND_FILENAME);
 deathSound = new Audio(DEATH_SOUND_FILENAME);
@@ -179,8 +183,26 @@ function move(direction, originX, originY, value)
         result[0] = newX;
         result[1] = newY;
     }
-    else
+    else if (value == 1 && greenBit)
     {
+        if (map[newY][newX] == 12)
+        {
+            if (map[newY + offsetY][newX + offsetX] == 0)
+            {
+                newMessage("You shove with all your might!");
+                map[newY + offsetY][newX + offsetX] = map[newY][newX];
+                map[newY][newX] = 0;
+            }
+        }
+        if (map[newY][newX] == 14 || map[newY][newX] == 15)
+        {
+            if (map[newY + offsetY][newX + offsetX] == 0)
+            {
+                newMessage("You deliver a solid boot!");
+                map[newY + offsetY][newX + offsetX] = map[newY][newX];
+                map[newY][newX] = 0;
+            }
+        }
     }
 
     return result;
@@ -269,9 +291,9 @@ document.onkeyup = function(e)
 
 function drawMap()
 {
-    mapString = tmiss_draw.mapToString(map, blueBit);
+    mapString = tmiss_draw.mapToString(map, blueBit, pinkBit, greenBit);
     document.getElementById("left").innerHTML = mapString;
-    timerDraw = setTimeout(drawMap, 25);
+    timerDraw = setTimeout(drawMap, 100);
 }
 
 function playerInteractions()
@@ -320,9 +342,7 @@ function playerInteract(value, valueX, valueY)
 
     if (value == 2)
     {
-        winSound.play();
-        window.alert("You win! Good job!");
-        endGame();
+        winGame();
         result = -1;
     }
     else if (value == 3)
@@ -342,6 +362,20 @@ function playerInteract(value, valueX, valueY)
             if (life < 1)
             {
                 result = -1;
+            }
+            else if (greenBit)
+            {
+                random = Math.floor(Math.random() * 2);
+                if (random == 0)
+                {
+                    newMessage("You grab the 3 and hurl it into the distance!");
+                    map[valueY][valueX] = 0;
+                }
+                else
+                {
+                    newMessage("You reach for the 3 but it deftly scampers away from you.");
+                }
+
             }
         }
         else
@@ -455,7 +489,7 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value == 14)
     {
-        if (!blueBit)
+        if (pinkBit)
         {
             newMessage("You light the fuse...");
             map[valueY][valueX] = 15;
@@ -484,7 +518,7 @@ function randomMush()
     var millisecs;
     var random;
 
-    millisecs = (Math.floor(Math.random() * 5) + 15) * 1000;
+    millisecs = (Math.floor(Math.random() * 11) + 25) * 1000;
 
     random = randomTile();
 
@@ -560,16 +594,28 @@ function explosion(ballX, ballY, roundCount)
     }
 }
 
-function gameOver(message)
+function winGame()
 {
-    deathSound.play();
-    playerAlive = false;
+    quickUpdate();
+    winSound.play();
+    window.alert("You win! Good job!");
+    endGame();
+}
 
-    //just in case player was ninja'd:
+function quickUpdate()
+{
     clearTimeout(timerDraw);
     drawMap();
     updateStatusPane();
+}
 
+function gameOver(message)
+{
+    //just in case player was ninja'd:
+    quickUpdate();
+
+    deathSound.play();
+    playerAlive = false;
     window.alert("Game Over: " + message);
     endGame();
 }
@@ -730,24 +776,39 @@ function startGame()
     
     while (!done)
     {
-        if (blueBit)
-        {
-            preset = "b";
-        }
-        else
+        if (pinkBit)
         {
             preset = "p";
         }
+        else if (greenBit)
+        {
+            preset = "g";
+        }
+        else
+        {
+            preset = "b";
+        }
 
-        input = window.prompt("Select Player: (type b for blue or p for pink)", preset);
+        input = window.prompt("Select Player: (type b for blue or p for pink or g for green)", preset);
         if (input === "b")
         {
             blueBit = true;
+            pinkBit = false;
+            greenBit = false;
             done = true;
         }
         else if (input === "p") 
         {
             blueBit = false;
+            pinkBit = true;
+            greenBit = false;
+            done = true;
+        }
+        else if (input === "g") 
+        {
+            blueBit = false;
+            pinkBit = false;
+            greenBit = true;
             done = true;
         }
     }
