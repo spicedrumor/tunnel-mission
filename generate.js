@@ -9,7 +9,7 @@ var tmiss_generate = {
         var row;
         var random;
 
-        width = 38;
+        width = 52;
         height = 20;
         newMap = [];
         

@@ -208,6 +208,21 @@ function move(direction, originX, originY, value)
     return result;
 }
 
+function randomTile()
+{
+    var randomX;
+    var randomY;
+    var result;
+
+    result = [];
+    randomX = Math.floor(Math.random() * map[0].length);
+    randomY = Math.floor(Math.random() * map.length);
+    result[0] = randomX;
+    result[1] = randomY;
+
+    return result;
+}
+
 function spell()
 {
     var i;
@@ -287,7 +302,6 @@ document.onkeyup = function(e)
         yPos = newCoords[1];
     }
 }
-
 
 function drawMap()
 {
@@ -373,7 +387,7 @@ function playerInteract(value, valueX, valueY)
                 }
                 else
                 {
-                    newMessage("You reach for the 3 but it deftly scampers away from you.");
+                    newMessage("You reach for the 3 but it deftly scampers away.");
                 }
 
             }
@@ -493,7 +507,7 @@ function playerInteract(value, valueX, valueY)
         {
             newMessage("You light the fuse...");
             map[valueY][valueX] = 15;
-            setTimeout(function(){explosion(valueX, valueY, currentRoundCount)}, 5000);
+            setTimeout(function(){tmiss_mapMutate.explosion(valueX, valueY, map, playerAlive, explodeSound, validTile, newMessage)}, 5000);
         }
     }    
     else if (value == 16)
@@ -530,69 +544,6 @@ function randomMush()
     timerMushroom = setTimeout(randomMush, millisecs);
 }
 
-function explosion(ballX, ballY, roundCount)
-{
-    var output;
-    
-    if (!playerAlive || roundCount != currentRoundCount)
-    {
-        return;
-    }
-
-    output = 12;
-
-    newMessage("Giant explosion!");
-    explodeSound.play();
-    map[ballY][ballX] = 0;
-    if (validTile(ballX, ballY - 1))
-    {
-        map[ballY - 1][ballX] = output;
-        if (validTile(ballX, ballY - 2))
-        {
-            map[ballY - 2][ballX] = output;
-            if (validTile(ballX, ballY - 3))
-            {
-                map[ballY - 3][ballX] = output;
-            }
-        }
-    }
-    if (validTile(ballX + 1, ballY))
-    {
-        map[ballY][ballX + 1] = output;
-        if (validTile(ballX + 2, ballY))
-        {
-            map[ballY][ballX + 2] = output;
-            if (validTile(ballX + 3, ballY))
-            {
-                map[ballY][ballX + 3] = output;
-            }
-        }
-    }
-    if (validTile(ballX, ballY + 1))
-    {
-        map[ballY + 1][ballX] = output;
-        if (validTile(ballX, ballY + 2))
-        {
-            map[ballY + 2][ballX] = output;
-            if (validTile(ballX, ballY + 3))
-            {
-                map[ballY + 3][ballX] = output;
-            }
-        }
-    }
-    if (validTile(ballX - 1, ballY))
-    {
-        map[ballY][ballX - 1] = output;
-        if (validTile(ballX - 2, ballY))
-        {
-            map[ballY][ballX - 2] = output;
-            if (validTile(ballX - 3, ballY))
-            {
-                map[ballY][ballX - 3] = output;
-            }
-        }
-    }
-}
 
 function winGame()
 {
@@ -629,21 +580,6 @@ function endGame()
     clearTimeout(timerInteractions);
     clearTimeout(timerMushroom);
     setTimeout(startGame, 1000);
-}
-
-function randomTile()
-{
-    var randomX;
-    var randomY;
-    var result;
-
-    result = [];
-    randomX = Math.floor(Math.random() * map[0].length);
-    randomY = Math.floor(Math.random() * map.length);
-    result[0] = randomX;
-    result[1] = randomY;
-
-    return result;
 }
 
 function doIExist()
