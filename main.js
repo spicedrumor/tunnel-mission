@@ -38,13 +38,23 @@ var timerMoveMob;
 var timerDraw;
 var timerMushroom;
 var timerInteractions;
+var timerPlayerFlash;
 var currentRoundCount;
 var playerAlive;
 
+var mapObject = {
+};
+mapObject.map = map;
+
+playerObject = {
+};
+playerObject.colour = "#00FFFF";
+playerObject.blueBit = true;
+playerObject.pinkBit = false;
+playerObject.greenBit = false;
+playerObject.flashCount = 0;
+
 currentRoundCount = 0;
-blueBit = true;
-pinkBit = false;
-greenBit = false;
 
 hitSound = new Audio(HIT_SOUND_FILENAME);
 deathSound = new Audio(DEATH_SOUND_FILENAME);
@@ -183,7 +193,7 @@ function move(direction, originX, originY, value)
         result[0] = newX;
         result[1] = newY;
     }
-    else if (value == 1 && greenBit)
+    else if (value == 1 && playerObject.greenBit)
     {
         if (map[newY][newX] == 12)
         {
@@ -305,7 +315,7 @@ document.onkeyup = function(e)
 
 function drawMap()
 {
-    mapString = tmiss_draw.mapToString(map, blueBit, pinkBit, greenBit);
+    mapString = tmiss_draw.mapToString(map, playerObject);
     document.getElementById("left").innerHTML = mapString;
     timerDraw = setTimeout(drawMap, 100);
 }
@@ -362,7 +372,7 @@ function playerInteract(value, valueX, valueY)
     else if (value == 3)
     {
         random = 1;
-        if (blueBit)
+        if (playerObject.blueBit)
         {
             random = Math.floor(Math.random() * 5);
         }
@@ -377,7 +387,7 @@ function playerInteract(value, valueX, valueY)
             {
                 result = -1;
             }
-            else if (greenBit)
+            else if (playerObject.greenBit)
             {
                 random = Math.floor(Math.random() * 2);
                 if (random == 0)
@@ -434,7 +444,7 @@ function playerInteract(value, valueX, valueY)
     else if (value == 5)
     {
         random = 1;
-        if (blueBit)
+        if (playerObject.blueBit)
         {
             random = Math.floor(Math.random() * 5);
         }
@@ -503,7 +513,7 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value == 14)
     {
-        if (pinkBit)
+        if (playerObject.pinkBit)
         {
             newMessage("You light the fuse...");
             map[valueY][valueX] = 15;
@@ -712,11 +722,11 @@ function startGame()
     
     while (!done)
     {
-        if (pinkBit)
+        if (playerObject.pinkBit)
         {
             preset = "p";
         }
-        else if (greenBit)
+        else if (playerObject.greenBit)
         {
             preset = "g";
         }
@@ -728,23 +738,26 @@ function startGame()
         input = window.prompt("Select Player: (type b for blue or p for pink or g for green)", preset);
         if (input === "b")
         {
-            blueBit = true;
-            pinkBit = false;
-            greenBit = false;
+            playerObject.blueBit = true;
+            playerObject.pinkBit = false;
+            playerObject.greenBit = false;
+            playerObject.colour = "#00FFFF";
             done = true;
         }
         else if (input === "p") 
         {
-            blueBit = false;
-            pinkBit = true;
-            greenBit = false;
+            playerObject.blueBit = false;
+            playerObject.pinkBit = true;
+            playerObject.greenBit = false;
+            playerObject.colour = COLOR_PINK;
             done = true;
         }
         else if (input === "g") 
         {
-            blueBit = false;
-            pinkBit = false;
-            greenBit = true;
+            playerObject.blueBit = false;
+            playerObject.pinkBit = false;
+            playerObject.greenBit = true;
+            playerObject.colour = "#00FF00";
             done = true;
         }
     }
