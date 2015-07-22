@@ -52,7 +52,8 @@ playerObject.colour = "#00FFFF";
 playerObject.blueBit = true;
 playerObject.pinkBit = false;
 playerObject.greenBit = false;
-playerObject.flashCount = 0;
+playerObject.flashing = false;
+playerObject.flashBit = false;
 
 currentRoundCount = 0;
 
@@ -381,7 +382,7 @@ function playerInteract(value, valueX, valueY)
         {
             hitSound.play();
             newMessage("3 bites you with glee!");
-            life -= 1;
+            playerHit(1);
 
             if (life < 1)
             {
@@ -453,7 +454,7 @@ function playerInteract(value, valueX, valueY)
             hitSound.play();
             newMessage("5 shatters in your general direction!");
             random = Math.floor(Math.random() * 21) + 5;
-            life -= random;
+            playerHit(random);
             map[valueY][valueX] = 0;
 
             if (life < 1)
@@ -537,6 +538,36 @@ function playerInteract(value, valueX, valueY)
     return result;
 }
 
+function playerHit(damage)
+{
+    life -= damage;
+
+    clearTimeout(timerPlayerFlash); //TODO clear at end of game
+    timerPlayerFlash = setTimeout(function(){playerFlash(10)}, 200);
+    playerObject.flashBit = true;
+}
+
+function playerFlash(counter)
+{
+    //alert("fsddsf" + counter);
+    if (counter > 0)
+    {
+        if (counter % 2 == 0)
+        {
+            playerObject.flashBit = false;
+        }
+        else
+        {
+            playerObject.flashBit = true;
+        }
+        timerPlayerFlash = setTimeout(function(){playerFlash(counter - 1)}, 200);
+    }
+    else if (counter == 0)
+    {
+        playerObject.flashBit = false;
+    }
+}
+
 function randomMush()
 {
     var millisecs;
@@ -589,6 +620,7 @@ function endGame()
     clearTimeout(timerDraw);
     clearTimeout(timerInteractions);
     clearTimeout(timerMushroom);
+    clearTimeout(timerPlayerFlash);
     setTimeout(startGame, 1000);
 }
 

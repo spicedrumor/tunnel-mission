@@ -21,7 +21,14 @@ var tmiss_draw = {
                 }
                 else if (map[i][j] == 1)
                 {
-                    result += playerObject.colour + '">@';
+                    if (playerObject.flashBit)
+                    {
+                        result += "white" + '">@';
+                    }
+                    else
+                    {
+                        result += playerObject.colour + '">@';
+                    }
                 }
                 else if (map[i][j] == 2)
                 {
