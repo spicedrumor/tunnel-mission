@@ -45,6 +45,7 @@ var playerAlive;
 var mapObject = {
 };
 mapObject.map = map;
+mapObject.mobs = [];
 
 playerObject = {
 };
@@ -122,34 +123,35 @@ function validMove(newX, newY)
     return result;
 }
 
+function clobberTile(tileX, tileY)
+{
+    mapObject.removeMob(tileX, tileY);
+}
+
 function moveRandomMob()
 {
-    var randomX;
-    var randomY;
     var randomDirection;
     var mover;
-    var destination;
-
-    randomX = Math.floor(Math.random() * map[0].length);
-    randomY = Math.floor(Math.random() * map.length);
+    var random;
     
     randomDirection = directions[Math.floor(Math.random() * 4)];
     
-    mover = map[randomY][randomX];
-    if (mover > 2 && mover < 10) 
-    {
-        if (mover != 7)
-        {
-            move(randomDirection, randomX, randomY, mover);
-        }
-        else
-        {
-            destination = move(randomDirection, randomX, randomY, mover);
-            move(randomDirection, destination[0], destination[1], mover);
-        }
-    }
+    random = Math.floor(Math.random() * mapObject.mobs.length);//TODO: no mobs
 
-    timerMoveMob = setTimeout(moveRandomMob, 25);
+    mover = mapObject.mobs[random];
+
+    mobMove(randomDirection, mover.x, mover.y, mover.value);
+
+    timerMoveMob = setTimeout(moveRandomMob, 5);
+}
+
+function mobMove(direction, originX, originY, value)
+{
+    var result;
+
+    result = move(direction, originX, originY, value);
+
+    return result;
 }
 
 function move(direction, originX, originY, value)
@@ -189,10 +191,18 @@ function move(direction, originX, originY, value)
 
     if (validMove(newX, newY))
     {
-        map[originY][originX] = 0;
-        map[newY][newX] = value;
-        result[0] = newX;
-        result[1] = newY;
+        if (value != 1)
+        {
+            mapObject.removeMob(originX, originY);
+            mapObject.insertMob(newX, newY, value);
+        }
+        else
+        {
+            map[originY][originX] = 0;
+            map[newY][newX] = value;
+            result[0] = newX;
+            result[1] = newY;
+        }
     }
     else if (value == 1 && playerObject.greenBit)
     {
@@ -394,7 +404,7 @@ function playerInteract(value, valueX, valueY)
                 if (random == 0)
                 {
                     newMessage("You grab the 3 and hurl it into the distance!");
-                    map[valueY][valueX] = 0;
+                    clobberTile(valueX, valueY);
                 }
                 else
                 {
@@ -417,9 +427,9 @@ function playerInteract(value, valueX, valueY)
         while (i < 4)
         {
             random = randomTile();
-            if (safeTile(random[0], random[1]))
+            if (emptyTile(random[0], random[1]))
             {
-                map[random[1]][random[0]] = 4;
+                mapObject.insertMob(random[0], random[1], 4);
                 j += 1;
             }
 
@@ -434,7 +444,7 @@ function playerInteract(value, valueX, valueY)
         random = Math.floor(Math.random() * 2);
         if (random == 0)
         {
-            map[valueY][valueX] = 0;
+            clobberTile(valueX, valueY);
         }
         else
         {
@@ -455,7 +465,7 @@ function playerInteract(value, valueX, valueY)
             newMessage("5 shatters in your general direction!");
             random = Math.floor(Math.random() * 21) + 5;
             playerHit(random);
-            map[valueY][valueX] = 0;
+            mapObject.removeMob(valueX, valueY);
 
             if (life < 1)
             {
@@ -475,14 +485,14 @@ function playerInteract(value, valueX, valueY)
         while (i < 6)
         {
             random = randomTile();
-            if (safeTile(random[0], random[1]))
+            if (emptyTile(random[0], random[1]))
             {
-                map[random[1]][random[0]] = 7;
+                mapObject.insertMob(random[0], random[1], 7);
             }
 
             i += 1;
         }
-        map[valueY][valueX] = 0;
+        mapObject.removeMob(valueX, valueY);
     }
     else if (value == 7)
     {
@@ -525,7 +535,7 @@ function playerInteract(value, valueX, valueY)
     {
         newMessage("You are drawn into the event horizon.");
         random = randomTile();
-        if (emptyTile(random[0], random[1]))
+        if (emptyTile(random[0], random[1]))//TODO wat
         {
             map[valueY][valueX] = 0;
             map[yPos][xPos] = 0;
@@ -549,7 +559,6 @@ function playerHit(damage)
 
 function playerFlash(counter)
 {
-    //alert("fsddsf" + counter);
     if (counter > 0)
     {
         if (counter % 2 == 0)
@@ -721,7 +730,8 @@ function newGame()
 
     currentRoundCount += 1;
 
-    map = tmiss_generate.map();
+    mapObject = tmiss_generate.map();
+    map = mapObject.mapArray;
     mapWidth = map[0].length;
     mapHeight = map.length;
 
