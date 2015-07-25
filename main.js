@@ -2,12 +2,6 @@
 {
 
 var MESSAGE_QUEUE_MAX = 8;
-var HIT_SOUND_FILENAME = "res/augh.wav";
-var DEATH_SOUND_FILENAME = "res/death.wav";
-var WIN_SOUND_FILENAME = "res/woohoo.wav";
-var EAT_SOUND_FILENAME = "res/omnom.wav";
-var EXPLODE_SOUND_FILENAME = "res/explosion.wav";
-var MAGIC_SOUND_FILENAME = "res/whoosh.wav";
 var KEY_CODE_W = 87;
 var KEY_CODE_A = 65;
 var KEY_CODE_S = 83;
@@ -55,15 +49,9 @@ playerObject.pinkBit = false;
 playerObject.greenBit = false;
 playerObject.flashing = false;
 playerObject.flashBit = false;
+playerObject.score = 1;
 
 currentRoundCount = 0;
-
-hitSound = new Audio(HIT_SOUND_FILENAME);
-deathSound = new Audio(DEATH_SOUND_FILENAME);
-winSound = new Audio(WIN_SOUND_FILENAME);
-eatSound = new Audio(EAT_SOUND_FILENAME);
-explodeSound = new Audio(EXPLODE_SOUND_FILENAME);
-magicSound = new Audio(MAGIC_SOUND_FILENAME);
 
 directions = ["n", "s", "e", "w"];
 
@@ -142,7 +130,7 @@ function moveRandomMob()
 
     mobMove(randomDirection, mover.x, mover.y, mover.value);
 
-    timerMoveMob = setTimeout(moveRandomMob, 5);
+    timerMoveMob = setTimeout(moveRandomMob, 200);
 }
 
 function mobMove(direction, originX, originY, value)
@@ -254,7 +242,7 @@ function spell()
     var value;
 
     newMessage("You cast a spell!");
-    magicSound.play();
+    tmiss_sound.magic();
 
     for (i = -1; i < 2; i++)
     {
@@ -390,7 +378,6 @@ function playerInteract(value, valueX, valueY)
 
         if (random != 0)
         {
-            hitSound.play();
             newMessage("3 bites you with glee!");
             playerHit(1);
 
@@ -461,7 +448,6 @@ function playerInteract(value, valueX, valueY)
         }
         if (random != 0)
         {
-            hitSound.play();
             newMessage("5 shatters in your general direction!");
             random = Math.floor(Math.random() * 21) + 5;
             playerHit(random);
@@ -513,7 +499,8 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value == 10)
     {
-        eatSound.play();
+        tmiss_generate.map();
+        tmiss_sound.eat();
         newMessage("You devour a curious looking mushroom.");
         map[valueY][valueX] = 0;
         life += 6;
@@ -528,7 +515,7 @@ function playerInteract(value, valueX, valueY)
         {
             newMessage("You light the fuse...");
             map[valueY][valueX] = 15;
-            setTimeout(function(){tmiss_mapMutate.explosion(valueX, valueY, map, playerAlive, explodeSound, validTile, newMessage)}, 5000);
+            setTimeout(function(){tmiss_mapMutate.explosion(valueX, valueY, map, playerAlive, validTile, newMessage)}, 5000);
         }
     }    
     else if (value == 16)
@@ -550,6 +537,7 @@ function playerInteract(value, valueX, valueY)
 
 function playerHit(damage)
 {
+    tmiss_sound.hit();
     life -= damage;
 
     clearTimeout(timerPlayerFlash); //TODO clear at end of game
@@ -598,7 +586,7 @@ function randomMush()
 function winGame()
 {
     quickUpdate();
-    winSound.play();
+    tmiss_sound.win();
     window.alert("You win! Good job!");
     endGame();
 }
@@ -615,7 +603,7 @@ function gameOver(message)
     //just in case player was ninja'd:
     quickUpdate();
 
-    deathSound.play();
+    tmiss_sound.death();
     playerAlive = false;
     window.alert("Game Over: " + message);
     endGame();

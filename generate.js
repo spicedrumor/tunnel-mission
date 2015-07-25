@@ -85,15 +85,7 @@ var tmiss_generate = {
                     }
                     else if (random == 1)
                     {
-                        random = Math.floor(Math.random() * 2);
-                        if (random == 0)
-                        {
-                            row[j] = 14;
-                        }
-                        else
-                        {
-                            row[j] = 0;
-                        }
+                        row[j] = 14;
                     }
                     else if (random == 2)
                     {

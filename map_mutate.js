@@ -1,6 +1,6 @@
 var tmiss_mapMutate = {
 
-explosion: function(ballX, ballY, map, playerAlive, explodeSound, validTile, newMessage)
+explosion: function(ballX, ballY, map, playerAlive, validTile, newMessage)
 {
     var output;
     if (!playerAlive)
@@ -10,8 +10,8 @@ explosion: function(ballX, ballY, map, playerAlive, explodeSound, validTile, new
 
     output = 12;
 
-    newMessage("Giant explosion!");
-    explodeSound.play();
+    newMessage("Giant explosion!"); 
+    tmiss_sound.explode();
     map[ballY][ballX] = 0;
     if (validTile(ballX, ballY - 1))
     {
