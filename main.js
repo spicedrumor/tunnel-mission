@@ -122,13 +122,16 @@ function moveRandomMob()
     var mover;
     var random;
     
-    randomDirection = directions[Math.floor(Math.random() * 4)];
-    
-    random = Math.floor(Math.random() * mapObject.mobs.length);//TODO: no mobs
+    if (mapObject.mobs.length > 0)
+    {
+        randomDirection = directions[Math.floor(Math.random() * 4)];
+        
+        random = Math.floor(Math.random() * mapObject.mobs.length);
 
-    mover = mapObject.mobs[random];
+        mover = mapObject.mobs[random];
 
-    mobMove(randomDirection, mover.x, mover.y, mover.value);
+        mobMove(randomDirection, mover.x, mover.y, mover.value);
+    }
 
     timerMoveMob = setTimeout(moveRandomMob, 200);
 }
@@ -520,15 +523,19 @@ function playerInteract(value, valueX, valueY)
     }    
     else if (value == 16)
     {
-        newMessage("You are drawn into the event horizon.");
         random = randomTile();
-        if (emptyTile(random[0], random[1]))//TODO wat
+        if (emptyTile(random[0], random[1]))
         {
+            newMessage("You are drawn into the event horizon.");
             map[valueY][valueX] = 0;
             map[yPos][xPos] = 0;
             xPos = random[0];
             yPos = random[1];
             map[random[1]][random[0]] = 1;
+        }
+        else
+        {
+            newMessage("The event horizon collapses.");
         }
     }
 
@@ -540,7 +547,7 @@ function playerHit(damage)
     tmiss_sound.hit();
     life -= damage;
 
-    clearTimeout(timerPlayerFlash); //TODO clear at end of game
+    clearTimeout(timerPlayerFlash);
     timerPlayerFlash = setTimeout(function(){playerFlash(10)}, 200);
     playerObject.flashBit = true;
 }
@@ -611,6 +618,7 @@ function gameOver(message)
 
 function endGame()
 {
+    clearTimeout(timerPlayerFlash);
     clearTimeout(timerHeart);
     clearTimeout(timerExist);
     clearTimeout(timerMoveMob);
@@ -677,9 +685,9 @@ function updateStatusPane()
 
     rightPane = document.getElementById("right");
     rightPane.innerHTML = "";
-    rightPane.innerHTML += '<font color="green">' + "<h2>Health: " + life + "</h2></font><br>";
-    rightPane.innerHTML += '<font color="red">' + "<h2>Time: " + timer + "</h2></font><br>";
-    rightPane.innerHTML += '</font>';
+    rightPane.innerHTML += '<font color="green">' + "<h2>Health: " + life + "</h2></font>";
+    rightPane.innerHTML += '<font color="red">' + "<h2>Time: " + timer + "</h2></font>";
+    rightPane.innerHTML += '<font color="blue">' + "<h2>Score: " + playerObject.score + "</h2></font>";
     for (i = 0; i < MESSAGE_QUEUE_MAX; i++)
     {
         if (i != 0)
@@ -704,11 +712,6 @@ function newMessage(message)
 
     messageQueue[0] = message;
 }
-
-var Blast = function(direction)
-{
-    this.direction = direction;
-};
 
 function newGame()
 {
