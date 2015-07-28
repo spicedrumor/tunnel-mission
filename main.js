@@ -50,6 +50,8 @@ playerObject.greenBit = false;
 playerObject.flashing = false;
 playerObject.flashBit = false;
 playerObject.score = 1;
+playerObject.xPos = 0;
+playerObject.yPos = 0;
 
 currentRoundCount = 0;
 
@@ -133,7 +135,7 @@ function moveRandomMob()
         mobMove(randomDirection, mover.x, mover.y, mover.value);
     }
 
-    timerMoveMob = setTimeout(moveRandomMob, 200);
+    timerMoveMob = setTimeout(moveRandomMob, 20);
 }
 
 function mobMove(direction, originX, originY, value)
@@ -189,6 +191,10 @@ function move(direction, originX, originY, value)
         }
         else
         {
+            xPos = newX;
+            yPos = newY;
+            playerObject.xPos = newX;
+            playerObject.yPos = newY;
             map[originY][originX] = 0;
             map[newY][newX] = value;
             result[0] = newX;
@@ -309,15 +315,13 @@ document.onkeyup = function(e)
     }
     else
     {
-        newCoords = move(direction, xPos, yPos, MAP_VAL_PLAYER);
-        xPos = newCoords[0];
-        yPos = newCoords[1];
+        move(direction, xPos, yPos, MAP_VAL_PLAYER);
     }
 }
 
 function drawMap()
 {
-    mapString = tmiss_draw.mapToString(map, playerObject);
+    mapString = tmiss_draw.viewString(mapObject, playerObject);
     document.getElementById("left").innerHTML = mapString;
     timerDraw = setTimeout(drawMap, 100);
 }
@@ -529,6 +533,8 @@ function playerInteract(value, valueX, valueY)
             newMessage("You are drawn into the event horizon.");
             map[valueY][valueX] = 0;
             map[yPos][xPos] = 0;
+            playerObject.xPos = random[0];
+            playerObject.yPos = random[1];
             xPos = random[0];
             yPos = random[1];
             map[random[1]][random[0]] = 1;
@@ -713,6 +719,8 @@ function newGame()
 {
     xPos = 0;
     yPos = 0;
+    playerObject.xPos = 0;
+    playerObject.yPos = 0;
     playerAlive = true;
 
     currentRoundCount += 1;

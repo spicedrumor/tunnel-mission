@@ -55,8 +55,8 @@ var tmiss_generate = {
                 mapArray[mobY][mobX] = value;
             }
         };
-        width = 52;
-        height = 20;
+        width = 69;
+        height = 69;
         newMap = [];
         
         for (i = 0; i < height; i++)
@@ -89,7 +89,7 @@ var tmiss_generate = {
                     }
                     else if (random == 2)
                     {
-                        random = Math.floor(Math.random() * 8);
+                        random = Math.floor(Math.random() * 5);
                         if (random == 0)
                         {
                             row[j] = 16;
