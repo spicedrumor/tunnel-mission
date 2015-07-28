@@ -276,7 +276,6 @@ function spell()
 }
 //var keysDeep;
 var currentKeys;
-currentKeys = [];
 //keysDeep = 0;
 
 function playerMover()
@@ -286,7 +285,7 @@ function playerMover()
         move(currentKeys[currentKeys.length - 1], xPos, yPos, MAP_VAL_PLAYER);
     }
 
-    timerMovePlayer = setTimeout(playerMover, 500);
+    timerMovePlayer = setTimeout(playerMover, 250);
 }
 
 document.onkeydown = function(e)
@@ -688,6 +687,7 @@ function endGame()
     clearTimeout(timerInteractions);
     clearTimeout(timerMushroom);
     clearTimeout(timerPlayerFlash);
+    clearTimeout(timerMovePlayer);
     setTimeout(startGame, 1000);
 }
 
@@ -782,6 +782,8 @@ function newGame()
     playerObject.xPos = 0;
     playerObject.yPos = 0;
     playerAlive = true;
+
+    currentKeys = [];
 
     currentRoundCount += 1;
 
