@@ -694,11 +694,11 @@ function updateStatusPane()
     {
         if (i != 0)
         {
-            rightPane.innerHTML += "<h3>" + messageQueue[i] + "</h4>";
+            rightPane.innerHTML += '<font color="grey">' + "<h4>" + messageQueue[i] + "</h4>" + "</font>";
         }
         else
         {
-            rightPane.innerHTML += "<h2>" + messageQueue[i] + "</h2>";
+            rightPane.innerHTML += '<font color="lime">' + "<h2>" + messageQueue[i] + "</h2>" + "</font>";
         }
     }
 }

@@ -64,6 +64,7 @@ var tmiss_generate = {
             row = [];
             for (j = 0; j < width; j++)
             {
+                random = 0;
                 random = Math.floor(Math.random() * 7);
                 if (random == 0)
                 {
@@ -89,7 +90,7 @@ var tmiss_generate = {
                     }
                     else if (random == 2)
                     {
-                        random = Math.floor(Math.random() * 5);
+                        random = Math.floor(Math.random() * 6);
                         if (random == 0)
                         {
                             row[j] = 16;
