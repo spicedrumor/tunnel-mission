@@ -33,6 +33,7 @@ var timerDraw;
 var timerMushroom;
 var timerInteractions;
 var timerPlayerFlash;
+var timerMovePlayer;
 var currentRoundCount;
 var playerAlive;
 
@@ -273,12 +274,66 @@ function spell()
         newMessage("Nothing happened...");
     }
 }
+//var keysDeep;
+var currentKeys;
+currentKeys = [];
+//keysDeep = 0;
 
-document.onkeyup = function(e)
+function playerMover()
+{
+    if (currentKeys.length > 0)
+    {
+        move(currentKeys[currentKeys.length - 1], xPos, yPos, MAP_VAL_PLAYER);
+    }
+
+    timerMovePlayer = setTimeout(playerMover, 500);
+}
+
+document.onkeydown = function(e)
 {
     var direction;
     var newCoords;
     var key = e.keyCode ? e.keyCode : e.which;
+                
+    direction = "";
+    if (key == KEY_CODE_W)
+    {
+        direction = "n";
+    }
+    else if (key == KEY_CODE_D)
+    {
+        direction = "e";
+    }
+    else if (key == KEY_CODE_S)
+    {
+        direction = "s";
+    }
+    else if (key == KEY_CODE_A)
+    {
+        direction = "w";
+    }
+
+    if (direction === "")
+    {
+    }
+    else
+    {
+        if (currentKeys.indexOf(direction) == -1)
+        {
+            move(direction, xPos, yPos, MAP_VAL_PLAYER);
+
+            currentKeys.push(direction);
+            clearTimeout(timerMovePlayer);
+            timerMovePlayer = setTimeout(playerMover, 500);
+        }
+    }
+}
+
+document.onkeyup = function(e)
+{
+    var direction;
+    var key = e.keyCode ? e.keyCode : e.which;
+    var value;
                 
     direction = "";
     if (key == KEY_CODE_W)
@@ -315,7 +370,12 @@ document.onkeyup = function(e)
     }
     else
     {
-        move(direction, xPos, yPos, MAP_VAL_PLAYER);
+        value = currentKeys.indexOf(direction);
+        currentKeys.splice(value, 1);
+        if (currentKeys.length == 0)
+        {
+            clearTimeout(timerMovePlayer);
+        }
     }
 }
 

@@ -55,8 +55,8 @@ var tmiss_generate = {
                 mapArray[mobY][mobX] = value;
             }
         };
-        width = 69;
-        height = 69;
+        width = 20;
+        height = 500;
         newMap = [];
         
         for (i = 0; i < height; i++)
