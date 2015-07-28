@@ -596,8 +596,6 @@ function playerInteract(value, valueX, valueY)
         random = randomTile();
         if (emptyTile(random[0], random[1]))
         {
-            random[0] = 0;
-            random[1] = map.length - 1;
             newMessage("You are drawn into the event horizon.");
             map[valueY][valueX] = 0;
             map[yPos][xPos] = 0;

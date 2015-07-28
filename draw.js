@@ -103,12 +103,12 @@ var tmiss_draw = {
                     }
                     else if (value == 14)
                     {
-                        result += 'red">';
+                        result += '#990000">';
                         result += 'o';
                     }
                     else if (value == 15)
                     {
-                        result += 'red">';
+                        result += '#FF0000">';
                         result += 'o';
                     }
                     else if (value == 16)
