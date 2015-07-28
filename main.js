@@ -385,6 +385,13 @@ function drawMap()
     timerDraw = setTimeout(drawMap, 100);
 }
 
+function flashMap(counter)
+{
+    mapString = "";
+    document.getElementById("left").innerHTML = mapString;
+    timerDraw = setTimeout(drawMap, 100);
+}
+
 function playerInteractions()
 {
     var i;
@@ -589,6 +596,8 @@ function playerInteract(value, valueX, valueY)
         random = randomTile();
         if (emptyTile(random[0], random[1]))
         {
+            random[0] = 0;
+            random[1] = map.length - 1;
             newMessage("You are drawn into the event horizon.");
             map[valueY][valueX] = 0;
             map[yPos][xPos] = 0;
@@ -782,6 +791,7 @@ function newGame()
     playerObject.xPos = 0;
     playerObject.yPos = 0;
     playerAlive = true;
+    playerObject.flashBit = false;
 
     currentKeys = [];
 
