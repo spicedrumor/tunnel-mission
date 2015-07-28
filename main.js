@@ -533,10 +533,6 @@ function playerInteract(value, valueX, valueY)
             yPos = random[1];
             map[random[1]][random[0]] = 1;
         }
-        else
-        {
-            newMessage("The event horizon collapses.");
-        }
     }
 
     return result;
