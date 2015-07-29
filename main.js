@@ -262,13 +262,13 @@ function spell()
             tileY = yPos + i;
             if (validTile(tileX, tileY) && map[tileY][tileX] > 2)
             {
-                map[tileY][tileX] = 0;
+                clobberTile(tileX, tileY);
                 k += 1;
             }
         }
     }
 
-    if (k ==0)
+    if (k == 0)
     {
         newMessage("Nothing happened...");
     }
@@ -367,7 +367,7 @@ document.onkeyup = function(e)
     }
     else if (key == 82)
     {
-        life += 500;
+        life += 5000;
     }
 
     if (direction === "")
@@ -515,7 +515,8 @@ function playerInteract(value, valueX, valueY)
         else
         {
             newMessage("4 metamorphosizes into 8!");
-            map[valueY][valueX] = 8;
+            mapObject.removeMob(valueX, valueY);
+            mapObject.insertMob(valueX, valueY, 8);
         }
     }
     else if (value == 5)
@@ -594,13 +595,13 @@ function playerInteract(value, valueX, valueY)
         {
             newMessage("You light the fuse...");
             map[valueY][valueX] = 15;
-            setTimeout(function(){tmiss_mapMutate.explosion(valueX, valueY, map, playerAlive, validTile, newMessage)}, 5000);
+            setTimeout(function(){tmiss_mapMutate.explosion(valueX, valueY, mapObject, playerAlive, validTile, newMessage)}, 5000);
         }
     }    
     else if (value == 16)
     {
         random = randomTile();
-        if (emptyTile(random[0], random[1]))
+        if (emptyTile(random[0], random[1]) && (yPos - random[1] < 128 && yPos - random[1] > -128))
         {
             newMessage("You are drawn into the event horizon.");
             map[valueY][valueX] = 0;
