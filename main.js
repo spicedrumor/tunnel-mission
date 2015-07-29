@@ -36,6 +36,7 @@ var timerPlayerFlash;
 var timerMovePlayer;
 var currentRoundCount;
 var playerAlive;
+var currentKeys;
 
 var mapObject = {
 };
@@ -249,7 +250,6 @@ function spell()
     var k;
     var tileX;
     var tileY;
-    var value;
 
     newMessage("You cast a spell!");
     tmiss_sound.magic();
@@ -260,8 +260,7 @@ function spell()
         {
             tileX = xPos + j;
             tileY = yPos + i;
-            value = map[tileY][tileX];
-            if (validTile(tileX, tileY) && value > 2)
+            if (validTile(tileX, tileY) && map[tileY][tileX] > 2)
             {
                 map[tileY][tileX] = 0;
                 k += 1;
@@ -274,18 +273,21 @@ function spell()
         newMessage("Nothing happened...");
     }
 }
-//var keysDeep;
-var currentKeys;
-//keysDeep = 0;
 
 function playerMover()
 {
+    var moveTime = 250;
+
+    if (playerObject.blueBit)
+    {
+        moveTime = 100;
+    }
     if (currentKeys.length > 0)
     {
         move(currentKeys[currentKeys.length - 1], xPos, yPos, MAP_VAL_PLAYER);
     }
 
-    timerMovePlayer = setTimeout(playerMover, 250);
+    timerMovePlayer = setTimeout(playerMover, moveTime);
 }
 
 document.onkeydown = function(e)
@@ -362,6 +364,10 @@ document.onkeyup = function(e)
         {
             newMessage("You feel too weak for that.");
         }
+    }
+    else if (key == 82)
+    {
+        life += 500;
     }
 
     if (direction === "")
@@ -612,7 +618,7 @@ function playerInteract(value, valueX, valueY)
 
 function playerHit(damage)
 {
-    tmiss_sound.hit();
+    //tmiss_sound.hit();
     life -= damage;
 
     clearTimeout(timerPlayerFlash);
@@ -796,6 +802,9 @@ function newGame()
     currentRoundCount += 1;
 
     mapObject = tmiss_generate.map();
+
+    //mapObject.setMap();
+
     map = mapObject.mapArray;
     mapWidth = map[0].length;
     mapHeight = map.length;
