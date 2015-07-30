@@ -35,7 +35,6 @@ var timerInteractions;
 var timerPlayerFlash;
 var timerMovePlayer;
 var currentRoundCount;
-var playerAlive;
 var currentKeys;
 
 var mapObject = {
@@ -55,6 +54,7 @@ playerObject.score = 1;
 playerObject.xPos = 0;
 playerObject.yPos = 0;
 playerObject.armour = 0;
+playerObject.alive = true;
 
 currentRoundCount = 0;
 
@@ -443,6 +443,7 @@ function playerInteract(value, valueX, valueY)
     var result;
     var message;
     var done;
+    var timeOut;
 
     result = 0;
 
@@ -611,7 +612,13 @@ function playerInteract(value, valueX, valueY)
         {
             newMessage("You light the fuse...");
             map[valueY][valueX] = 15;
-            setTimeout(function(){tmiss_mapMutate.explosion(valueX, valueY, mapObject, playerObject, playerAlive, validTile, newMessage)}, 5000);
+            timeOut = setTimeout(function(){tmiss_mapMutate.explosion(valueX, valueY, mapObject, playerObject, validTile, newMessage)}, 5000);
+            if (mapObject.boomAlert[valueY] === undefined)
+            {
+                mapObject.boomAlert[valueY] = [];
+            }
+
+            mapObject.boomAlert[valueY][valueX] = timeOut;
         }
     }    
     else if (value == 16)
@@ -739,13 +746,30 @@ function gameOver(message)
     quickUpdate();
 
     tmiss_sound.death();
-    playerAlive = false;
-    window.alert("Game Over: " + message);
+    playerObject.alive = false;
     endGame();
+    window.alert("Game Over: " + message);
 }
 
 function endGame()
 {
+    var i;
+    var j;
+    var array;
+
+    array = mapObject.boomAlert;
+
+    for (i = 0; i < array.length; i++)
+    {
+        if (array[i])
+        {
+            for (j = 0; j < array[i].length; j++)
+            {
+                clearTimeout(array[i][j]);
+            }
+        }
+    }
+
     clearTimeout(timerPlayerFlash);
     clearTimeout(timerHeart);
     clearTimeout(timerExist);
@@ -848,7 +872,7 @@ function newGame()
     yPos = 0;
     playerObject.xPos = 0;
     playerObject.yPos = 0;
-    playerAlive = true;
+    playerObject.alive = true;
     playerObject.flashBit = false;
     playerObject.armour = 0;
 
@@ -858,11 +882,11 @@ function newGame()
 
     mapObject = tmiss_generate.map();
 
-    //mapObject.setMap();
-
     map = mapObject.mapArray;
     mapWidth = map[0].length;
     mapHeight = map.length;
+
+    mapObject.boomAlert = [];
 
     messageQueue = [];
     for (var i = 0; i < MESSAGE_QUEUE_MAX; i++)

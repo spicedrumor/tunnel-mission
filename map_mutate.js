@@ -3,10 +3,16 @@ var tmiss_mapMutate = {
 newMessage: null,
 playerObject: null,
 mapObject: null,
-explosion: function(ballX, ballY, mapObject, playerObject, playerAlive, validTile, newMessage)
+explosion: function(ballX, ballY, mapObject, playerObject, validTile, newMessage)
 {
     var map;
     var value;
+
+    if (mapObject.boomAlert[ballY])
+    {
+        clearTimeout(mapObject.boomAlert[ballY][ballX]);
+        delete mapObject.boomAlert[ballY][ballX];
+    }
 
     map = mapObject.mapArray;
 
@@ -14,7 +20,7 @@ explosion: function(ballX, ballY, mapObject, playerObject, playerAlive, validTil
     this.playerObject = playerObject;
     this.mapObject = mapObject;
 
-    if (playerAlive)
+    if (playerObject.alive)
     {
         newMessage("Giant explosion!"); 
         tmiss_sound.explode();
@@ -56,7 +62,7 @@ recursion: function(tileX, tileY, xOffset, yOffset, mapObject, validTile, count)
             }
             else if (value === 14 || value === 15)
             {
-                this.explosion(tileX, tileY, this.mapObject, this.playerObject, true, validTile, this.newMessage);
+                this.explosion(tileX, tileY, this.mapObject, this.playerObject, validTile, this.newMessage);
             }
             if (sevener)
             {
