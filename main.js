@@ -722,7 +722,7 @@ function winGame()
     quickUpdate();
     tmiss_sound.win();
     playerObject.score += (timer * 7);
-    window.alert("You win! Good job! Score: " + playerObject.score);
+    window.alert("You win! Good job! Final score: " + playerObject.score);
     endGame();
 }
 

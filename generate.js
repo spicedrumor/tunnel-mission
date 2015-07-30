@@ -84,7 +84,7 @@ var tmiss_generate = {
             {
                 random = 0;
                 random = Math.floor(Math.random() * 7);
-                if (random == 0)
+                if (random === 0)
                 {
                     random = Math.floor(Math.random() * 6) + 3;
                     row[j] = random;
@@ -94,7 +94,7 @@ var tmiss_generate = {
                     newMob.y = i;
                     mapObject.mobs.push(newMob);
                 }
-                else if (random == 1)
+                else if (random === 1)
                 {
                     random = Math.floor(Math.random() * 9);
 
@@ -102,14 +102,14 @@ var tmiss_generate = {
                     {
                         row[j] = 10;
                     }
-                    else if (random == 1)
+                    else if (random === 1)
                     {
                         row[j] = 14;
                     }
-                    else if (random == 2)
+                    else if (random === 2)
                     {
                         random = Math.floor(Math.random() * 6);
-                        if (random == 0)
+                        if (random === 0)
                         {
                             row[j] = 16;
                         }
@@ -118,14 +118,14 @@ var tmiss_generate = {
                             row[j] = 0;
                         }
                     }
-                    else if (random == 3 || random == 4 || random == 5)
-                    {
-                        row[j] = 12;
-                    }
                     else
                     {
                         row[j] = 0;
                     }
+                }
+                else if (random === 2)
+                {
+                        row[j] = 12;
                 }
                 else
                 {
