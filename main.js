@@ -263,6 +263,7 @@ function spell()
             if (validTile(tileX, tileY) && map[tileY][tileX] > 2)
             {
                 clobberTile(tileX, tileY);
+                map[tileY][tileX] = 0;
                 k += 1;
             }
         }
@@ -368,6 +369,7 @@ document.onkeyup = function(e)
     else if (key == 82)
     {
         life += 5000;
+        timer += 5000;
     }
 
     if (direction === "")
@@ -439,6 +441,7 @@ function playerInteract(value, valueX, valueY)
     var j;
     var result;
     var message;
+    var done;
 
     result = 0;
 
@@ -600,17 +603,30 @@ function playerInteract(value, valueX, valueY)
     }    
     else if (value == 16)
     {
-        random = randomTile();
-        if (emptyTile(random[0], random[1]) && (yPos - random[1] < 128 && yPos - random[1] > -128))
+        done = false;
+        i = 0;
+
+        while (!done)
         {
-            newMessage("You are drawn into the event horizon.");
-            map[valueY][valueX] = 0;
-            map[yPos][xPos] = 0;
-            playerObject.xPos = random[0];
-            playerObject.yPos = random[1];
-            xPos = random[0];
-            yPos = random[1];
-            map[random[1]][random[0]] = 1;
+            random = randomTile();
+            if (emptyTile(random[0], random[1]) && (yPos - random[1] < 128 && yPos - random[1] > -128))
+            {
+                done = true;
+                newMessage("You are drawn into the event horizon.");
+                map[valueY][valueX] = 0;
+                map[yPos][xPos] = 0;
+                playerObject.xPos = random[0];
+                playerObject.yPos = random[1];
+                xPos = random[0];
+                yPos = random[1];
+                map[random[1]][random[0]] = 1;
+            }
+
+            i += 1;
+            if (i === 2)
+            {
+                done = true;
+            }
         }
     }
 
