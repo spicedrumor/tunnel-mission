@@ -54,6 +54,7 @@ playerObject.flashBit = false;
 playerObject.score = 1;
 playerObject.xPos = 0;
 playerObject.yPos = 0;
+playerObject.armour = 0;
 
 currentRoundCount = 0;
 
@@ -572,13 +573,25 @@ function playerInteract(value, valueX, valueY)
     else if (value == 8)
     {
         message = "8 grins mischievously.";
-        if (messageQueue[0] === message)
+        if (messageQueue[0] === message || messageQueue[1] === message)
         {
         }
         else
         {
             newMessage(message);
         }
+    }
+    else if (value == 9)
+    {
+        message = "9 beams at you and you get rock hard!";
+        if (messageQueue[0] === message || messageQueue[1] === message)
+        {
+        }
+        else
+        {
+            newMessage(message);
+        }
+        playerObject.armour = 5;
     }
     else if (value == 10)
     {
@@ -598,7 +611,7 @@ function playerInteract(value, valueX, valueY)
         {
             newMessage("You light the fuse...");
             map[valueY][valueX] = 15;
-            setTimeout(function(){tmiss_mapMutate.explosion(valueX, valueY, mapObject, playerAlive, validTile, newMessage)}, 5000);
+            setTimeout(function(){tmiss_mapMutate.explosion(valueX, valueY, mapObject, playerObject, playerAlive, validTile, newMessage)}, 5000);
         }
     }    
     else if (value == 16)
@@ -633,14 +646,37 @@ function playerInteract(value, valueX, valueY)
     return result;
 }
 
+function armourBuff()
+{
+    var result;
+
+    result = false;
+
+    if (playerObject.armour > 0)
+    {
+        newMessage("Your hard body absorbs the attack!");
+        result = true;
+        playerObject.armour -= 1;
+        if (playerObject.armour == 0)
+        {
+            newMessage("You are suddenly not so hard anymore...");
+        }
+    }
+
+    return result;
+}
+
 function playerHit(damage)
 {
-    //tmiss_sound.hit();
-    life -= damage;
+    if (!armourBuff())
+    {
+        //tmiss_sound.hit();
+        life -= damage;
 
-    clearTimeout(timerPlayerFlash);
-    timerPlayerFlash = setTimeout(function(){playerFlash(10)}, 200);
-    playerObject.flashBit = true;
+        clearTimeout(timerPlayerFlash);
+        timerPlayerFlash = setTimeout(function(){playerFlash(10)}, 200);
+        playerObject.flashBit = true;
+    }
 }
 
 function playerFlash(counter)
@@ -685,7 +721,8 @@ function winGame()
 {
     quickUpdate();
     tmiss_sound.win();
-    window.alert("You win! Good job!");
+    playerObject.score += (timer * 7);
+    window.alert("You win! Good job! Score: " + playerObject.score);
     endGame();
 }
 
@@ -813,6 +850,7 @@ function newGame()
     playerObject.yPos = 0;
     playerAlive = true;
     playerObject.flashBit = false;
+    playerObject.armour = 0;
 
     currentKeys = [];
 
@@ -834,7 +872,7 @@ function newGame()
     newMessage('<font color="' + "lime" + '">Objective: Rescue the '+ '</font><font color="' + COLOR_PINK + '">!</font>');
 
     life = 64;
-    timer = 512;
+    timer = 1024;
     timerBit = false;
 }
 

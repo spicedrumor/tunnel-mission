@@ -1,133 +1,69 @@
 var tmiss_mapMutate = {
 
-explosion: function(ballX, ballY, mapObject, playerAlive, validTile, newMessage)
+newMessage: null,
+playerObject: null,
+explosion: function(ballX, ballY, mapObject, playerObject, playerAlive, validTile, newMessage)
 {
-    var output;
     var map;
     var value;
 
     map = mapObject.mapArray;
 
-    if (!playerAlive)
+    this.newMessage = newMessage;
+    this.playerObject = playerObject;
+
+    if (playerAlive)
     {
-        return;
+        newMessage("Giant explosion!"); 
+        tmiss_sound.explode();
+        map[ballY][ballX] = 0;
+
+        this.recursion(ballX, ballY, 0, -1, mapObject, validTile, 3);
+        this.recursion(ballX, ballY, 0, 1, mapObject, validTile, 3);
+        this.recursion(ballX, ballY, -1, 0, mapObject, validTile, 3);
+        this.recursion(ballX, ballY, 1, 0, mapObject, validTile, 3);
     }
+},
 
-    output = 12;
+recursion: function(tileX, tileY, xOffset, yOffset, mapObject, validTile, count)
+{
+    var map;
+    var sevener;
 
-    newMessage("Giant explosion!"); 
-    tmiss_sound.explode();
-    map[ballY][ballX] = 0;
-    if (validTile(ballX, ballY - 1))
+    sevener = false;
+
+    map = mapObject.mapArray;
+
+    if (count > 0)
     {
-        value = map[ballY - 1][ballX];
-        if (value > 2 && value < 9)
+        tileX += xOffset;
+        tileY += yOffset;
+        if (validTile(tileX, tileY))
         {
-            mapObject.removeMob(ballX, ballY - 1);
-        }
-        map[ballY - 1][ballX] = output;
-        if (validTile(ballX, ballY - 2))
-        {
-            value = map[ballY - 2][ballX];
-            if (value > 2 && value < 9)
+            value = map[tileY][tileX];
+            if (value > 2 && value < 10)
             {
-                mapObject.removeMob(ballX, ballY - 2);
-            }
-            map[ballY - 2][ballX] = output;
-            if (validTile(ballX, ballY - 3))
-            {
-                value = map[ballY - 3][ballX];
-                if (value > 2 && value < 9)
+                mapObject.removeMob(tileX, tileY);
+                if (value === 7)
                 {
-                    mapObject.removeMob(ballX, ballY - 3);
+                    this.newMessage("A 7 has fallen!");
+                    mapObject.insertMob(tileX, tileY, 9);
+                    playerObject.score += 777;
+                    sevener = true;
                 }
-                map[ballY - 3][ballX] = output;
+            }
+            if (sevener)
+            {
+                count = 0;
+            }
+            else
+            {
+                map[tileY][tileX] = 12;
             }
         }
-    }
 
-    if (validTile(ballX + 1, ballY))
-    {
-        value = map[ballY][ballX + 1];
-        if (value > 2 && value < 9)
-        {
-            mapObject.removeMob(ballX + 1, ballY);
-        }
-        map[ballY][ballX + 1] = output;
-        if (validTile(ballX + 2, ballY))
-        {
-            value = map[ballY][ballX + 2];
-            if (value > 2 && value < 9)
-            {
-                mapObject.removeMob(ballX + 2, ballY);
-            }
-            map[ballY][ballX + 2] = output;
-            if (validTile(ballX + 3, ballY))
-            {
-                value = map[ballY][ballX + 3];
-                if (value > 2 && value < 9)
-                {
-                    mapObject.removeMob(ballX + 3, ballY);
-                }
-                map[ballY][ballX + 3] = output;
-            }
-        }
-    }
-
-    if (validTile(ballX, ballY + 1))
-    {
-        value = map[ballY + 1][ballX];
-        if (value > 2 && value < 9)
-        {
-            mapObject.removeMob(ballX, ballY + 1);
-        }
-        map[ballY + 1][ballX] = output;
-        if (validTile(ballX, ballY + 2))
-        {
-            value = map[ballY + 2][ballX];
-            if (value > 2 && value < 9)
-            {
-                mapObject.removeMob(ballX, ballY + 2);
-            }
-            map[ballY + 2][ballX] = output;
-            if (validTile(ballX, ballY + 3))
-            {
-                value = map[ballY + 3][ballX];
-                if (value > 2 && value < 9)
-                {
-                    mapObject.removeMob(ballX, ballY + 3);
-                }
-                map[ballY + 3][ballX] = output;
-            }
-        }
-    }
-
-    if (validTile(ballX - 1, ballY))
-    {
-        value = map[ballY][ballX - 1];
-        if (value > 2 && value < 9)
-        {
-            mapObject.removeMob(ballX - 1, ballY);
-        }
-        map[ballY][ballX - 1] = output;
-        if (validTile(ballX - 2, ballY))
-        {
-            value = map[ballY][ballX - 2];
-            if (value > 2 && value < 9)
-            {
-                mapObject.removeMob(ballX - 2, ballY);
-            }
-            map[ballY][ballX - 2] = output;
-            if (validTile(ballX - 3, ballY))
-            {
-                value = map[ballY][ballX - 3];
-                if (value > 2 && value < 9)
-                {
-                    mapObject.removeMob(ballX - 3, ballY);
-                }
-                map[ballY][ballX - 3] = output;
-            }
-        }
+        count -= 1;
+        this.recursion(tileX, tileY, xOffset, yOffset, mapObject, validTile, count);
     }
 }
 
