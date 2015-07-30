@@ -104,10 +104,6 @@ var tmiss_generate = {
                     }
                     else if (random === 1)
                     {
-                        row[j] = 14;
-                    }
-                    else if (random === 2)
-                    {
                         random = Math.floor(Math.random() * 6);
                         if (random === 0)
                         {
@@ -118,6 +114,10 @@ var tmiss_generate = {
                             row[j] = 0;
                         }
                     }
+                    else if (random > 1 && random < 5)
+                    {
+                        row[j] = 14;
+                    }
                     else
                     {
                         row[j] = 0;
@@ -125,7 +125,15 @@ var tmiss_generate = {
                 }
                 else if (random === 2)
                 {
-                        row[j] = 12;
+                        random = Math.floor(Math.random() * 2);
+                        if (random === 0)
+                        {
+                            row[j] = 12;
+                        }
+                        else
+                        {
+                            row[j] = 0;
+                        }
                 }
                 else
                 {

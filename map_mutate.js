@@ -2,6 +2,7 @@ var tmiss_mapMutate = {
 
 newMessage: null,
 playerObject: null,
+mapObject: null,
 explosion: function(ballX, ballY, mapObject, playerObject, playerAlive, validTile, newMessage)
 {
     var map;
@@ -11,6 +12,7 @@ explosion: function(ballX, ballY, mapObject, playerObject, playerAlive, validTil
 
     this.newMessage = newMessage;
     this.playerObject = playerObject;
+    this.mapObject = mapObject;
 
     if (playerAlive)
     {
@@ -51,6 +53,10 @@ recursion: function(tileX, tileY, xOffset, yOffset, mapObject, validTile, count)
                     playerObject.score += 777;
                     sevener = true;
                 }
+            }
+            else if (value === 14 || value === 15)
+            {
+                this.explosion(tileX, tileY, this.mapObject, this.playerObject, true, validTile, this.newMessage);
             }
             if (sevener)
             {
