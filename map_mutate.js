@@ -3,7 +3,8 @@ var tmiss_mapMutate = {
 newMessage: null,
 playerObject: null,
 mapObject: null,
-explosion: function(ballX, ballY, mapObject, playerObject, validTile, newMessage)
+slain: 0,
+explosion: function(ballX, ballY, mapObject, playerObject, validTile, newMessage, rootCall)
 {
     var map;
     var value;
@@ -30,6 +31,12 @@ explosion: function(ballX, ballY, mapObject, playerObject, validTile, newMessage
         this.recursion(ballX, ballY, 0, 1, mapObject, validTile, 3);
         this.recursion(ballX, ballY, -1, 0, mapObject, validTile, 3);
         this.recursion(ballX, ballY, 1, 0, mapObject, validTile, 3);
+
+        if (rootCall)
+        {
+            playerObject.score += (this.slain * this.slain * 777);
+            this.slain = 0;
+        }
     }
 },
 
@@ -54,15 +61,30 @@ recursion: function(tileX, tileY, xOffset, yOffset, mapObject, validTile, count)
                 mapObject.removeMob(tileX, tileY);
                 if (value === 7)
                 {
-                    this.newMessage("A 7 has fallen!");
+                    if (this.slain === 0)
+                    {
+                        this.newMessage("A 7 has fallen!");
+                    }
+                    else if (this.slain == 1)
+                    {
+                        this.newMessage("Multi-Kill!");
+                    }
+                    else if (this.slain == 2)
+                    {
+                        this.newMessage("Mega-Kill!");
+                    }
+                    else if (this.slain > 2)
+                    {
+                        this.newMessage("M-M-M-MONSTER KILL!!!");
+                    }
                     mapObject.insertMob(tileX, tileY, 9);
-                    playerObject.score += 777;
                     sevener = true;
+                    this.slain += 1;
                 }
             }
             else if (value === 14 || value === 15)
             {
-                this.explosion(tileX, tileY, this.mapObject, this.playerObject, validTile, this.newMessage);
+                this.explosion(tileX, tileY, this.mapObject, this.playerObject, validTile, this.newMessage, false);
             }
             if (sevener)
             {

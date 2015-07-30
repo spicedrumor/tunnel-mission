@@ -87,7 +87,7 @@ function validTile(newX, newY)
 
 function emptyTile(tileX, tileY)
 {
-    return (map[tileY][tileX] == 0);
+    return (map[tileY][tileX] === 0);
 }
 
 function safeTile(tileX, tileY)
@@ -157,6 +157,7 @@ function move(direction, originX, originY, value)
     var offsetY;
     var newX;
     var newY;
+    var target;
     
     result = [];
     result[0] = originX;
@@ -204,26 +205,10 @@ function move(direction, originX, originY, value)
             result[1] = newY;
         }
     }
-    else if (value == 1 && playerObject.greenBit)
+    else if (value === 1)
     {
-        if (map[newY][newX] == 12)
-        {
-            if (map[newY + offsetY][newX + offsetX] == 0)
-            {
-                newMessage("You shove with all your might!");
-                map[newY + offsetY][newX + offsetX] = map[newY][newX];
-                map[newY][newX] = 0;
-            }
-        }
-        if (map[newY][newX] == 14 || map[newY][newX] == 15)
-        {
-            if (map[newY + offsetY][newX + offsetX] == 0)
-            {
-                newMessage("You deliver a solid boot!");
-                map[newY + offsetY][newX + offsetX] = map[newY][newX];
-                map[newY][newX] = 0;
-            }
-        }
+        target = map[newY][newX];
+        playerBump(target, newX, newY, offsetX, offsetY);
     }
 
     return result;
@@ -270,7 +255,7 @@ function spell()
         }
     }
 
-    if (k == 0)
+    if (k === 0)
     {
         newMessage("Nothing happened...");
     }
@@ -299,19 +284,19 @@ document.onkeydown = function(e)
     var key = e.keyCode ? e.keyCode : e.which;
                 
     direction = "";
-    if (key == KEY_CODE_W)
+    if (key === KEY_CODE_W)
     {
         direction = "n";
     }
-    else if (key == KEY_CODE_D)
+    else if (key === KEY_CODE_D)
     {
         direction = "e";
     }
-    else if (key == KEY_CODE_S)
+    else if (key === KEY_CODE_S)
     {
         direction = "s";
     }
-    else if (key == KEY_CODE_A)
+    else if (key === KEY_CODE_A)
     {
         direction = "w";
     }
@@ -321,7 +306,7 @@ document.onkeydown = function(e)
     }
     else
     {
-        if (currentKeys.indexOf(direction) == -1)
+        if (currentKeys.indexOf(direction) === -1)
         {
             move(direction, xPos, yPos, MAP_VAL_PLAYER);
 
@@ -339,23 +324,23 @@ document.onkeyup = function(e)
     var value;
                 
     direction = "";
-    if (key == KEY_CODE_W)
+    if (key === KEY_CODE_W)
     {
         direction = "n";
     }
-    else if (key == KEY_CODE_D)
+    else if (key === KEY_CODE_D)
     {
         direction = "e";
     }
-    else if (key == KEY_CODE_S)
+    else if (key === KEY_CODE_S)
     {
         direction = "s";
     }
-    else if (key == KEY_CODE_A)
+    else if (key === KEY_CODE_A)
     {
         direction = "w";
     }
-    else if (key == 81)
+    else if (key === 81)
     {
         if (life > 50)
         {
@@ -367,7 +352,7 @@ document.onkeyup = function(e)
             newMessage("You feel too weak for that.");
         }
     }
-    else if (key == 82)
+    else if (key === 82)
     {
         life += 5000;
         timer += 5000;
@@ -380,7 +365,7 @@ document.onkeyup = function(e)
     {
         value = currentKeys.indexOf(direction);
         currentKeys.splice(value, 1);
-        if (currentKeys.length == 0)
+        if (currentKeys.length === 0)
         {
             clearTimeout(timerMovePlayer);
         }
@@ -425,7 +410,7 @@ function playerInteractions()
                 }
             }
 
-            if (rc == -1)
+            if (rc === -1)
             {
                 return;
             }
@@ -447,12 +432,12 @@ function playerInteract(value, valueX, valueY)
 
     result = 0;
 
-    if (value == 2)
+    if (value === 2)
     {
         winGame();
         result = -1;
     }
-    else if (value == 3)
+    else if (value === 3)
     {
         random = 1;
         if (playerObject.blueBit)
@@ -472,7 +457,7 @@ function playerInteract(value, valueX, valueY)
             else if (playerObject.greenBit)
             {
                 random = Math.floor(Math.random() * 2);
-                if (random == 0)
+                if (random === 0)
                 {
                     newMessage("You grab the 3 and hurl it into the distance!");
                     clobberTile(valueX, valueY);
@@ -489,7 +474,7 @@ function playerInteract(value, valueX, valueY)
             newMessage("You narrowly evade 3's attack!");
         }
     }
-    else if (value == 4)
+    else if (value === 4)
     {
         newMessage("4 propagates.");
         i = 0;
@@ -507,13 +492,13 @@ function playerInteract(value, valueX, valueY)
             i += 1;
         }
 
-        if (j == 0)
+        if (j === 0)
         {
             newMessage("4 failed to propagate!");
         }
 
         random = Math.floor(Math.random() * 2);
-        if (random == 0)
+        if (random === 0)
         {
             clobberTile(valueX, valueY);
         }
@@ -524,7 +509,7 @@ function playerInteract(value, valueX, valueY)
             mapObject.insertMob(valueX, valueY, 8);
         }
     }
-    else if (value == 5)
+    else if (value === 5)
     {
         random = 1;
         if (playerObject.blueBit)
@@ -548,7 +533,7 @@ function playerInteract(value, valueX, valueY)
             newMessage("You narrowly evade 5's attack!");
         }
     }
-    else if (value == 6)
+    else if (value === 6)
     {
         newMessage("6 whistles a funeral dirge and evaporates.");
         i = 0;
@@ -565,13 +550,13 @@ function playerInteract(value, valueX, valueY)
         }
         mapObject.removeMob(valueX, valueY);
     }
-    else if (value == 7)
+    else if (value === 7)
     {
         newMessage("7 touches base with you.");
         gameOver("7 8 u  :(");
         result = -1;
     }
-    else if (value == 8)
+    else if (value === 8)
     {
         message = "8 grins mischievously.";
         if (messageQueue[0] === message || messageQueue[1] === message)
@@ -582,7 +567,7 @@ function playerInteract(value, valueX, valueY)
             newMessage(message);
         }
     }
-    else if (value == 9)
+    else if (value === 9)
     {
         message = "9 beams at you and you get rock hard!";
         if (messageQueue[0] === message || messageQueue[1] === message)
@@ -594,7 +579,7 @@ function playerInteract(value, valueX, valueY)
         }
         playerObject.armour = 5;
     }
-    else if (value == 10)
+    else if (value === 10)
     {
         tmiss_generate.map();
         tmiss_sound.eat();
@@ -602,26 +587,11 @@ function playerInteract(value, valueX, valueY)
         map[valueY][valueX] = 0;
         life += 6;
     }    
-    else if (value == 13)
+    else if (value === 13)
     {
         //reserved
     }
-    else if (value == 14)
-    {
-        if (playerObject.pinkBit)
-        {
-            newMessage("You light the fuse...");
-            map[valueY][valueX] = 15;
-            timeOut = setTimeout(function(){tmiss_mapMutate.explosion(valueX, valueY, mapObject, playerObject, validTile, newMessage)}, 5000);
-            if (mapObject.boomAlert[valueY] === undefined)
-            {
-                mapObject.boomAlert[valueY] = [];
-            }
-
-            mapObject.boomAlert[valueY][valueX] = timeOut;
-        }
-    }    
-    else if (value == 16)
+    else if (value === 16)
     {
         done = false;
         i = 0;
@@ -653,6 +623,78 @@ function playerInteract(value, valueX, valueY)
     return result;
 }
 
+function playerBump(value, valueX, valueY, offsetX, offsetY)
+{
+    var random;
+    var i;
+    var j;
+    var result;
+    var message;
+    var done;
+    var timeOut;
+
+    if (value === 14 && playerObject.pinkBit)
+    {
+        newMessage("You light the fuse...");
+        map[valueY][valueX] = 15;
+        timeOut = setTimeout(function(){tmiss_mapMutate.explosion(valueX, valueY, mapObject, playerObject, validTile, newMessage, true)}, 5000);
+        if (mapObject.boomAlert[valueY] === undefined)
+        {
+            mapObject.boomAlert[valueY] = [];
+        }
+
+        mapObject.boomAlert[valueY][valueX] = timeOut;
+    }
+    else if (value === 15 && playerObject.pinkBit)
+    {
+        newMessage("You deliver a solid boot.");
+        bootItem(valueX, valueY, offsetX, offsetY, true);
+    }
+    else if ((value === 12 || value === 14) && playerObject.greenBit)
+    {
+        if (map[newY + offsetY][newX + offsetX] === 0)
+        {
+            newMessage("You shove with all your might!");
+            map[newY + offsetY][newX + offsetX] = map[newY][newX];
+            map[newY][newX] = 0;
+        }
+    }
+}
+
+function bootItem(tileX, tileY, offsetX, offsetY, travel)
+{
+    var value;
+    var newX;
+    var newY;
+    var array;
+
+    newX = tileX + offsetX;
+    newY = tileY + offsetY;
+
+    if (map[newY][newX] === 0)
+    {
+        value = map[tileY][tileX];
+        map[tileY][tileX] = 0;
+        map[newY][newX] = value;
+
+        if (value === 15)
+        {
+            array = mapObject.boomAlert;
+            clearTimeout(array[tileY][tileX]);
+            if (array[newY] === undefined)
+            {
+                array[newY] = [];
+            }
+            array[newY][newX] = setTimeout(function(){tmiss_mapMutate.explosion(newX, newY, mapObject, playerObject, validTile, newMessage, true)}, 5000);
+        }
+
+        if (travel)
+        {
+            bootItem(newX, newY, offsetX, offsetY, travel);
+        }
+    }
+}
+
 function armourBuff()
 {
     var result;
@@ -664,7 +706,7 @@ function armourBuff()
         newMessage("Your hard body absorbs the attack!");
         result = true;
         playerObject.armour -= 1;
-        if (playerObject.armour == 0)
+        if (playerObject.armour === 0)
         {
             newMessage("You are suddenly not so hard anymore...");
         }
@@ -690,7 +732,7 @@ function playerFlash(counter)
 {
     if (counter > 0)
     {
-        if (counter % 2 == 0)
+        if (counter % 2 === 0)
         {
             playerObject.flashBit = false;
         }
@@ -700,7 +742,7 @@ function playerFlash(counter)
         }
         timerPlayerFlash = setTimeout(function(){playerFlash(counter - 1)}, 200);
     }
-    else if (counter == 0)
+    else if (counter === 0)
     {
         playerObject.flashBit = false;
     }
@@ -875,6 +917,7 @@ function newGame()
     playerObject.alive = true;
     playerObject.flashBit = false;
     playerObject.armour = 0;
+    playerObject.score = 1;
 
     currentKeys = [];
 
