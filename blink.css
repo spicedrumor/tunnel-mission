@@ -1,17 +1,17 @@
 canvas {
   position:absolute;
-  top:0;
+  top:45;
   left:0;
   z-index:100;
 
   background-color:#FFAE73;  
 
 
-  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
-  filter: alpha(opacity=5);
-  -moz-opacity:0.05;
-  -khtml-opacity: 0.05;
-  opacity: 0.05;    
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=01)";
+  filter: alpha(opacity=1);
+  -moz-opacity:0.01;
+  -khtml-opacity: 0.01;
+  opacity: 0.01;    
 }
 
 @keyframes blink {  

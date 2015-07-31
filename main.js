@@ -205,7 +205,7 @@ function move(direction, originX, originY, value)
             result[1] = newY;
         }
     }
-    else if (value === 1)
+    else if (validTile(newX, newY) && value === 1)
     {
         target = map[newY][newX];
         playerBump(target, newX, newY, offsetX, offsetY);
@@ -442,7 +442,7 @@ function playerInteract(value, valueX, valueY)
         random = 1;
         if (playerObject.blueBit)
         {
-            random = Math.floor(Math.random() * 5);
+            random = Math.floor(Math.random() * 3);
         }
 
         if (random != 0)
@@ -516,19 +516,16 @@ function playerInteract(value, valueX, valueY)
         {
             random = Math.floor(Math.random() * 5);
         }
-        if (random != 0)
-        {
-            newMessage("5 shatters in your general direction!");
-            random = Math.floor(Math.random() * 21) + 5;
-            playerHit(random);
-            mapObject.removeMob(valueX, valueY);
+        newMessage("5 shatters in your general direction!");
+        random = Math.floor(Math.random() * 21) + 5;
+        playerHit(random);
+        mapObject.removeMob(valueX, valueY);
 
-            if (life < 1)
-            {
-                result = -1;
-            }
+        if (life < 1)
+        {
+            result = -1;
         }
-        else
+        if (random == 0)
         {
             newMessage("You narrowly evade 5's attack!");
         }
@@ -1008,10 +1005,43 @@ function startGame()
     timerMushroom = setTimeout(randomMush, 30);
 }
 
-var xxx = document.getElementById('canvas').getContext('2d');
-xxx.canvas.addEventListener('mousedown', function(event)
+var canvasWidth;
+var canvasHeight;
+var canvas;
+var canvasOffset;
+
+canvas = document.getElementById('canvas');
+canvasWidth = canvas.width;
+canvasHeight = canvas.height;
+canvasOffset = 100;
+
+var context = canvas.getContext('2d');
+context.canvas.addEventListener('mousedown', function(event)
 {  
-    alert('this works');
+    var xp = event.clientX - context.canvas.offsetLeft;
+    var yp = event.clientY - context.canvas.offsetTop;
+
+    if (yp < canvasOffset)
+    {
+        move('n', xPos, yPos, MAP_VAL_PLAYER);
+    }
+    else if (yp > canvasHeight - canvasOffset)
+    {
+        move('s', xPos, yPos, MAP_VAL_PLAYER);
+    }
+    else if (xp < canvasOffset)
+    {
+        move('w', xPos, yPos, MAP_VAL_PLAYER);
+    }
+    else if (xp > canvasWidth - canvasOffset)
+    {
+        move('e', xPos, yPos, MAP_VAL_PLAYER);
+    }
+
+});
+
+context.canvas.addEventListener('mouseup', function(event)
+{  
 });
 
 startGame();
