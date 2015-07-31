@@ -1,3 +1,19 @@
+canvas {
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:100;
+
+  background-color:#FFAE73;  
+
+
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  filter: alpha(opacity=5);
+  -moz-opacity:0.05;
+  -khtml-opacity: 0.05;
+  opacity: 0.05;    
+}
+
 @keyframes blink {  
     0% { color: red; }
     100% { color: black; }

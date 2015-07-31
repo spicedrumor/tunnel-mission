@@ -880,7 +880,7 @@ function updateStatusPane()
 
     rightPane = document.getElementById("right");
     rightPane.innerHTML = "";
-    rightPane.innerHTML += '<font color="green">' + "<h2>Health: " + life + "</h2></font>";
+    rightPane.innerHTML += '<font color="green">' + "<h2>Life: " + life + "</h2></font>";
     rightPane.innerHTML += '<font color="red">' + "<h2>Time: " + timer + "</h2></font>";
     rightPane.innerHTML += '<font color="blue">' + "<h2>Score: " + playerObject.score + "</h2></font>";
     for (i = 0; i < MESSAGE_QUEUE_MAX; i++)
@@ -1007,6 +1007,12 @@ function startGame()
     timerInteractions = setTimeout(playerInteractions, 25);
     timerMushroom = setTimeout(randomMush, 30);
 }
+
+var xxx = document.getElementById('canvas').getContext('2d');
+xxx.canvas.addEventListener('mousedown', function(event)
+{  
+    alert('this works');
+});
 
 startGame();
 
