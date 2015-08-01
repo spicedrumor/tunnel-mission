@@ -872,25 +872,37 @@ function heartBeat()
 
 function updateStatusPane()
 {
-    var rightPane;
+    var pane;
     var i;
+    /*
+    pane = document.getElementById("right");
+    pane.innerHTML = "";
+    pane.innerHTML += '<font color="green">' + "<h2>Life: " + life + "</h2></font>";
+    pane.innerHTML += '<font color="red">' + "<h2>Time: " + timer + "</h2></font>";
+    pane.innerHTML += '<font color="blue">' + "<h2>Score: " + playerObject.score + "</h2></font>";
+    */
 
-    rightPane = document.getElementById("right");
-    rightPane.innerHTML = "";
-    rightPane.innerHTML += '<font color="green">' + "<h2>Life: " + life + "</h2></font>";
-    rightPane.innerHTML += '<font color="red">' + "<h2>Time: " + timer + "</h2></font>";
-    rightPane.innerHTML += '<font color="blue">' + "<h2>Score: " + playerObject.score + "</h2></font>";
+    pane = document.getElementById("bottom");
+    pane.innerHTML = "";
     for (i = 0; i < MESSAGE_QUEUE_MAX; i++)
     {
         if (i != 0)
         {
-            rightPane.innerHTML += '<font color="grey">' + "<h4>" + messageQueue[i] + "</h4>" + "</font>";
+            pane.innerHTML += '<font color="grey">' + "<h4>" + messageQueue[i] + "</h4>" + "</font>";
         }
         else
         {
-            rightPane.innerHTML += '<font color="lime">' + "<h2>" + messageQueue[i] + "</h2>" + "</font>";
+            pane.innerHTML += '<font color="lime">' + "<h2>" + messageQueue[i] + "</h2>" + "</font>";
         }
     }
+
+    pane = document.getElementById("top");
+    pane.innerHTML = "";
+
+    pane.innerHTML += '<font size="6" color="green">' + "Life: " + life + "</font>&emsp;";
+    pane.innerHTML += '<font size="6" color="red">' + "Time: " + timer + "</font>&emsp;";
+    pane.innerHTML += '<font size="6" color="blue">' + "Score: " + playerObject.score + "</font>";
+
 }
 
 function newMessage(message)
