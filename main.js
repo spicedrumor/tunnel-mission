@@ -11,8 +11,6 @@ var MAP_VAL_PLAYER = 1;
 var MAP_VAL_MOB = 3;
 var COLOR_PINK = "#FF66FF";
 var map;
-var mapWidth;
-var mapHeight;
 var mapString;
 var xPos;
 var yPos;
@@ -72,7 +70,7 @@ function validTile(newX, newY)
     {
             notTooSmall = true;
     }
-    if (newX < mapWidth && newY < mapHeight)
+    if (newX < mapObject.width && newY < mapObject.height)
     {
         notTooBig = true;
     }
@@ -448,7 +446,7 @@ function playerInteract(value, valueX, valueY)
         random = 1;
         if (playerObject.blueBit)
         {
-            random = Math.floor(Math.random() * 3);
+            random = Math.floor(Math.random() * 2);
         }
 
         if (random != 0)
@@ -520,20 +518,25 @@ function playerInteract(value, valueX, valueY)
         random = 1;
         if (playerObject.blueBit)
         {
-            random = Math.floor(Math.random() * 5);
+            random = Math.floor(Math.random() * 2);
         }
-        newMessage("5 shatters in your general direction!");
-        random = Math.floor(Math.random() * 21) + 5;
-        playerHit(random);
+
+        if (random === 0)
+        {
+            newMessage("You narrowly evade 5 as it shatters apart!");
+        }
+        else
+        {
+            newMessage("5 shatters in your general direction!");
+            random = Math.floor(Math.random() * 21) + 5;
+            playerHit(random);
+        }
+
         mapObject.removeMob(valueX, valueY);
 
         if (life < 1)
         {
             result = -1;
-        }
-        if (random == 0)
-        {
-            newMessage("You narrowly evade 5's attack!");
         }
     }
     else if (value === 6)
@@ -555,9 +558,22 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value === 7)
     {
-        newMessage("7 touches base with you.");
-        gameOver("7 8 u  :(");
-        result = -1;
+        random = 1;
+        if (playerObject.blueBit)
+        {
+            random = Math.floor(Math.random() * 7);
+        }
+
+        if (random === 0)
+        {
+            newMessage("7 hisses as you just barely dodge its attack!");
+        }
+        else
+        {
+            newMessage("7 touches base with you.");
+            gameOver("7 8 u  :(");
+            result = -1;
+        }
     }
     else if (value === 8)
     {
@@ -787,6 +803,8 @@ function quickUpdate()
 
 function gameOver(message)
 {
+    var position;
+
     //just in case player was ninja'd:
     quickUpdate();
 
@@ -794,6 +812,11 @@ function gameOver(message)
     playerObject.alive = false;
     endGame();
     window.alert("Game Over: " + message);
+    position = playerObject.yPos;
+    if (position > 50)
+    {
+        window.alert("Distance remaining: " + (500 - position) + "m.");
+    }
 }
 
 function endGame()
@@ -934,8 +957,6 @@ function newGame()
     mapObject = tmiss_generate.map();
 
     map = mapObject.mapArray;
-    mapWidth = map[0].length;
-    mapHeight = map.length;
 
     mapObject.boomAlert = [];
 

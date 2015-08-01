@@ -19,8 +19,8 @@ var tmiss_draw = {
         var viewY;
         var value;
 
-        mapWidth = mapObject.mapArray[0].length;
-        mapHeight = mapObject.mapArray.length;
+        mapWidth = mapObject.width;
+        mapHeight = mapObject.height;
 
         playerX = playerObject.xPos;
         playerY = playerObject.yPos;

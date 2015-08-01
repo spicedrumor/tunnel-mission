@@ -73,7 +73,7 @@ var tmiss_generate = {
                 mapArray[mobY][mobX] = value;
             }
         };
-        width = 20;
+        width = 25;
         height = 500;
         newMap = [];
         
@@ -152,6 +152,8 @@ var tmiss_generate = {
         newMap[1][1] = 0;
 
         mapObject.mapArray = newMap;
+        mapObject.width = width;
+        mapObject.height = height;
 
         return mapObject;
     }
