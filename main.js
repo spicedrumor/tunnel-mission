@@ -813,7 +813,7 @@ function gameOver(message)
     endGame();
     window.alert("Game Over: " + message);
     position = playerObject.yPos;
-    if (position > 50)
+    if (position > 10)
     {
         window.alert("Distance remaining: " + (500 - position) + "m.");
     }
