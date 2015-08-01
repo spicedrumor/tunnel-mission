@@ -1016,6 +1016,7 @@ canvasHeight = canvas.height;
 canvasOffset = 100;
 
 var context = canvas.getContext('2d');
+
 context.canvas.addEventListener('mousedown', function(event)
 {  
     var xp = event.clientX - context.canvas.offsetLeft;
@@ -1044,10 +1045,11 @@ context.canvas.addEventListener('mouseup', function(event)
 {  
 });
 
+
 var elm = document.body;
 
 var catcher = function(evt) {
-    if (evt.touches.length < 2)
+    if (evt.touches.length > 2)
         evt.preventDefault();
 };
 
