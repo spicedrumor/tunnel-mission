@@ -126,7 +126,7 @@ var tmiss_draw = {
                 }
                 else
                 {
-                    result += ' <font color="blue">?</font> ';
+                    result += ' <font color="#191919">#</font> ';
                 }
             }
             result += "<br>";

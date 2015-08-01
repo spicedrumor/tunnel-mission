@@ -340,6 +340,12 @@ document.onkeyup = function(e)
     {
         direction = "w";
     }
+    else if (key === 80)
+    {
+        life -= 5;
+        quickUpdate();
+        alert("You exchange some life energy to suspend time.");
+    }
     else if (key === 81)
     {
         if (life > 50)
@@ -874,13 +880,6 @@ function updateStatusPane()
 {
     var pane;
     var i;
-    /*
-    pane = document.getElementById("right");
-    pane.innerHTML = "";
-    pane.innerHTML += '<font color="green">' + "<h2>Life: " + life + "</h2></font>";
-    pane.innerHTML += '<font color="red">' + "<h2>Time: " + timer + "</h2></font>";
-    pane.innerHTML += '<font color="blue">' + "<h2>Score: " + playerObject.score + "</h2></font>";
-    */
 
     pane = document.getElementById("bottom");
     pane.innerHTML = "";
