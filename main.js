@@ -1044,6 +1044,15 @@ context.canvas.addEventListener('mouseup', function(event)
 {  
 });
 
+var elm = document.body;
+
+var catcher = function(evt) {
+    if (evt.touches.length < 2)
+        evt.preventDefault();
+};
+
+elm.addEventListener('touchstart', catcher, true);
+
 startGame();
 
 }());
