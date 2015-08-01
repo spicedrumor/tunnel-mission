@@ -8,10 +8,10 @@ canvas {
 
 
   -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=01)";
-  filter: alpha(opacity=1);
-  -moz-opacity:0.01;
-  -khtml-opacity: 0.01;
-  opacity: 0.01;    
+  filter: alpha(opacity=9);
+  -moz-opacity:0.09;
+  -khtml-opacity: 0.09;
+  opacity: 0.09;    
 }
 
 @keyframes blink {  
