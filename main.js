@@ -655,11 +655,11 @@ function playerBump(value, valueX, valueY, offsetX, offsetY)
     }
     else if ((value === 12 || value === 14) && playerObject.greenBit)
     {
-        if (map[newY + offsetY][newX + offsetX] === 0)
+        if (map[valueY + offsetY][valueX + offsetX] === 0)
         {
             newMessage("You shove with all your might!");
-            map[newY + offsetY][newX + offsetX] = map[newY][newX];
-            map[newY][newX] = 0;
+            map[valueY + offsetY][valueX + offsetX] = map[valueY][valueX];
+            map[valueY][valueX] = 0;
         }
     }
 }
