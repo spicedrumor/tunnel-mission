@@ -7,11 +7,11 @@ canvas {
   background-color:#FFAE73;  
 
 
-  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=05)";
-  filter: alpha(opacity=5);
-  -moz-opacity:0.05;
-  -khtml-opacity: 0.05;
-  opacity: 0.05;    
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
+  filter: alpha(opacity=0);
+  -moz-opacity:0.00;
+  -khtml-opacity: 0.00;
+  opacity: 0.00;    
 }
 
 @keyframes blink {  
