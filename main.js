@@ -408,7 +408,7 @@ function playerInteractions()
             if (validTile(tileX, tileY))
             {
                 current = map[tileY][tileX];
-                if (current > 1)
+                if (current != 0)
                 {
                     rc = playerInteract(current, tileX, tileY);
                 }
@@ -436,7 +436,12 @@ function playerInteract(value, valueX, valueY)
 
     result = 0;
 
-    if (value === 2)
+    if (value === -1)
+    {
+        newMessage("The flames lick at you!");
+        playerHit(1);
+    }
+    else if (value === 2)
     {
         winGame();
         result = -1;
@@ -454,11 +459,7 @@ function playerInteract(value, valueX, valueY)
             newMessage("3 bites you with glee!");
             playerHit(1);
 
-            if (life < 1)
-            {
-                result = -1;
-            }
-            else if (playerObject.greenBit)
+            if (life > 0 && playerObject.greenBit)
             {
                 random = Math.floor(Math.random() * 2);
                 if (random === 0)
@@ -533,11 +534,6 @@ function playerInteract(value, valueX, valueY)
         }
 
         mapObject.removeMob(valueX, valueY);
-
-        if (life < 1)
-        {
-            result = -1;
-        }
     }
     else if (value === 6)
     {
@@ -637,6 +633,11 @@ function playerInteract(value, valueX, valueY)
                 done = true;
             }
         }
+    }
+
+    if (life < 1)
+    {
+        result = -1;
     }
 
     return result;
@@ -812,11 +813,9 @@ function gameOver(message)
     playerObject.alive = false;
     endGame();
     window.alert("Game Over: " + message);
-    position = playerObject.yPos;
-    if (position > 10)
-    {
-        window.alert("Distance remaining: " + (500 - position) + "m.");
-    }
+    //position = yPos;
+    //window.alert("Position: " + (position) + "m.");
+    //window.alert("Distance remaining: " + (500 - position) + "m.");
 }
 
 function endGame()
@@ -826,6 +825,19 @@ function endGame()
     var array;
 
     array = mapObject.boomAlert;
+
+    for (i = 0; i < array.length; i++)
+    {
+        if (array[i])
+        {
+            for (j = 0; j < array[i].length; j++)
+            {
+                clearTimeout(array[i][j]);
+            }
+        }
+    }
+
+    array = mapObject.fireAlert;
 
     for (i = 0; i < array.length; i++)
     {
@@ -923,7 +935,8 @@ function updateStatusPane()
 
     pane.innerHTML += '<font size="6" color="green">' + "Life: " + life + "</font>&emsp;";
     pane.innerHTML += '<font size="6" color="red">' + "Time: " + timer + "</font>&emsp;";
-    pane.innerHTML += '<font size="6" color="blue">' + "Score: " + playerObject.score + "</font>";
+    pane.innerHTML += '<font size="6" color="blue">' + "Score: " + playerObject.score + "</font>&emsp;";
+    pane.innerHTML += '<font size="6" color="yellow">' + "yp: " + yPos + "</font>";
 
 }
 
@@ -959,6 +972,7 @@ function newGame()
     map = mapObject.mapArray;
 
     mapObject.boomAlert = [];
+    mapObject.fireAlert = [];
 
     messageQueue = [];
     for (var i = 0; i < MESSAGE_QUEUE_MAX; i++)
@@ -1045,12 +1059,13 @@ var canvasOffset;
 canvas = document.getElementById('canvas');
 canvasWidth = canvas.width;
 canvasHeight = canvas.height;
-canvasOffset = 100;
+canvasOffset = 200;
 
 var context = canvas.getContext('2d');
 
 context.canvas.addEventListener('mousedown', function(event)
 {  
+    event.preventDefault();//TODO
     var xp = event.clientX - context.canvas.offsetLeft;
     var yp = event.clientY - context.canvas.offsetTop;
 

@@ -4,15 +4,32 @@ newMessage: null,
 playerObject: null,
 mapObject: null,
 slain: 0,
-explosion: function(ballX, ballY, mapObject, playerObject, validTile, newMessage, rootCall)
+output: -1,
+fire: function(tileX, tileY, mapObject){
+    var random;
+
+    random = Math.floor(Math.random() * 7);
+
+    if (random === 0)
+    {
+        mapObject.mapArray[tileY][tileX] = 0;
+        delete mapObject.fireAlert[tileY][tileX];
+    }
+    else
+    {
+        mapObject.fireAlert[tileY][tileX] = setTimeout(function(){tmiss_mapMutate.fire(tileX, tileY, mapObject)}, 1000);
+    }
+},
+explosion: function(tileX, tileY, mapObject, playerObject, validTile, newMessage, rootCall)
 {
     var map;
     var value;
+    var array;
 
-    if (mapObject.boomAlert[ballY])
+    if (mapObject.boomAlert[tileY])
     {
-        clearTimeout(mapObject.boomAlert[ballY][ballX]);
-        delete mapObject.boomAlert[ballY][ballX];
+        clearTimeout(mapObject.boomAlert[tileY][tileX]);
+        delete mapObject.boomAlert[tileY][tileX];
     }
 
     map = mapObject.mapArray;
@@ -25,12 +42,19 @@ explosion: function(ballX, ballY, mapObject, playerObject, validTile, newMessage
     {
         newMessage("Giant explosion!"); 
         tmiss_sound.explode();
-        map[ballY][ballX] = 0;
 
-        this.recursion(ballX, ballY, 0, -1, mapObject, validTile, 3);
-        this.recursion(ballX, ballY, 0, 1, mapObject, validTile, 3);
-        this.recursion(ballX, ballY, -1, 0, mapObject, validTile, 3);
-        this.recursion(ballX, ballY, 1, 0, mapObject, validTile, 3);
+        array = mapObject.fireAlert;
+        if (array[tileY] === undefined)
+        {
+            array[tileY] = [];
+        }
+        array[tileY][tileX] = setTimeout(function(){tmiss_mapMutate.fire(tileX, tileY, mapObject)}, 1000);
+        map[tileY][tileX] = this.output;
+
+        this.recursion(tileX, tileY, 0, -1, mapObject, validTile, 3);
+        this.recursion(tileX, tileY, 0, 1, mapObject, validTile, 3);
+        this.recursion(tileX, tileY, -1, 0, mapObject, validTile, 3);
+        this.recursion(tileX, tileY, 1, 0, mapObject, validTile, 3);
 
         if (rootCall)
         {
@@ -44,6 +68,7 @@ recursion: function(tileX, tileY, xOffset, yOffset, mapObject, validTile, count)
 {
     var map;
     var sevener;
+    var array;
 
     sevener = false;
 
@@ -92,7 +117,13 @@ recursion: function(tileX, tileY, xOffset, yOffset, mapObject, validTile, count)
             }
             else
             {
-                map[tileY][tileX] = 12;
+                array = mapObject.fireAlert;
+                if (array[tileY] === undefined)
+                {
+                    array[tileY] = [];
+                }
+                array[tileY][tileX] = setTimeout(function(){tmiss_mapMutate.fire(tileX, tileY, mapObject)}, 1000);
+                map[tileY][tileX] = this.output;
             }
         }
 

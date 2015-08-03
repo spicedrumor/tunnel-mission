@@ -18,6 +18,7 @@ var tmiss_draw = {
         var viewX;
         var viewY;
         var value;
+        var random;
 
         mapWidth = mapObject.width;
         mapHeight = mapObject.height;
@@ -43,7 +44,19 @@ var tmiss_draw = {
                     value = map[viewY][viewX];
 
                     result += '<font color="';
-                    if (value == 0)
+                    if (value === -1)
+                    {
+                        random = Math.floor(Math.random() * 2);
+                        if (random === 0)
+                        {
+                            result += 'red">~';
+                        }
+                        else
+                        {
+                            result += 'red">^';
+                        }
+                    }
+                    else if (value == 0)
                     {
                         result += '#6B6B6B">.';
                     }
