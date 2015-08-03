@@ -3,6 +3,7 @@ var tmiss_mapMutate = {
 newMessage: null,
 playerObject: null,
 mapObject: null,
+validTile: null,
 slain: 0,
 output: -1,
 fire: function(tileX, tileY, mapObject){
@@ -17,11 +18,44 @@ fire: function(tileX, tileY, mapObject){
     }
     else
     {
+        this.neighbourLicker(tileX, tileY, mapObject);
         mapObject.fireAlert[tileY][tileX] = setTimeout(function(){tmiss_mapMutate.fire(tileX, tileY, mapObject)}, 1000);
     }
 },
-explosion: function(tileX, tileY, mapObject, playerObject, validTile, newMessage, rootCall)
-{
+neighbourLicker: function(tileX, tileY, mapObject){
+    var i;
+    var j;
+    var x;
+    var y;
+    var array;
+    var map;
+
+    map = mapObject.mapArray;
+    array = mapObject.boomAlert;
+
+    mapWidth = mapObject.mapArray[0].length;
+    mapHeight = mapObject.mapArray.length;
+
+    for (i = -1; i < 2; i++)
+    {
+        for (j = -1; j < 2; j++)
+        {
+            if (i != 0 || j != 0)
+            {
+                x = tileX + j;
+                y = tileY + i;
+                if (x >= 0 && y >= 0 && x < mapWidth && y < mapHeight)
+                {
+                    if (map[y][x] === 14 || map[y][x] === 15)
+                    {
+                        this.explosion(x, y, mapObject, tmiss_mapMutate.playerObject, tmiss_mapMutate.validTile, tmiss_mapMutate.newMessage, true);
+                    }
+                }
+            }
+        }
+    }
+},
+explosion: function(tileX, tileY, mapObject, playerObject, validTile, newMessage, rootCall){
     var map;
     var value;
     var array;
@@ -37,6 +71,7 @@ explosion: function(tileX, tileY, mapObject, playerObject, validTile, newMessage
     this.newMessage = newMessage;
     this.playerObject = playerObject;
     this.mapObject = mapObject;
+    this.validTile = tmiss_validate.validTile;
 
     if (playerObject.alive)
     {
@@ -78,7 +113,7 @@ recursion: function(tileX, tileY, xOffset, yOffset, mapObject, validTile, count)
     {
         tileX += xOffset;
         tileY += yOffset;
-        if (validTile(tileX, tileY))
+        if (validTile(tileX, tileY, mapObject))
         {
             value = map[tileY][tileX];
             if (value > 2 && value < 10)
@@ -122,6 +157,7 @@ recursion: function(tileX, tileY, xOffset, yOffset, mapObject, validTile, count)
                 {
                     array[tileY] = [];
                 }
+                clearTimeout(array[tileY][tileX]);
                 array[tileY][tileX] = setTimeout(function(){tmiss_mapMutate.fire(tileX, tileY, mapObject)}, 1000);
                 map[tileY][tileX] = this.output;
             }
