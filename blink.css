@@ -3,15 +3,6 @@ canvas {
   top:62;
   left:0;
   z-index:100;
-
-  background-color:#FFAE73;  
-
-
-  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=00)";
-  filter: alpha(opacity=0);
-  -moz-opacity:0.00;
-  -khtml-opacity: 0.00;
-  opacity: 0.00;    
 }
 
 @keyframes blink {  

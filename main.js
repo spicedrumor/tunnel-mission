@@ -690,7 +690,7 @@ function bootItem(tileX, tileY, offsetX, offsetY, travel)
 
     newX = tileX + offsetX;
     newY = tileY + offsetY;
-
+//TODO bug
     if (map[newY][newX] === 0)
     {
         value = map[tileY][tileX];
@@ -1062,6 +1062,12 @@ canvasHeight = canvas.height;
 canvasOffset = 200;
 
 var context = canvas.getContext('2d');
+
+
+context.fillStyle = "rgb(200,100,50)";
+
+context.strokeStyle="#FF0000";
+//context.strokeRect(50,50,500,50);
 
 context.canvas.addEventListener('mousedown', function(event)
 {  

@@ -9,7 +9,7 @@ output: -1,
 fire: function(tileX, tileY, mapObject){
     var random;
 
-    random = Math.floor(Math.random() * 7);
+    random = Math.floor(Math.random() * 5);
 
     if (random === 0)
     {
@@ -19,7 +19,7 @@ fire: function(tileX, tileY, mapObject){
     else
     {
         this.neighbourLicker(tileX, tileY, mapObject);
-        mapObject.fireAlert[tileY][tileX] = setTimeout(function(){tmiss_mapMutate.fire(tileX, tileY, mapObject)}, 1000);
+        mapObject.fireAlert[tileY][tileX] = setTimeout(function(){tmiss_mapMutate.fire(tileX, tileY, mapObject)}, 2000);
     }
 },
 neighbourLicker: function(tileX, tileY, mapObject){
@@ -48,7 +48,7 @@ neighbourLicker: function(tileX, tileY, mapObject){
                 {
                     if (map[y][x] === 14 || map[y][x] === 15)
                     {
-                        this.explosion(x, y, mapObject, tmiss_mapMutate.playerObject, tmiss_mapMutate.validTile, tmiss_mapMutate.newMessage, true);
+                        this.explosion(x, y, mapObject, this.playerObject, this.validTile, this.newMessage, true);
                     }
                 }
             }
