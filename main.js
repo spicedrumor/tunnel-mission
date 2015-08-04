@@ -1059,7 +1059,7 @@ var canvasOffset;
 canvas = document.getElementById('canvas');
 canvasWidth = canvas.width;
 canvasHeight = canvas.height;
-canvasOffset = 200;
+canvasOffset = 100;
 
 var context = canvas.getContext('2d');
 
