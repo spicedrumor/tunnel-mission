@@ -1016,7 +1016,7 @@ function startGame()
             preset = "b";
         }
 
-        input = window.prompt("Select Player: (type b for blue or p for pink or g for green)", preset);
+        input = window.prompt("Select Player: (type b for blue or p for pink or g for green or h for help)", preset);
         if (input === "b")
         {
             playerObject.blueBit = true;
@@ -1040,6 +1040,10 @@ function startGame()
             playerObject.greenBit = true;
             playerObject.colour = "#00FF00";
             done = true;
+        }
+        else if (input === "h")
+        {
+            tmiss_help.menu();
         }
     }
     
