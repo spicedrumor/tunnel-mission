@@ -114,7 +114,7 @@ var tmiss_generate = {
                             row[j] = 0;
                         }
                     }
-                    else if (random > 1 && random < 5)
+                    else if (random > 1 && random < 3)
                     {
                         row[j] = 14;
                     }

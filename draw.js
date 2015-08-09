@@ -129,6 +129,11 @@ var tmiss_draw = {
                         result += '#002900">';
                         result += '*';
                     }
+                    else if (value == 17)
+                    {
+                        result += '#CC33FF">';
+                        result += '<img src="res/trans_crystal.png" alt="mushroom" height="20" width="15">';
+                    }
                     else
                     {
                         result += 'blue">';

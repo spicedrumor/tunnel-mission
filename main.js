@@ -231,13 +231,15 @@ function spell()
 {
     var i;
     var j;
-    var k;
+    var hit;
     var tileX;
     var tileY;
 
     newMessage("You cast a spell!");
+    life -= 25;
     tmiss_sound.magic();
 
+    hit = false;
     for (i = -1; i < 2; i++)
     {
         for (j = -1; j < 2; j++)
@@ -248,12 +250,12 @@ function spell()
             {
                 clobberTile(tileX, tileY);
                 map[tileY][tileX] = 0;
-                k += 1;
+                hit = true;
             }
         }
     }
 
-    if (k === 0)
+    if (!hit)
     {
         newMessage("Nothing happened...");
     }
@@ -346,9 +348,8 @@ document.onkeyup = function(e)
     }
     else if (key === 81)
     {
-        if (life > 50)
+        if (life > 25)
         {
-            life -= 50;
             spell();
         }
         else
@@ -596,7 +597,6 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value === 10)
     {
-        tmiss_generate.map();
         tmiss_sound.eat();
         newMessage("You devour a curious looking mushroom.");
         map[valueY][valueX] = 0;
@@ -634,6 +634,13 @@ function playerInteract(value, valueX, valueY)
             }
         }
     }
+    else if (value === 17)
+    {
+        tmiss_sound.eat();
+        newMessage("You snatch up the crystal and attempt to eat it.");
+        map[valueY][valueX] = 0;
+        life += 16;
+    }    
 
     if (life < 1)
     {

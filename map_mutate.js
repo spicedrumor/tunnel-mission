@@ -19,7 +19,7 @@ fire: function(tileX, tileY, mapObject){
     else
     {
         this.neighbourLicker(tileX, tileY, mapObject);
-        mapObject.fireAlert[tileY][tileX] = setTimeout(function(){tmiss_mapMutate.fire(tileX, tileY, mapObject)}, 2000);
+        mapObject.fireAlert[tileY][tileX] = setTimeout(function(){tmiss_mapMutate.fire(tileX, tileY, mapObject)}, 1000);
     }
 },
 neighbourLicker: function(tileX, tileY, mapObject){
@@ -104,6 +104,7 @@ recursion: function(tileX, tileY, xOffset, yOffset, mapObject, validTile, count)
     var map;
     var sevener;
     var array;
+    var random;
 
     sevener = false;
 
@@ -121,6 +122,8 @@ recursion: function(tileX, tileY, xOffset, yOffset, mapObject, validTile, count)
                 mapObject.removeMob(tileX, tileY);
                 if (value === 7)
                 {
+                    random = Math.floor(Math.random() * 2);
+
                     if (this.slain === 0)
                     {
                         this.newMessage("A 7 has fallen!");
@@ -137,7 +140,14 @@ recursion: function(tileX, tileY, xOffset, yOffset, mapObject, validTile, count)
                     {
                         this.newMessage("M-M-M-MONSTER KILL!!!");
                     }
-                    mapObject.insertMob(tileX, tileY, 9);
+                    if (random === 0)
+                    {
+                        mapObject.insertMob(tileX, tileY, 9);
+                    }
+                    else
+                    {
+                        map[tileY][tileX] = 17;
+                    }
                     sevener = true;
                     this.slain += 1;
                 }
