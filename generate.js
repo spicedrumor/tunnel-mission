@@ -1,5 +1,5 @@
 var tmiss_generate = {
-    map: function()
+    map: function(difficulty)
     {
         var width;
         var height;
@@ -9,6 +9,8 @@ var tmiss_generate = {
         var row;
         var random;
         var newMob;
+        var multiplierMain = 7;
+        var multiplierMob = 7;
 
         var mapObject = {
             mapArray: [],
@@ -74,7 +76,18 @@ var tmiss_generate = {
             }
         };
         width = 25;
-        height = 500;
+        height = 400;
+        if (difficulty === "hard")
+        {
+            height = 500;
+            width = 30;
+            multiplierMain = 5;
+        }
+        else if (difficulty === "easy")
+        {
+            height = 100;
+            multiplierMain = 9;
+        }
         newMap = [];
         
         for (i = 0; i < height; i++)
@@ -83,9 +96,9 @@ var tmiss_generate = {
             for (j = 0; j < width; j++)
             {
                 random = 0;
-                random = Math.floor(Math.random() * 7);
+                random = Math.floor(Math.random() * multiplierMain);
                 if (random === 0)
-                {
+                { //mob
                     random = Math.floor(Math.random() * 6) + 3;
                     row[j] = random;
                     newMob = {};
@@ -95,7 +108,7 @@ var tmiss_generate = {
                     mapObject.mobs.push(newMob);
                 }
                 else if (random === 1)
-                {
+                { //item
                     random = Math.floor(Math.random() * 9);
 
                     if (random == 0)
@@ -124,7 +137,7 @@ var tmiss_generate = {
                     }
                 }
                 else if (random === 2)
-                {
+                { //wall
                         random = Math.floor(Math.random() * 2);
                         if (random === 0)
                         {

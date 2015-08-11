@@ -34,6 +34,9 @@ var timerPlayerFlash;
 var timerMovePlayer;
 var currentRoundCount;
 var currentKeys;
+var difficulty;
+
+difficulty = "normal";
 
 var mapObject = {
 };
@@ -636,8 +639,7 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value === 17)
     {
-        tmiss_sound.eat();
-        newMessage("You snatch up the crystal and attempt to eat it.");
+        newMessage("You snatch up the crystal and swallow it whole!");
         map[valueY][valueX] = 0;
         life += 16;
     }    
@@ -959,6 +961,16 @@ function newMessage(message)
     messageQueue[0] = message;
 }
 
+function newMap()
+{
+    mapObject = tmiss_generate.map(difficulty);
+
+    map = mapObject.mapArray;
+
+    mapObject.boomAlert = [];
+    mapObject.fireAlert = [];
+}
+
 function newGame()
 {
     xPos = 0;
@@ -974,12 +986,7 @@ function newGame()
 
     currentRoundCount += 1;
 
-    mapObject = tmiss_generate.map();
-
-    map = mapObject.mapArray;
-
-    mapObject.boomAlert = [];
-    mapObject.fireAlert = [];
+    newMap();
 
     messageQueue = [];
     for (var i = 0; i < MESSAGE_QUEUE_MAX; i++)
@@ -1051,6 +1058,12 @@ function startGame()
         else if (input === "h")
         {
             tmiss_help.menu();
+        }
+        else if (input === "easy" || input === "hard" || input === "normal")
+        {
+            difficulty = input;
+            alert("Difficulty set to " + difficulty);
+            newMap(input);
         }
     }
     
