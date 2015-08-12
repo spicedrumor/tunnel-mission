@@ -589,6 +589,7 @@ function playerInteract(value, valueX, valueY)
     else if (value === 9)
     {
         message = "9 beams at you and you get rock hard!";
+        context.drawImage(pic, 0, 0);
         if (messageQueue[0] === message || messageQueue[1] === message)
         {
         }
@@ -738,6 +739,7 @@ function armourBuff()
         if (playerObject.armour === 0)
         {
             newMessage("You are suddenly not so hard anymore...");
+            context.clearRect(0, 0, canvas.width, canvas.height);
         }
     }
 
@@ -858,6 +860,9 @@ function endGame()
             }
         }
     }
+
+    //clear the canvas
+    context.clearRect(0, 0, canvas.width, canvas.height);
 
     clearTimeout(timerPlayerFlash);
     clearTimeout(timerHeart);
@@ -1086,6 +1091,13 @@ canvasHeight = canvas.height;
 canvasOffset = 100;
 
 var context = canvas.getContext('2d');
+
+var pic;
+pic = new Image();
+pic.src = "res/no_idea.png";
+pic.onload = function()
+{
+}
 
 
 context.fillStyle = "rgb(200,100,50)";
