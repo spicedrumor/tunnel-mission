@@ -285,7 +285,7 @@ document.onkeydown = function(e)
     var direction;
     var newCoords;
     var key = e.keyCode ? e.keyCode : e.which;
-                
+
     direction = "";
     if (key === KEY_CODE_W)
     {
@@ -325,7 +325,7 @@ document.onkeyup = function(e)
     var direction;
     var key = e.keyCode ? e.keyCode : e.which;
     var value;
-                
+
     direction = "";
     if (key === KEY_CODE_W)
     {
@@ -1001,7 +1001,7 @@ function newGame()
     newMessage('<font color="' + "lime" + '">Objective: Rescue the '+ '</font><font color="' + COLOR_PINK + '">!</font>');
 
     life = 64;
-    timer = 1024;
+    timer = 128;
     timerBit = false;
 }
 
@@ -1071,7 +1071,7 @@ function startGame()
             newMap(input);
         }
     }
-    
+
     timerHeart = setTimeout(heartBeat, 500);
     timerExist = setTimeout(doIExist, 50);
     timerMoveMob = setTimeout(moveRandomMob, 25);
@@ -1106,7 +1106,7 @@ context.strokeStyle="#FF0000";
 //context.strokeRect(50,50,500,50);
 
 context.canvas.addEventListener('mousedown', function(event)
-{  
+{
     event.preventDefault();//TODO
     var xp = event.clientX - context.canvas.offsetLeft;
     var yp = event.clientY - context.canvas.offsetTop;
