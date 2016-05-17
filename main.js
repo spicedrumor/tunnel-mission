@@ -618,7 +618,7 @@ function playerInteract(value, valueX, valueY)
         while (!done)
         {
             random = randomTile();
-            if (emptyTile(random[0], random[1]) && (yPos - random[1] < 128 && yPos - random[1] > -128))
+            if (emptyTile(random[0], random[1]) && (yPos - random[1] < 32 && yPos - random[1] > -32))
             {
                 done = true;
                 newMessage("You are drawn into the event horizon.");
