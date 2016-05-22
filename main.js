@@ -604,7 +604,14 @@ function playerInteract(value, valueX, valueY)
         tmiss_sound.eat();
         newMessage("You devour a curious looking mushroom.");
         map[valueY][valueX] = 0;
-        life += 6;
+        if (playerObject.greenBit)
+        {
+            life += 9;
+        }
+        else
+        {
+            life += 6;
+        }
     }
     else if (value === 13)
     {
