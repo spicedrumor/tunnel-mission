@@ -75,17 +75,17 @@ var tmiss_generate = {
                 mapArray[mobY][mobX] = value;
             }
         };
-        width = 25;
-        height = 128;
+        width = 32;
+        height = 256;
         if (difficulty === "hard")
         {
-            height = 256;
+            height = 512;
             width = 30;
             multiplierMain = 5;
         }
         else if (difficulty === "easy")
         {
-            height = 64;
+            height = 128;
             multiplierMain = 9;
         }
         newMap = [];

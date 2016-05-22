@@ -605,7 +605,7 @@ function playerInteract(value, valueX, valueY)
         newMessage("You devour a curious looking mushroom.");
         map[valueY][valueX] = 0;
         life += 6;
-    }    
+    }
     else if (value === 13)
     {
         //reserved
@@ -622,6 +622,7 @@ function playerInteract(value, valueX, valueY)
             {
                 done = true;
                 newMessage("You are drawn into the event horizon.");
+                //TODO following should be a func
                 map[valueY][valueX] = 0;
                 map[yPos][xPos] = 0;
                 playerObject.xPos = random[0];
@@ -643,7 +644,7 @@ function playerInteract(value, valueX, valueY)
         newMessage("You snatch up the crystal and swallow it whole!");
         map[valueY][valueX] = 0;
         life += 16;
-    }    
+    }
 
     if (life < 1)
     {
@@ -824,9 +825,6 @@ function gameOver(message)
     playerObject.alive = false;
     endGame();
     window.alert("Game Over: " + message);
-    //position = yPos;
-    //window.alert("Position: " + (position) + "m.");
-    //window.alert("Distance remaining: " + (500 - position) + "m.");
 }
 
 function endGame()
@@ -950,7 +948,7 @@ function updateStatusPane()
     pane.innerHTML += '<font size="6" color="green">' + "Life: " + life + "</font>&emsp;";
     pane.innerHTML += '<font size="6" color="red">' + "Time: " + timer + "</font>&emsp;";
     pane.innerHTML += '<font size="6" color="blue">' + "Score: " + playerObject.score + "</font>&emsp;";
-    pane.innerHTML += '<font size="6" color="yellow">' + "yp: " + yPos + "</font>";
+    pane.innerHTML += '<font size="6" color="yellow">' + "position: " + Math.floor(yPos / mapObject.height * 100) + "%</font>";
 
 }
 
@@ -1000,8 +998,8 @@ function newGame()
     }
     newMessage('<font color="' + "lime" + '">Objective: Rescue the '+ '</font><font color="' + COLOR_PINK + '">!</font>');
 
-    life = 64;
-    timer = 128;
+    life = 128;
+    timer = 256;
     timerBit = false;
 }
 
@@ -1019,7 +1017,7 @@ function startGame()
     }
 
     done = false;
-    
+
     while (!done)
     {
         if (playerObject.pinkBit)
