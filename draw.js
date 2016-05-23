@@ -38,7 +38,7 @@ var tmiss_draw = {
             {
                 viewX = (j - centre) + playerX;
                 viewY = (i - centre) + playerY;
-                
+
                 if (viewX >= 0 && viewY >= 0 && viewX < mapWidth && viewY < mapHeight)
                 {
                     value = map[viewY][viewX];

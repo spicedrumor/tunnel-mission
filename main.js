@@ -35,6 +35,10 @@ var timerMovePlayer;
 var currentRoundCount;
 var currentKeys;
 var difficulty;
+var SMILESTARTSIZE = 128;
+var SMILEHITCOUNT = 16;
+var smileReduction = SMILESTARTSIZE / SMILEHITCOUNT;
+var smileCurSize;
 
 difficulty = "normal";
 
@@ -431,6 +435,8 @@ function playerInteractions()
 function playerInteract(value, valueX, valueY)
 {
     var random;
+    var newX;
+    var newY;
     var i;
     var j;
     var result;
@@ -589,7 +595,9 @@ function playerInteract(value, valueX, valueY)
     else if (value === 9)
     {
         message = "9 beams at you and you get rock hard!";
-        context.drawImage(pic, 0, 0);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(pic, 0, 0, SMILESTARTSIZE, SMILESTARTSIZE);
+        smileCurSize = SMILESTARTSIZE;
         if (messageQueue[0] === message || messageQueue[1] === message)
         {
         }
@@ -597,7 +605,7 @@ function playerInteract(value, valueX, valueY)
         {
             newMessage(message);
         }
-        playerObject.armour = 5;
+        playerObject.armour = 16;
     }
     else if (value === 10)
     {
@@ -625,18 +633,20 @@ function playerInteract(value, valueX, valueY)
         while (!done)
         {
             random = randomTile();
-            if (emptyTile(random[0], random[1]) && (yPos - random[1] < 32 && yPos - random[1] > -32))
+            newX = random[0];
+            newY = random[1];
+            if (emptyTile(newX, newY) && (yPos - newY < -16) && (yPos - newY > -32))
             {
                 done = true;
                 newMessage("You are drawn into the event horizon.");
                 //TODO following should be a func
                 map[valueY][valueX] = 0;
                 map[yPos][xPos] = 0;
-                playerObject.xPos = random[0];
-                playerObject.yPos = random[1];
-                xPos = random[0];
-                yPos = random[1];
-                map[random[1]][random[0]] = 1;
+                playerObject.xPos = newX;
+                playerObject.yPos = newY;
+                xPos = newX;
+                yPos = newY;
+                map[newY][newX] = 1;
             }
 
             i += 1;
@@ -742,6 +752,9 @@ function armourBuff()
     if (playerObject.armour > 0)
     {
         newMessage("Your hard body absorbs the attack!");
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        smileCurSize = smileCurSize - smileReduction;
+        context.drawImage(pic, 0, 0, smileCurSize, smileCurSize);
         result = true;
         playerObject.armour -= 1;
         if (playerObject.armour === 0)
@@ -1136,7 +1149,7 @@ context.canvas.addEventListener('mousedown', function(event)
 });
 
 context.canvas.addEventListener('mouseup', function(event)
-{  
+{
 });
 
 
