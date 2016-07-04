@@ -126,7 +126,7 @@ var tmiss_draw = {
                     }
                     else if (value == 16)
                     {
-                        result += '#002900">';
+                        result += '#006600">';
                         result += '*';
                     }
                     else if (value == 17)
