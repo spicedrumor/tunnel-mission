@@ -595,6 +595,8 @@ function playerInteract(value, valueX, valueY)
     else if (value === 9)
     {
         message = "9 beams at you and you get rock hard!";
+        //TODO: need to constantly 'refresh' canvas
+        //ie clearRect and then draw whatever n times per sec
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(pic, 0, 0, SMILESTARTSIZE, SMILESTARTSIZE);
         smileCurSize = SMILESTARTSIZE;
@@ -635,6 +637,7 @@ function playerInteract(value, valueX, valueY)
             random = randomTile();
             newX = random[0];
             newY = random[1];
+            //TODO check if neighbours hold a 7:
             if (emptyTile(newX, newY) && (yPos - newY < -16) && (yPos - newY > -32))
             {
                 done = true;
@@ -1019,7 +1022,7 @@ function newGame()
     newMessage('<font color="' + "lime" + '">Objective: Rescue the '+ '</font><font color="' + COLOR_PINK + '">!</font>');
 
     life = 128;
-    timer = 256;
+    timer = 128;
     timerBit = false;
 }
 

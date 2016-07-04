@@ -86,10 +86,10 @@ explosion: function(tileX, tileY, mapObject, playerObject, validTile, newMessage
         array[tileY][tileX] = setTimeout(function(){tmiss_mapMutate.fire(tileX, tileY, mapObject)}, 1000);
         map[tileY][tileX] = this.output;
 
-        this.recursion(tileX, tileY, 0, -1, mapObject, validTile, 4);
-        this.recursion(tileX, tileY, 0, 1, mapObject, validTile, 4);
-        this.recursion(tileX, tileY, -1, 0, mapObject, validTile, 4);
-        this.recursion(tileX, tileY, 1, 0, mapObject, validTile, 4);
+        this.recursion(tileX, tileY, 0, -1, mapObject, validTile, 8);
+        this.recursion(tileX, tileY, 0, 1, mapObject, validTile, 8);
+        this.recursion(tileX, tileY, -1, 0, mapObject, validTile, 8);
+        this.recursion(tileX, tileY, 1, 0, mapObject, validTile, 8);
 
         if (rootCall)
         {
