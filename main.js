@@ -31,6 +31,7 @@ var timerDraw;
 var timerMushroom;
 var timerInteractions;
 var timerPlayerFlash;
+var timerPlayerPhasing;
 var timerMovePlayer;
 var currentRoundCount;
 var currentKeys;
@@ -55,6 +56,7 @@ playerObject.pinkBit = false;
 playerObject.greenBit = false;
 playerObject.flashing = false;
 playerObject.flashBit = false;
+playerObject.phasing = false; //TODO temporary travel protection
 playerObject.score = 1;
 playerObject.xPos = 0;
 playerObject.yPos = 0;
@@ -574,6 +576,9 @@ function playerInteract(value, valueX, valueY)
         {
             newMessage("7 hisses as you just barely dodge its attack!");
         }
+        else if (phaseBuff())
+        {
+        }
         else
         {
             newMessage("7 touches base with you.");
@@ -650,6 +655,7 @@ function playerInteract(value, valueX, valueY)
                 xPos = newX;
                 yPos = newY;
                 map[newY][newX] = 1;
+                playerPhase();
             }
 
             i += 1;
@@ -746,6 +752,25 @@ function bootItem(tileX, tileY, offsetX, offsetY, travel)
     }
 }
 
+function phaseBuff()
+{
+    var result;
+
+    result = false;
+
+    if (playerObject.phasing)
+    {
+        newMessage("Your phase-state protects you from attack!");
+        result = true;
+    }
+    else
+    {
+        result = false;
+    }
+
+    return result;
+}
+
 function armourBuff()
 {
     var result;
@@ -770,9 +795,22 @@ function armourBuff()
     return result;
 }
 
+function playerPhase()
+{
+    clearTimeout(timerPlayerPhasing);
+    timerPlayerPhasing = setTimeout(function(){playerPhasing()}, 3000);
+    playerObject.phasing = true;
+}
+
+function playerPhasing()
+{
+    playerObject.phasing = false;
+    newMessage("You fully phase into existence.");
+}
+
 function playerHit(damage)
 {
-    if (!armourBuff())
+    if (!armourBuff() && !phaseBuff())
     {
         //tmiss_sound.hit();
         life -= damage;
@@ -885,6 +923,7 @@ function endGame()
     //clear the canvas
     context.clearRect(0, 0, canvas.width, canvas.height);
 
+    clearTimeout(timerPlayerPhasing);
     clearTimeout(timerPlayerFlash);
     clearTimeout(timerHeart);
     clearTimeout(timerExist);
@@ -1099,6 +1138,8 @@ function startGame()
     timerDraw = setTimeout(drawMap, 25);
     timerInteractions = setTimeout(playerInteractions, 25);
     timerMushroom = setTimeout(randomMush, 30);
+
+    playerPhase();
 }
 
 var canvasWidth;
