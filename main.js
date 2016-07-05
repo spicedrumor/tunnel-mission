@@ -634,38 +634,30 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value === 16)
     {
-        done = false;
-        i = 0;
+        yLimit = mapObject.height - 1;
+        newY = yPos + (Math.floor(Math.random() * 16) + 16);
 
-        while (!done)
+        if (newY > yLimit)
         {
-            random = randomTile();
-            newX = random[0];
-            newY = random[1];
-            //TODO check if neighbours hold a 7:
-            if (emptyTile(newX, newY) && (yPos - newY < -16) && (yPos - newY > -32))
-            {
-                done = true;
-                newMessage("You are drawn into the event horizon.");
-                //TODO following should be a func
-                map[valueY][valueX] = 0;
-                map[yPos][xPos] = 0;
-                playerObject.xPos = newX;
-                playerObject.yPos = newY;
-                xPos = newX;
-                yPos = newY;
-                map[newY][newX] = 1;
-                playerPhase();
-            }
-
-            i += 1;
-            if (i === 2)
-            {
-                done = true;
-            }
+            newY = yLimit;
         }
+
+        playerMove(xPos, newY);
+        tmiss_sound.magic();
     }
     else if (value === 17)
+    {
+        newY = yPos - (Math.floor(Math.random() * 16) + 16);
+
+        if (newY < 0)
+        {
+            newY = 0;
+        }
+
+        playerMove(xPos, newY);
+        tmiss_sound.magic();
+    }
+    else if (value === 18)
     {
         newMessage("You snatch up the crystal and swallow it whole!");
         map[valueY][valueX] = 0;
@@ -678,6 +670,23 @@ function playerInteract(value, valueX, valueY)
     }
 
     return result;
+}
+
+function playerMove(newX, newY)
+{
+    newMessage("You are drawn into the event horizon.");
+    //TODO following should be a func
+    map[yPos][xPos] = 0;
+    playerObject.xPos = newX;
+    playerObject.yPos = newY;
+    xPos = newX;
+    yPos = newY;
+    if (map[newY][newX] != 0)
+    {
+        newMessage("Something explodes into many wet chunks.");
+    }
+    map[newY][newX] = 1;
+    playerPhase();
 }
 
 function playerBump(value, valueX, valueY, offsetX, offsetY)
@@ -798,7 +807,7 @@ function armourBuff()
 function playerPhase()
 {
     clearTimeout(timerPlayerPhasing);
-    timerPlayerPhasing = setTimeout(function(){playerPhasing()}, 3000);
+    timerPlayerPhasing = setTimeout(function(){playerPhasing()}, 2000);
     playerObject.phasing = true;
 }
 

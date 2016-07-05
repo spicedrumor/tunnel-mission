@@ -121,6 +121,10 @@ var tmiss_generate = {
                         {
                             row[j] = 16;
                         }
+                        else if (random === 1)
+                        {
+                            row[j] = 17;
+                        }
                         else
                         {
                             row[j] = 0;

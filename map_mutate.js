@@ -146,7 +146,7 @@ recursion: function(tileX, tileY, xOffset, yOffset, mapObject, validTile, count)
                     }
                     else
                     {
-                        map[tileY][tileX] = 17;
+                        map[tileY][tileX] = 18;
                     }
                     sevener = true;
                     this.slain += 1;
