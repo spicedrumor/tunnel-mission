@@ -900,20 +900,21 @@ function winGame()
     tmiss_sound.win();
     score = playerObject.score
     score += (timer * 10);
+    score += life;
     grade = "?";
-    if (score < 100)
+    if (score < 200)
         grade = "F";
-    else if (score < 150)
-        grade = "D";
-    else if (score < 200)
-        grade = "C";
     else if (score < 250)
-        grade = "C+";
+        grade = "D";
     else if (score < 300)
-        grade = "B";
+        grade = "C";
     else if (score < 350)
-        grade = "B+";
+        grade = "C+";
     else if (score < 400)
+        grade = "B";
+    else if (score < 450)
+        grade = "B+";
+    else if (score < 500)
         grade = "A";
     else
         grade = "A+";
@@ -1007,7 +1008,11 @@ function heartBeat()
     var dead;
 
     //TODO hacky
-    map[mapObject.height - 2][mapObject.width - 2] = 2;
+    if (map[mapObject.height - 2][mapObject.width - 2] != 2)
+    {
+        mapObject.removeMob(mapObject.width - 2, mapObject.height - 2);
+        map[mapObject.height - 2][mapObject.width - 2] = 2;
+    }
 
     dead = false;
 

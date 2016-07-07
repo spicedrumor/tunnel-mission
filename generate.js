@@ -172,9 +172,6 @@ var tmiss_generate = {
             row = [];
         }
 
-        newMap[0][0] = 1;
-        newMap[height - 2][width - 2] = 2;
-
         mapObject.mapArray = newMap;
         mapObject.width = width;
         mapObject.height = height;
@@ -182,6 +179,9 @@ var tmiss_generate = {
         //ensure player isn't instagib'd at start:
         tmiss_mapMutate.boxClobber(0, 0, 5, mapObject);
         mapObject.mapArray[0][0] = 1;
+
+        mapObject.removeMob(width - 2, height - 2);
+        mapObject.mapArray[height - 2][width - 2] = 2;
 
         return mapObject;
     }

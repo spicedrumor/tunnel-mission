@@ -14,6 +14,7 @@ boxClobber: function(xStart, yStart, size, mapObject){
     {
         for (x = xStart; x < xStart + size; x++)
         {
+            mapObject.removeMob(x, y);
             map[y][x] = 0;
         }
     }
