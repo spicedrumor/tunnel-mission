@@ -62,6 +62,7 @@ playerObject.xPos = 0;
 playerObject.yPos = 0;
 playerObject.armour = 0;
 playerObject.alive = true;
+playerObject.hasShield = false;
 
 currentRoundCount = 0;
 
@@ -133,11 +134,11 @@ function moveRandomMob()
     var randomDirection;
     var mover;
     var random;
-    
+
     if (mapObject.mobs.length > 0)
     {
         randomDirection = directions[Math.floor(Math.random() * 4)];
-        
+
         random = Math.floor(Math.random() * mapObject.mobs.length);
 
         mover = mapObject.mobs[random];
@@ -165,7 +166,7 @@ function move(direction, originX, originY, value)
     var newX;
     var newY;
     var target;
-    
+
     result = [];
     result[0] = originX;
     result[1] = originY;
@@ -581,9 +582,18 @@ function playerInteract(value, valueX, valueY)
         }
         else
         {
-            newMessage("7 touches base with you.");
-            gameOver("7 8 u  :(");
-            result = -1;
+            if (playerObject.hasShield)
+            {
+                newMessage("Your shield partially blocks 7s attack!");
+                random = Math.floor(Math.random() * 77) + 7;
+                playerHit(random);
+            }
+            else
+            {
+                newMessage("7 touches base with you.");
+                gameOver("7 8 u  :(");
+                result = -1;
+            }
         }
     }
     else if (value === 8)
@@ -618,6 +628,7 @@ function playerInteract(value, valueX, valueY)
     {
         tmiss_sound.eat();
         newMessage("You devour a curious looking mushroom.");
+        playerObject.score += 4;
         map[valueY][valueX] = 0;
         if (playerObject.greenBit)
         {
@@ -638,6 +649,7 @@ function playerInteract(value, valueX, valueY)
         newMessage("You are drawn into the event horizon.");
         if (value === 16)
         {
+            playerObject.score += 5;
             yLimit = mapObject.height - 1;
             newY = yPos + yShift;
             if (newY > yLimit)
@@ -663,6 +675,21 @@ function playerInteract(value, valueX, valueY)
         map[valueY][valueX] = 0;
         life += 7;
         timer += 7;
+    }
+    else if (value === 19)
+    {
+        if (!playerObject.hasShield)
+        {
+            newMessage("You find an old, tarnished metal shield.");
+            map[valueY][valueX] = 0;
+            playerObject.hasShield = true;
+        }
+        else
+        {
+            newMessage("You find an old, tarnished metal shield.");
+            map[valueY][valueX] = 0;
+            playerObject.score += 5;
+        }
     }
 
     if (life < 1)
@@ -871,8 +898,27 @@ function winGame()
 {
     quickUpdate();
     tmiss_sound.win();
-    playerObject.score += (timer * 7);
-    window.alert("Good job! Final score: " + playerObject.score);
+    score = playerObject.score
+    score += (timer * 10);
+    grade = "?";
+    if (score < 100)
+        grade = "F";
+    else if (score < 150)
+        grade = "D";
+    else if (score < 200)
+        grade = "C";
+    else if (score < 250)
+        grade = "C+";
+    else if (score < 300)
+        grade = "B";
+    else if (score < 350)
+        grade = "B+";
+    else if (score < 400)
+        grade = "A";
+    else
+        grade = "A+";
+
+    window.alert("Good job! Final grade: " + grade + " (" + score + ")");
     endGame();
 }
 
@@ -959,6 +1005,9 @@ function doIExist()
 function heartBeat()
 {
     var dead;
+
+    //TODO hacky
+    map[mapObject.height - 2][mapObject.width - 2] = 2;
 
     dead = false;
 

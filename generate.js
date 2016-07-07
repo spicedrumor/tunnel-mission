@@ -108,7 +108,7 @@ var tmiss_generate = {
                 }
                 else if (random === 1)
                 { //item
-                    random = Math.floor(Math.random() * 9);
+                    random = Math.floor(Math.random() * 11);
 
                     if (random == 0)
                     {
@@ -130,7 +130,19 @@ var tmiss_generate = {
                             row[j] = 0;
                         }
                     }
-                    else if (random > 1 && random < 3)
+                    else if (random === 2)
+                    {
+                        random = Math.floor(Math.random() * 32);
+                        if (random === 0)
+                        {
+                            row[j] = 19;
+                        }
+                        else
+                        {
+                            row[j] = 0;
+                        }
+                    }
+                    else if (random > 2 && random < 4)
                     {
                         row[j] = 14;
                     }
@@ -141,8 +153,8 @@ var tmiss_generate = {
                 }
                 else if (random === 2)
                 { //wall
-                        random = Math.floor(Math.random() * 2);
-                        if (random === 0)
+                        random = Math.floor(Math.random() * 10);
+                        if (random < 8)
                         {
                             row[j] = 12;
                         }
