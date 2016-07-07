@@ -74,7 +74,7 @@ var tmiss_draw = {
                     else if (value == 2)
                     {
                         result += COLOR_PINK;
-                        result += '">!';
+                        result += '">*';
                     }
                     else if (value == 3)
                     {

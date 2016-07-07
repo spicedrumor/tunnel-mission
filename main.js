@@ -632,26 +632,26 @@ function playerInteract(value, valueX, valueY)
     {
         //reserved
     }
-    else if (value === 16)
+    else if (value === 16 || value === 17)
     {
-        yLimit = mapObject.height - 1;
-        newY = yPos + (Math.floor(Math.random() * 16) + 16);
-
-        if (newY > yLimit)
+        yShift = (Math.floor(Math.random() * 16) + 16);
+        newMessage("You are drawn into the event horizon.");
+        if (value === 16)
         {
-            newY = yLimit;
+            yLimit = mapObject.height - 1;
+            newY = yPos + yShift;
+            if (newY > yLimit)
+            {
+                newY = yLimit;
+            }
         }
-
-        playerMove(xPos, newY);
-        tmiss_sound.magic();
-    }
-    else if (value === 17)
-    {
-        newY = yPos - (Math.floor(Math.random() * 16) + 16);
-
-        if (newY < 0)
+        else
         {
-            newY = 0;
+            newY = yPos - yShift;
+            if (newY < 0)
+            {
+                newY = 0;
+            }
         }
 
         playerMove(xPos, newY);
@@ -661,7 +661,8 @@ function playerInteract(value, valueX, valueY)
     {
         newMessage("You snatch up the crystal and swallow it whole!");
         map[valueY][valueX] = 0;
-        life += 16;
+        life += 7;
+        timer += 7;
     }
 
     if (life < 1)
@@ -674,8 +675,6 @@ function playerInteract(value, valueX, valueY)
 
 function playerMove(newX, newY)
 {
-    newMessage("You are drawn into the event horizon.");
-    //TODO following should be a func
     map[yPos][xPos] = 0;
     playerObject.xPos = newX;
     playerObject.yPos = newY;
@@ -714,7 +713,7 @@ function playerBump(value, valueX, valueY, offsetX, offsetY)
     else if (value === 15 && playerObject.pinkBit)
     {
         newMessage("You deliver a solid boot.");
-        bootItem(valueX, valueY, offsetX, offsetY, true);
+        bootItem(valueX, valueY, offsetX, offsetY, 3);
     }
     else if ((value === 12 || value === 14) && playerObject.greenBit)
     {
@@ -754,9 +753,9 @@ function bootItem(tileX, tileY, offsetX, offsetY, travel)
             array[newY][newX] = setTimeout(function(){tmiss_mapMutate.explosion(newX, newY, mapObject, playerObject, validTile, newMessage, true)}, 5000);
         }
 
-        if (travel)
+        if (travel > 0)
         {
-            bootItem(newX, newY, offsetX, offsetY, travel);
+            bootItem(newX, newY, offsetX, offsetY, travel - 1);
         }
     }
 }
@@ -873,7 +872,7 @@ function winGame()
     quickUpdate();
     tmiss_sound.win();
     playerObject.score += (timer * 7);
-    window.alert("You win! Good job! Final score: " + playerObject.score);
+    window.alert("Good job! Final score: " + playerObject.score);
     endGame();
 }
 
@@ -1067,7 +1066,7 @@ function newGame()
     {
         newMessage("");
     }
-    newMessage('<font color="' + "lime" + '">Objective: Rescue the '+ '</font><font color="' + COLOR_PINK + '">!</font>');
+    newMessage('<font color="' + "lime" + '">Objective: Locate the '+ '</font><font color="' + COLOR_PINK + '">*</font>');
 
     life = 128;
     timer = 128;

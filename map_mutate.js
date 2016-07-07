@@ -6,6 +6,18 @@ mapObject: null,
 validTile: null,
 slain: 0,
 output: -1,
+boxClobber: function(xStart, yStart, size, mapObject){
+    //TODO param validation
+    map = mapObject.mapArray;
+
+    for (y = yStart; y < yStart + size; y++)
+    {
+        for (x = xStart; x < xStart + size; x++)
+        {
+            map[y][x] = 0;
+        }
+    }
+},
 fire: function(tileX, tileY, mapObject){
     var random;
 
@@ -93,7 +105,7 @@ explosion: function(tileX, tileY, mapObject, playerObject, validTile, newMessage
 
         if (rootCall)
         {
-            playerObject.score += (this.slain * this.slain * 777);
+            playerObject.score += (this.slain * this.slain * 7);
             this.slain = 0;
         }
     }
@@ -122,7 +134,6 @@ recursion: function(tileX, tileY, xOffset, yOffset, mapObject, validTile, count)
                 mapObject.removeMob(tileX, tileY);
                 if (value === 7)
                 {
-                    random = Math.floor(Math.random() * 2);
 
                     if (this.slain === 0)
                     {
@@ -140,6 +151,8 @@ recursion: function(tileX, tileY, xOffset, yOffset, mapObject, validTile, count)
                     {
                         this.newMessage("M-M-M-MONSTER KILL!!!");
                     }
+
+                    random = Math.floor(Math.random() * 7);
                     if (random === 0)
                     {
                         mapObject.insertMob(tileX, tileY, 9);
@@ -148,6 +161,7 @@ recursion: function(tileX, tileY, xOffset, yOffset, mapObject, validTile, count)
                     {
                         map[tileY][tileX] = 18;
                     }
+
                     sevener = true;
                     this.slain += 1;
                 }

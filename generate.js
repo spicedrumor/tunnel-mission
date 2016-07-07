@@ -162,14 +162,14 @@ var tmiss_generate = {
 
         newMap[0][0] = 1;
         newMap[height - 2][width - 2] = 2;
-        //ensure player isn't instagib'd at start:
-        newMap[0][1] = 0;
-        newMap[1][0] = 0;
-        newMap[1][1] = 0;
 
         mapObject.mapArray = newMap;
         mapObject.width = width;
         mapObject.height = height;
+
+        //ensure player isn't instagib'd at start:
+        tmiss_mapMutate.boxClobber(0, 0, 5, mapObject);
+        mapObject.mapArray[0][0] = 1;
 
         return mapObject;
     }
