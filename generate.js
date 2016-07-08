@@ -112,7 +112,27 @@ var tmiss_generate = {
 
                     if (random == 0)
                     {
-                        row[j] = 10;
+                        random = Math.floor(Math.random() * 4);
+                        if (random === 0)
+                        {
+                            random = Math.floor(Math.random() * 3);
+                            if (random == 0)
+                            {
+                                row[j] = 300;
+                            }
+                            else if (random == 1)
+                            {
+                                row[j] = 301;
+                            }
+                            else if (random == 2)
+                            {
+                                row[j] = 302;
+                            }
+                        }
+                        else
+                        {
+                            row[j] = 10;
+                        }
                     }
                     else if (random === 1)
                     {

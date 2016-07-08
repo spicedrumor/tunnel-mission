@@ -144,6 +144,21 @@ var tmiss_draw = {
                         result += '#CC33FF">';
                         result += '<img src="res/trans_shield.png" alt="mushroom" height="20" width="15">';
                     }
+                    else if (value == 300)
+                    {
+                        result += '#CC33FF">';
+                        result += '<img src="res/trans_mushroom_blue.png" alt="mushroom" height="20" width="15">';
+                    }
+                    else if (value == 301)
+                    {
+                        result += '#CC33FF">';
+                        result += '<img src="res/trans_mushroom_pink.png" alt="mushroom" height="20" width="15">';
+                    }
+                    else if (value == 302)
+                    {
+                        result += '#CC33FF">';
+                        result += '<img src="res/trans_mushroom_green.png" alt="mushroom" height="20" width="15">';
+                    }
                     else
                     {
                         result += 'blue">';

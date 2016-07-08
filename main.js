@@ -350,6 +350,22 @@ document.onkeyup = function(e)
     {
         direction = "w";
     }
+    else if (key === 72)
+    {
+        tmiss_help.menu();
+    }
+    else if (key === 73)
+    {
+        newMessage("You check your inventory...");
+        if (playerObject.hasShield)
+        {
+            newMessage("You are carrying a metal shield.");
+        }
+        else
+        {
+            newMessage("Your inventory is empty.");
+        }
+    }
     else if (key === 80)
     {
         life -= 5;
@@ -673,8 +689,8 @@ function playerInteract(value, valueX, valueY)
     {
         newMessage("You snatch up the crystal and swallow it whole!");
         map[valueY][valueX] = 0;
-        life += 7;
-        timer += 7;
+        life += 8;
+        timer += 16;
     }
     else if (value === 19)
     {
@@ -690,6 +706,51 @@ function playerInteract(value, valueX, valueY)
             map[valueY][valueX] = 0;
             playerObject.score += 5;
         }
+    }
+    else if (value === 300)
+    {
+        tmiss_sound.eat();
+        newMessage("You devour an aulluring looking mushroom.");
+        map[valueY][valueX] = 0;
+        timer += 8;
+        if (playerObject.blueBit)
+        {
+        }
+        else
+        {
+            newMessage("You feel much lighter!");
+            colourPlayer("b");
+        }
+    }
+    else if (value === 301)
+    {
+        tmiss_sound.eat();
+        newMessage("You devour a scary looking mushroom.");
+        timer += 8;
+        if (playerObject.pinkBit)
+        {
+        }
+        else
+        {
+            newMessage("You feel much angrier!");
+            colourPlayer("p");
+        }
+        map[valueY][valueX] = 0;
+    }
+    else if (value === 302)
+    {
+        tmiss_sound.eat();
+        newMessage("You devour a muscular looking mushroom.");
+        timer += 8;
+        if (playerObject.greenBit)
+        {
+        }
+        else
+        {
+            newMessage("You feel like you live in a world made of cardboard!");
+            colourPlayer("g");
+        }
+        map[valueY][valueX] = 0;
     }
 
     if (life < 1)
@@ -1108,6 +1169,7 @@ function newGame()
     playerObject.flashBit = false;
     playerObject.armour = 0;
     playerObject.score = 1;
+    playerObject.hasShield = false;
 
     currentKeys = [];
 
@@ -1120,11 +1182,37 @@ function newGame()
     {
         newMessage("");
     }
+
+    newMessage("Type \"h\" for help <---------------");
+
     newMessage('<font color="' + "lime" + '">Objective: Locate the '+ '</font><font color="' + COLOR_PINK + '">*</font>');
 
     life = 128;
     timer = 128;
     timerBit = false;
+}
+
+function colourPlayer(colour)
+{
+    playerObject.blueBit = false;
+    playerObject.pinkBit = false;
+    playerObject.greenBit = false;
+
+    if (colour == "b")
+    {
+        playerObject.blueBit = true;
+        playerObject.colour = "#00FFFF";
+    }
+    else if (colour == "p")
+    {
+        playerObject.pinkBit = true;
+        playerObject.colour = COLOR_PINK;
+    }
+    else if (colour == "g")
+    {
+        playerObject.greenBit = true;
+        playerObject.colour = "#00FF00";
+    }
 }
 
 function startGame()
@@ -1158,28 +1246,9 @@ function startGame()
         }
 
         input = window.prompt("Select Player: (type b for blue or p for pink or g for green or h for help)", preset);
-        if (input === "b")
+        if (input === "b" || input == "p" || input == "g")
         {
-            playerObject.blueBit = true;
-            playerObject.pinkBit = false;
-            playerObject.greenBit = false;
-            playerObject.colour = "#00FFFF";
-            done = true;
-        }
-        else if (input === "p") 
-        {
-            playerObject.blueBit = false;
-            playerObject.pinkBit = true;
-            playerObject.greenBit = false;
-            playerObject.colour = COLOR_PINK;
-            done = true;
-        }
-        else if (input === "g") 
-        {
-            playerObject.blueBit = false;
-            playerObject.pinkBit = false;
-            playerObject.greenBit = true;
-            playerObject.colour = "#00FF00";
+            colourPlayer(input);
             done = true;
         }
         else if (input === "h")
