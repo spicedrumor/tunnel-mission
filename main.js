@@ -10,6 +10,7 @@ var MAP_VAL_EMPTY = 0;
 var MAP_VAL_PLAYER = 1;
 var MAP_VAL_MOB = 3;
 var COLOR_PINK = "#FF66FF";
+var MAX_PLOUGH = 5;
 var map;
 var mapString;
 var xPos;
@@ -63,6 +64,7 @@ playerObject.yPos = 0;
 playerObject.armour = 0;
 playerObject.alive = true;
 playerObject.hasShield = false;
+playerObject.powerMove = false;
 
 currentRoundCount = 0;
 
@@ -158,19 +160,73 @@ function mobMove(direction, originX, originY, value)
     return result;
 }
 
-function move(direction, originX, originY, value)
+function ploughThrough(originX, originY, offsetX, offsetY, value, count)
 {
-    var result;
+    if (count > 0 && validTile(originX + offsetX, originY + offsetY))
+    {
+        tmiss_sound.magic();
+        var newX;
+        var newY;
+
+        newX = originX + offsetX;
+        newY = originY + offsetY;
+        xPos = newX;
+        yPos = newY;
+        playerObject.xPos = newX;
+        playerObject.yPos = newY;
+
+        map[originY][originX] = 0;
+        if (map[newY][newX] === 7)
+        {
+            newMessage("A 7 has fallen!");
+            life += 8;
+            timer += 16;
+        }
+        else if (map[newY][newX] === 2)
+        {
+            winGame();
+        }
+        clobberTile(newX, newY);
+        map[newY][newX] = value;
+
+        ploughThrough(newX, newY, offsetX, offsetY, value, count - 1);
+    }
+    else if (count === MAX_PLOUGH)
+    {
+        newMessage("That would be a very bad idea... ");
+    }
+    else
+    {
+        newMessage("You suddenly feel drained.");
+        playerObject.powerMove = false;
+    }
+}
+
+function powerMove(direction, originX, originY, value)
+{
+    var offsetValues;
     var offsetX;
     var offsetY;
     var newX;
     var newY;
-    var target;
+
+    offsetValues = getOffset(direction);
+    offsetX = offsetValues[0];
+    offsetY = offsetValues[1];
+
+    newX = originX + offsetX;
+    newY = originY + offsetY;
+
+    ploughThrough(originX, originY, offsetX, offsetY, value, MAX_PLOUGH);
+}
+
+function getOffset(direction)
+{
+    var result;
+    var offsetX;
+    var offsetY;
 
     result = [];
-    result[0] = originX;
-    result[1] = originY;
-
     offsetX = 0;
     offsetY = 0;
 
@@ -190,6 +246,30 @@ function move(direction, originX, originY, value)
     {
         offsetX = -1;
     }
+
+    result[0] = offsetX;
+    result[1] = offsetY;
+
+    return result;
+}
+
+function move(direction, originX, originY, value)
+{
+    var result;
+    var offsetValues;
+    var offsetX;
+    var offsetY;
+    var newX;
+    var newY;
+    var target;
+
+    result = [];
+    result[0] = originX;
+    result[1] = originY;
+
+    offsetValues = getOffset(direction);
+    offsetX = offsetValues[0];
+    offsetY = offsetValues[1];
 
     newX = originX + offsetX;
     newY = originY + offsetY;
@@ -245,39 +325,51 @@ function spell()
     var tileX;
     var tileY;
 
-    newMessage("You cast a spell!");
-    life -= 25;
-    tmiss_sound.magic();
+    life -= 32;
 
-    hit = false;
-    for (i = -1; i < 2; i++)
+    if (playerObject.blueBit)
     {
-        for (j = -1; j < 2; j++)
+        newMessage("Your entire body tenses.");
+        playerObject.powerMove = true;
+    }
+    else if (playerObject.pinkBit)
+    {
+    }
+    else if (playerObject.greenBit)
+    {
+        tmiss_sound.magic();
+        newMessage("You focus on your chi... ");
+        hit = false;
+        for (i = -1; i < 2; i++)
         {
-            tileX = xPos + j;
-            tileY = yPos + i;
-            if (validTile(tileX, tileY) && map[tileY][tileX] > 2)
+            for (j = -1; j < 2; j++)
             {
-                clobberTile(tileX, tileY);
-                map[tileY][tileX] = 0;
-                hit = true;
+                tileX = xPos + j;
+                tileY = yPos + i;
+                if (validTile(tileX, tileY) && map[tileY][tileX] > 2)
+                {
+                    clobberTile(tileX, tileY);
+                    map[tileY][tileX] = 0;
+                    hit = true;
+                }
             }
+        }
+        if (!hit)
+        {
+            newMessage("Nothing happened...");
         }
     }
 
-    if (!hit)
-    {
-        newMessage("Nothing happened...");
-    }
+
 }
 
 function playerMover()
 {
-    var moveTime = 250;
+    var moveTime = 200;
 
     if (playerObject.blueBit)
     {
-        moveTime = 100;
+        moveTime = 80;
     }
     if (currentKeys.length > 0)
     {
@@ -318,11 +410,18 @@ document.onkeydown = function(e)
     {
         if (currentKeys.indexOf(direction) === -1)
         {
-            move(direction, xPos, yPos, MAP_VAL_PLAYER);
+            if (playerObject.powerMove)
+            {
+                powerMove(direction, xPos, yPos, MAP_VAL_PLAYER);
+            }
+            else
+            {
+                move(direction, xPos, yPos, MAP_VAL_PLAYER);
 
-            currentKeys.push(direction);
-            clearTimeout(timerMovePlayer);
-            timerMovePlayer = setTimeout(playerMover, 500);
+                currentKeys.push(direction);
+                clearTimeout(timerMovePlayer);
+                timerMovePlayer = setTimeout(playerMover, 500);
+            }
         }
     }
 }
@@ -374,7 +473,7 @@ document.onkeyup = function(e)
     }
     else if (key === 81)
     {
-        if (life > 25)
+        if (life > 32) //TODO move check to spell
         {
             spell();
         }
@@ -557,8 +656,16 @@ function playerInteract(value, valueX, valueY)
         }
         else
         {
-            newMessage("5 shatters in your general direction!");
-            random = Math.floor(Math.random() * 21) + 5;
+            if (playerObject.hasShield)
+            {
+                newMessage("Your shield absorbs some of 5's shrapnel!");
+                random = Math.floor(Math.random() * 15) + 5;
+            }
+            else
+            {
+                newMessage("5 shatters in your general direction!");
+                random = Math.floor(Math.random() * 21) + 5;
+            }
             playerHit(random);
         }
 
@@ -694,17 +801,12 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value === 19)
     {
+        newMessage("You find an old, tarnished metal shield.");
+        map[valueY][valueX] = 0;
+        playerObject.score += 15;
         if (!playerObject.hasShield)
         {
-            newMessage("You find an old, tarnished metal shield.");
-            map[valueY][valueX] = 0;
             playerObject.hasShield = true;
-        }
-        else
-        {
-            newMessage("You find an old, tarnished metal shield.");
-            map[valueY][valueX] = 0;
-            playerObject.score += 5;
         }
     }
     else if (value === 300)
@@ -800,14 +902,14 @@ function playerBump(value, valueX, valueY, offsetX, offsetY)
     }
     else if (value === 15 && playerObject.pinkBit)
     {
-        newMessage("You deliver a solid boot.");
+        newMessage("You execute your best flying dropkick!");
         bootItem(valueX, valueY, offsetX, offsetY, 3);
     }
     else if ((value === 12 || value === 14) && playerObject.greenBit)
     {
         if (map[valueY + offsetY][valueX + offsetX] === 0)
         {
-            newMessage("You shove with all your might!");
+            newMessage("You put your back into it!");
             map[valueY + offsetY][valueX + offsetX] = map[valueY][valueX];
             map[valueY][valueX] = 0;
         }
@@ -962,25 +1064,36 @@ function winGame()
     score = playerObject.score
     score += (timer * 10);
     score += life;
+    if (difficulty == "easy")
+    {
+        score = score / 2;
+    }
+    else if (difficulty == "hard")
+    {
+        score = score * 3;
+    }
+
+    score = Math.floor(score);
+
     grade = "?";
-    if (score < 200)
+    if (score < 500)
         grade = "F";
-    else if (score < 250)
+    else if (score < 550)
         grade = "D";
-    else if (score < 300)
+    else if (score < 600)
         grade = "C";
-    else if (score < 350)
+    else if (score < 650)
         grade = "C+";
-    else if (score < 400)
+    else if (score < 700)
         grade = "B";
-    else if (score < 450)
+    else if (score < 750)
         grade = "B+";
-    else if (score < 500)
+    else if (score < 800)
         grade = "A";
     else
         grade = "A+";
 
-    window.alert("Good job! Final grade: " + grade + " (" + score + ")");
+    window.alert("Good job!\nDifficulty: " + difficulty + "\nTotal score: " + score + "\nFinal grade: " + grade);
     endGame();
 }
 
@@ -1170,6 +1283,7 @@ function newGame()
     playerObject.armour = 0;
     playerObject.score = 1;
     playerObject.hasShield = false;
+    playerObject.powerMove = false;
 
     currentKeys = [];
 
