@@ -11,6 +11,7 @@ var MAP_VAL_PLAYER = 1;
 var MAP_VAL_MOB = 3;
 var COLOR_PINK = "#FF66FF";
 var MAX_PLOUGH = 5;
+var SEVENER_SCORE_VALUE = 15;
 var map;
 var mapString;
 var xPos;
@@ -70,7 +71,7 @@ currentRoundCount = 0;
 
 directions = ["n", "s", "e", "w"];
 
-function validTile(newX, newY)
+function validTile(tileX, tileY)
 {
     var result;
     var notTooSmall;
@@ -78,11 +79,11 @@ function validTile(newX, newY)
 
     result = false;
 
-    if (newX >= 0 && newY >= 0)
+    if (tileX >= 0 && tileY >= 0)
     {
             notTooSmall = true;
     }
-    if (newX < mapObject.width && newY < mapObject.height)
+    if (tileX < mapObject.width && tileY < mapObject.height)
     {
         notTooBig = true;
     }
@@ -93,6 +94,11 @@ function validTile(newX, newY)
     }
 
     return result;
+}
+
+function clearTile(tileX, tileY)
+{
+    return (validTile(tileX, tileY) && emptyTile(tileX, tileY));
 }
 
 function emptyTile(tileX, tileY)
@@ -160,7 +166,7 @@ function mobMove(direction, originX, originY, value)
     return result;
 }
 
-function ploughThrough(originX, originY, offsetX, offsetY, value, count)
+function ploughThrough(originX, originY, offsetX, offsetY, value, count, slain)
 {
     if (count > 0 && validTile(originX + offsetX, originY + offsetY))
     {
@@ -178,7 +184,8 @@ function ploughThrough(originX, originY, offsetX, offsetY, value, count)
         map[originY][originX] = 0;
         if (map[newY][newX] === 7)
         {
-            newMessage("A 7 has fallen!");
+            slain += 1;
+            sevenDown(slain);
             life += 8;
             timer += 16;
         }
@@ -189,7 +196,7 @@ function ploughThrough(originX, originY, offsetX, offsetY, value, count)
         clobberTile(newX, newY);
         map[newY][newX] = value;
 
-        ploughThrough(newX, newY, offsetX, offsetY, value, count - 1);
+        ploughThrough(newX, newY, offsetX, offsetY, value, count - 1, slain);
     }
     else if (count === MAX_PLOUGH)
     {
@@ -217,7 +224,7 @@ function powerMove(direction, originX, originY, value)
     newX = originX + offsetX;
     newY = originY + offsetY;
 
-    ploughThrough(originX, originY, offsetX, offsetY, value, MAX_PLOUGH);
+    ploughThrough(originX, originY, offsetX, offsetY, value, MAX_PLOUGH, 0);
 }
 
 function getOffset(direction)
@@ -324,6 +331,9 @@ function spell()
     var hit;
     var tileX;
     var tileY;
+    var target;
+    var slain;
+    var random;
 
     life -= 32;
 
@@ -334,12 +344,55 @@ function spell()
     }
     else if (playerObject.pinkBit)
     {
+        hit = false;
+        for (i = -1; i < 2; i++)
+        {
+            for (j = -1; j < 2; j++)
+            {
+                tileX = xPos + j;
+                tileY = yPos + i;
+                if (validTile(tileX, tileY))
+                {
+                    target = map[tileY][tileX];
+                    if (validTile(tileX, tileY) && target > 1 && target < 10)
+                    {
+                        hit = true;
+                    }
+                }
+            }
+        }
+
+        if (hit)
+        {
+            newMessage("You feel too crowded for that.");
+        }
+        else
+        {
+            newMessage("You call upon that which you hold most dear... ");
+            if (clearTile(xPos - 1, yPos - 1))
+            {
+                map[yPos - 1][xPos - 1] = 14;
+            }
+            if (clearTile(xPos + 1, yPos - 1))
+            {
+                map[yPos - 1][xPos + 1] = 14;
+            }
+            if (clearTile(xPos - 1, yPos + 1))
+            {
+                map[yPos + 1][xPos - 1] = 14;
+            }
+            if (clearTile(xPos + 1, yPos + 1))
+            {
+                map[yPos + 1][xPos + 1] = 14;
+            }
+        }
     }
     else if (playerObject.greenBit)
     {
         tmiss_sound.magic();
         newMessage("You focus on your chi... ");
         hit = false;
+        slain = 0;
         for (i = -1; i < 2; i++)
         {
             for (j = -1; j < 2; j++)
@@ -348,9 +401,19 @@ function spell()
                 tileY = yPos + i;
                 if (validTile(tileX, tileY) && map[tileY][tileX] > 2)
                 {
-                    clobberTile(tileX, tileY);
-                    map[tileY][tileX] = 0;
                     hit = true;
+                    target = map[tileY][tileX];
+                    clobberTile(tileX, tileY);
+                    if (target === 7)
+                    {
+                        slain += 1;
+                        map[tileY][tileX] = 18;
+                        sevenDown(slain);
+                    }
+                    else
+                    {
+                        map[tileY][tileX] = 0;
+                    }
                 }
             }
         }
@@ -361,6 +424,30 @@ function spell()
     }
 
 
+}
+
+function sevenDown(count)
+{
+    if (count === 1)
+    {
+        newMessage("A 7 has fallen!");
+        playerObject.score += SEVENER_SCORE_VALUE;
+    }
+    else if (count === 2)
+    {
+        newMessage("Multi-Kill!");
+        playerObject.score += SEVENER_SCORE_VALUE * 2;
+    }
+    else if (count === 3)
+    {
+        newMessage("Mega-Kill!");
+        playerObject.score += SEVENER_SCORE_VALUE * 4;
+    }
+    else if (count > 4)
+    {
+        newMessage("M-M-M-MONSTER KILL!!!");
+        playerObject.score += SEVENER_SCORE_VALUE * 8;
+    }
 }
 
 function playerMover()

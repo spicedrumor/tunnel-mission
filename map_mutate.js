@@ -135,16 +135,16 @@ recursion: function(tileX, tileY, xOffset, yOffset, mapObject, validTile, count)
                 mapObject.removeMob(tileX, tileY);
                 if (value === 7)
                 {
-
+                //TODO use the code from main:
                     if (this.slain === 0)
                     {
                         this.newMessage("A 7 has fallen!");
                     }
-                    else if (this.slain == 1)
+                    else if (this.slain === 1)
                     {
                         this.newMessage("Multi-Kill!");
                     }
-                    else if (this.slain == 2)
+                    else if (this.slain === 2)
                     {
                         this.newMessage("Mega-Kill!");
                     }
