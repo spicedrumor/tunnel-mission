@@ -12,10 +12,9 @@ var MAP_VAL_MOB = 3;
 var COLOR_PINK = "#FF66FF";
 var MAX_PLOUGH = 5;
 var SEVENER_SCORE_VALUE = 15;
+var SPELL_COST = 32;
 var map;
 var mapString;
-var xPos;
-var yPos;
 var directions;
 var messageQueue;
 var life;
@@ -176,8 +175,6 @@ function ploughThrough(originX, originY, offsetX, offsetY, value, count, slain)
 
         newX = originX + offsetX;
         newY = originY + offsetY;
-        xPos = newX;
-        yPos = newY;
         playerObject.xPos = newX;
         playerObject.yPos = newY;
 
@@ -290,8 +287,6 @@ function move(direction, originX, originY, value)
         }
         else
         {
-            xPos = newX;
-            yPos = newY;
             playerObject.xPos = newX;
             playerObject.yPos = newY;
             map[originY][originX] = 0;
@@ -334,8 +329,13 @@ function spell()
     var target;
     var slain;
     var random;
+    var xPos;
+    var yPos;
 
-    life -= 32;
+    xPos = playerObject.xPos;
+    yPos = playerObject.yPos;
+
+    life -= SPELL_COST;
 
     if (playerObject.blueBit)
     {
@@ -399,7 +399,8 @@ function spell()
             {
                 tileX = xPos + j;
                 tileY = yPos + i;
-                if (validTile(tileX, tileY) && map[tileY][tileX] > 2)
+                target = map[tileY][tileX];
+                if (validTile(tileX, tileY) && target > 2)
                 {
                     hit = true;
                     target = map[tileY][tileX];
@@ -452,7 +453,12 @@ function sevenDown(count)
 
 function playerMover()
 {
+    var xPos;
+    var yPos;
     var moveTime = 200;
+
+    xPos = playerObject.xPos;
+    yPos = playerObject.yPos;
 
     if (playerObject.blueBit)
     {
@@ -471,6 +477,11 @@ document.onkeydown = function(e)
     var direction;
     var newCoords;
     var key = e.keyCode ? e.keyCode : e.which;
+    var xPos;
+    var yPos;
+
+    xPos = playerObject.xPos;
+    yPos = playerObject.yPos;
 
     direction = "";
     if (key === KEY_CODE_W)
@@ -560,7 +571,7 @@ document.onkeyup = function(e)
     }
     else if (key === 81)
     {
-        if (life > 32) //TODO move check to spell
+        if (life > SPELL_COST)
         {
             spell();
         }
@@ -616,8 +627,8 @@ function playerInteractions()
     {
         for (j = -1; j < 2; j++)
         {
-            tileX = xPos + j;
-            tileY = yPos + i;
+            tileX = playerObject.xPos + j;
+            tileY = playerObject.yPos + i;
             if (validTile(tileX, tileY))
             {
                 current = map[tileY][tileX];
@@ -861,7 +872,7 @@ function playerInteract(value, valueX, valueY)
         {
             playerObject.score += 5;
             yLimit = mapObject.height - 1;
-            newY = yPos + yShift;
+            newY = playerObject.yPos + yShift;
             if (newY > yLimit)
             {
                 newY = yLimit;
@@ -869,14 +880,14 @@ function playerInteract(value, valueX, valueY)
         }
         else
         {
-            newY = yPos - yShift;
+            newY = playerObject.yPos - yShift;
             if (newY < 0)
             {
                 newY = 0;
             }
         }
 
-        playerMove(xPos, newY);
+        playerTeleport(playerObject.xPos, newY);
         tmiss_sound.magic();
     }
     else if (value === 18)
@@ -950,13 +961,11 @@ function playerInteract(value, valueX, valueY)
     return result;
 }
 
-function playerMove(newX, newY)
+function playerTeleport(newX, newY)
 {
-    map[yPos][xPos] = 0;
+    map[playerObject.yPos][playerObject.xPos] = 0;
     playerObject.xPos = newX;
     playerObject.yPos = newY;
-    xPos = newX;
-    yPos = newY;
     if (map[newY][newX] != 0)
     {
         newMessage("Something explodes into many wet chunks.");
@@ -1097,7 +1106,6 @@ function playerHit(damage)
 {
     if (!armourBuff() && !phaseBuff())
     {
-        //tmiss_sound.hit();
         life -= damage;
 
         clearTimeout(timerPlayerFlash);
@@ -1151,11 +1159,11 @@ function winGame()
     score = playerObject.score
     score += (timer * 10);
     score += life;
-    if (difficulty == "easy")
+    if (difficulty === "easy")
     {
         score = score / 2;
     }
-    else if (difficulty == "hard")
+    else if (difficulty === "hard")
     {
         score = score * 3;
     }
@@ -1254,7 +1262,7 @@ function endGame()
 
 function doIExist()
 {
-    if (map[yPos][xPos] != 1)
+    if (map[playerObject.yPos][playerObject.xPos] != 1)
     {
         gameOver("You (violently) ceased to exist.");
     }
@@ -1333,8 +1341,7 @@ function updateStatusPane()
     pane.innerHTML += '<font size="6" color="green">' + "Life: " + life + "</font>&emsp;";
     pane.innerHTML += '<font size="6" color="red">' + "Time: " + timer + "</font>&emsp;";
     pane.innerHTML += '<font size="6" color="blue">' + "Score: " + playerObject.score + "</font>&emsp;";
-    pane.innerHTML += '<font size="6" color="yellow">' + "position: " + Math.floor(yPos / mapObject.height * 100) + "%</font>";
-
+    pane.innerHTML += '<font size="6" color="yellow">' + "position: " + Math.floor(playerObject.yPos / mapObject.height * 100) + "%</font>";
 }
 
 function newMessage(message)
@@ -1361,8 +1368,6 @@ function newMap()
 
 function newGame()
 {
-    xPos = 0;
-    yPos = 0;
     playerObject.xPos = 0;
     playerObject.yPos = 0;
     playerObject.alive = true;
@@ -1399,17 +1404,17 @@ function colourPlayer(colour)
     playerObject.pinkBit = false;
     playerObject.greenBit = false;
 
-    if (colour == "b")
+    if (colour === "b")
     {
         playerObject.blueBit = true;
         playerObject.colour = "#00FFFF";
     }
-    else if (colour == "p")
+    else if (colour === "p")
     {
         playerObject.pinkBit = true;
         playerObject.colour = COLOR_PINK;
     }
-    else if (colour == "g")
+    else if (colour === "g")
     {
         playerObject.greenBit = true;
         playerObject.colour = "#00FF00";
@@ -1447,7 +1452,7 @@ function startGame()
         }
 
         input = window.prompt("Select Player: (type b for blue or p for pink or g for green or h for help)", preset);
-        if (input === "b" || input == "p" || input == "g")
+        if (input === "b" || input === "p" || input === "g")
         {
             colourPlayer(input);
             done = true;
@@ -1501,6 +1506,12 @@ context.strokeStyle="#FF0000";
 
 context.canvas.addEventListener('mousedown', function(event)
 {
+    var xPos;
+    var yPos;
+
+    xPos = playerObject.xPos;
+    yPos = playerObject.yPos;
+
     event.preventDefault();//TODO
     var xp = event.clientX - context.canvas.offsetLeft;
     var yp = event.clientY - context.canvas.offsetTop;
