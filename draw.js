@@ -56,13 +56,17 @@ var tmiss_draw = {
                             result += 'red">^';
                         }
                     }
-                    else if (value == 0)
+                    else if (value === 0)
                     {
                         result += '#6B6B6B">.';
                     }
-                    else if (value == 1)
+                    else if (value === 1)
                     {
-                        if (playerObject.flashBit)
+                        if (playerObject.flashBit && playerObject.phasing)
+                        {
+                            result += "grey" + '">@';
+                        }
+                        else if (playerObject.flashBit)
                         {
                             result += "white" + '">@';
                         }
@@ -71,90 +75,94 @@ var tmiss_draw = {
                             result += playerObject.colour + '">@';
                         }
                     }
-                    else if (value == 2)
+                    else if (value === 2)
                     {
                         result += COLOR_PINK;
                         result += '">*';
                     }
-                    else if (value == 3)
+                    else if (value === 3)
                     {
                         result += '#000066">3';
                     }
-                    else if (value == 4)
+                    else if (value === 4)
                     {
                         result += '#0066FF">4';
                     }
-                    else if (value == 5)
+                    else if (value === 5)
                     {
                         result += '#66FF66">5';
                     }
-                    else if (value == 6)
+                    else if (value === 6)
                     {
                         result += '#FFFF66">6';
                     }
-                    else if (value == 7)
+                    else if (value === 7)
                     {
                         result += '#FF0066">7';
                     }
-                    else if (value == 8)
+                    else if (value === 8)
                     {
                         result += '#0000CC">8';
                     }
-                    else if (value == 9)
+                    else if (value === 9)
                     {
                         result += '#9900FF">9';
                     }
-                    else if (value == 10)
+                    else if (value === 10)
                     {
                         result += '#CC33FF">';
                         result += '<img src="res/trans_mushroom.png" alt="mushroom" height="20" width="15">';
                     }
-                    else if (value == 12)
+                    else if (value === 12)
                     {
                         result += 'grey">';
                         result += '#';
                     }
-                    else if (value == 14)
+                    else if (value === 14)
                     {
                         result += '#990000">';
                         result += 'o';
                     }
-                    else if (value == 15)
+                    else if (value === 15)
                     {
                         result += '#FF0000">';
                         result += 'o';
                     }
-                    else if (value == 16)
+                    else if (value === 16)
                     {
                         result += '#006600">';
                         result += '*';
                     }
-                    else if (value == 17)
+                    else if (value === 17)
                     {
                         result += '#990000">';
                         result += '*';
                     }
-                    else if (value == 18)
+                    else if (value === 18)
                     {
                         result += '#CC33FF">';
                         result += '<img src="res/trans_crystal.png" alt="mushroom" height="20" width="15">';
                     }
-                    else if (value == 19)
+                    else if (value === 19)
                     {
                         result += '#CC33FF">';
                         result += '<img src="res/trans_shield.png" alt="mushroom" height="20" width="15">';
                     }
-                    else if (value == 300)
+                    else if (value === 103)
+                    {
+                        result += '#ff0066">3';
+                    }
+                    else if (value === 300)
                     {
                         result += '#CC33FF">';
                         result += '<img src="res/trans_mushroom_blue.png" alt="mushroom" height="20" width="15">';
                     }
-                    else if (value == 301)
+                    else if (value === 301)
                     {
                         result += '#CC33FF">';
                         result += '<img src="res/trans_mushroom_pink.png" alt="mushroom" height="20" width="15">';
                     }
-                    else if (value == 302)
+                    else if (value === 302)
                     {
                         result += '#CC33FF">';
                         result += '<img src="res/trans_mushroom_green.png" alt="mushroom" height="20" width="15">';

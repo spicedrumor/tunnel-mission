@@ -44,6 +44,10 @@ var smileCurSize;
 
 difficulty = "normal";
 
+//TODO: game object
+//    - contain mapObj, playerObj
+//    - contain difficulty, time, etc.
+
 var mapObject = {
 };
 mapObject.map = map;
@@ -100,6 +104,23 @@ function clearTile(tileX, tileY)
     return (validTile(tileX, tileY) && emptyTile(tileX, tileY));
 }
 
+function smashableTile(tileX, tileY)
+{
+    var result;
+    var target;
+
+    result = false;
+
+    target = map[tileY][tileX];
+
+    if (target === 12 || target === 0)
+    {
+        result = true;
+    }
+
+    return result;
+}
+
 function emptyTile(tileX, tileY)
 {
     return (map[tileY][tileX] === 0);
@@ -112,6 +133,23 @@ function safeTile(tileX, tileY)
     value = map[tileY][tileX];
 
     return (value != 1 && value != 2);
+}
+
+function validSmash(newX, newY)
+{
+    var result;
+
+    result = false;
+
+    if (validTile(newX, newY))
+    {
+        if (smashableTile(newX, newY))
+        {
+            result = true;
+        }
+    }
+
+    return result;
 }
 
 function validMove(newX, newY)
@@ -160,7 +198,15 @@ function mobMove(direction, originX, originY, value)
 {
     var result;
 
-    result = move(direction, originX, originY, value);
+    if (value > 100)
+    {
+        result = clingyMobMove(originX, originY, value);
+        result = clingyMobMove(result[0], result[1], value);
+    }
+    else
+    {
+        result = move(direction, originX, originY, value);
+    }
 
     return result;
 }
@@ -253,6 +299,56 @@ function getOffset(direction)
 
     result[0] = offsetX;
     result[1] = offsetY;
+
+    return result;
+}
+
+function clingyMobMove(originX, originY, value)
+{
+    var offsetValues;
+    var offsetX;
+    var offsetY;
+    var newX;
+    var newY;
+    var result;
+    var random;
+
+    offsetX = 0;
+    offsetY = 0;
+
+    result = [];
+    result[0] = originX;
+    result[1] = originY;
+
+    if (playerObject.xPos > originX)
+    {
+        offsetX = 1;
+    }
+    if (playerObject.xPos < originX)
+    {
+        offsetX = -1;
+    }
+    if (playerObject.yPos > originY)
+    {
+        offsetY = 1;
+    }
+    if (playerObject.yPos < originY)
+    {
+        offsetY = -1;
+    }
+
+    newX = originX + offsetX;
+    newY = originY + offsetY;
+
+
+    if (validSmash(newX, newY))
+    {
+        result[0] = newX;
+        result[1] = newY;
+
+        mapObject.removeMob(originX, originY);
+        mapObject.insertMob(newX, newY, value);
+    }
 
     return result;
 }
@@ -907,6 +1003,39 @@ function playerInteract(value, valueX, valueY)
             playerObject.hasShield = true;
         }
     }
+    else if (value === 103)
+    {
+        random = 1;
+        if (playerObject.blueBit)
+        {
+            random = Math.floor(Math.random() * 3);
+        }
+
+        if (random != 0)
+        {
+            newMessage("3's fangs tear off a chunk of your flesh!");
+            playerHit(Math.floor(Math.random() * 9) + 3);
+
+            if (life > 0 && playerObject.greenBit)
+            {
+                random = Math.floor(Math.random() * 3);
+                if (random === 0)
+                {
+                    newMessage("You grab the 3 and hurl it into the distance!");
+                    clobberTile(valueX, valueY);
+                }
+                else
+                {
+                    newMessage("3 chomps on your hand as you reach for it!");
+                }
+
+            }
+        }
+        else
+        {
+            newMessage("You just barely evade 3's attack!");
+        }
+    }
     else if (value === 300)
     {
         tmiss_sound.eat();
@@ -1094,6 +1223,7 @@ function playerPhase()
     clearTimeout(timerPlayerPhasing);
     timerPlayerPhasing = setTimeout(function(){playerPhasing()}, 2000);
     playerObject.phasing = true;
+    flashOn(2000);
 }
 
 function playerPhasing()
@@ -1108,10 +1238,20 @@ function playerHit(damage)
     {
         life -= damage;
 
-        clearTimeout(timerPlayerFlash);
-        timerPlayerFlash = setTimeout(function(){playerFlash(10)}, 200);
-        playerObject.flashBit = true;
+        flashOn(200);
     }
+}
+
+function flashOn(millisecs)
+{
+    clearTimeout(timerPlayerFlash);
+    timerPlayerFlash = setTimeout(function(){playerFlash(10)}, millisecs);
+    playerObject.flashBit = true;
+    /*
+    TODO
+    working on flash for phase state
+    possibly just default to making player grey during phase-protection
+    */
 }
 
 function playerFlash(counter)

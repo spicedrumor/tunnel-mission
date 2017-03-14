@@ -8,6 +8,7 @@ var tmiss_generate = {
         var newMap;
         var row;
         var random;
+        var mobValue;
         var newMob;
         var multiplierMain = 9;
 
@@ -98,10 +99,18 @@ var tmiss_generate = {
                 random = Math.floor(Math.random() * multiplierMain);
                 if (random === 0)
                 { //mob
-                    random = Math.floor(Math.random() * 6) + 3;
-                    row[j] = random;
+                    mobValue = Math.floor(Math.random() * 6) + 3;
+                    if (mobValue === 3)
+                    {
+                        random = Math.floor(Math.random() * 9);
+                        if (random === 0)
+                        {
+                            mobValue = 103;
+                        }
+                    }
+                    row[j] = mobValue;
                     newMob = {};
-                    newMob.value = random;
+                    newMob.value = mobValue;
                     newMob.x = j;
                     newMob.y = i;
                     mapObject.mobs.push(newMob);
