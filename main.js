@@ -988,6 +988,7 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value === 18)
     {
+        tmiss_sound.eat();
         newMessage("You snatch up the crystal and swallow it whole!");
         map[valueY][valueX] = 0;
         life += 8;
