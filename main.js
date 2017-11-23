@@ -61,7 +61,7 @@ playerObject.pinkBit = false;
 playerObject.greenBit = false;
 playerObject.flashing = false;
 playerObject.flashBit = false;
-playerObject.phasing = false; //TODO temporary travel protection
+playerObject.phasing = false;
 playerObject.score = 1;
 playerObject.xPos = 0;
 playerObject.yPos = 0;
@@ -997,7 +997,7 @@ function playerInteract(value, valueX, valueY)
     {
         newMessage("You find an old, tarnished metal shield.");
         map[valueY][valueX] = 0;
-        playerObject.score += 15;
+        playerObject.score += 150;
         if (!playerObject.hasShield)
         {
             playerObject.hasShield = true;
@@ -1041,9 +1041,9 @@ function playerInteract(value, valueX, valueY)
         tmiss_sound.eat();
         newMessage("You devour an aulluring looking mushroom.");
         map[valueY][valueX] = 0;
-        timer += 8;
         if (playerObject.blueBit)
         {
+            timer += 32;
         }
         else
         {
@@ -1055,9 +1055,9 @@ function playerInteract(value, valueX, valueY)
     {
         tmiss_sound.eat();
         newMessage("You devour a scary looking mushroom.");
-        timer += 8;
         if (playerObject.pinkBit)
         {
+            timer += 32;
         }
         else
         {
@@ -1070,9 +1070,9 @@ function playerInteract(value, valueX, valueY)
     {
         tmiss_sound.eat();
         newMessage("You devour a muscular looking mushroom.");
-        timer += 8;
         if (playerObject.greenBit)
         {
+            timer += 32;
         }
         else
         {
@@ -1362,7 +1362,7 @@ function endGame()
 
     for (i = 0; i < array.length; i++)
     {
-        if (array[i])
+       if (array[i])
         {
             for (j = 0; j < array[i].length; j++)
             {
@@ -1534,7 +1534,7 @@ function newGame()
     newMessage('<font color="' + "lime" + '">Objective: Locate the '+ '</font><font color="' + COLOR_PINK + '">*</font>');
 
     life = 128;
-    timer = 128;
+    timer = 1024;
     timerBit = false;
 }
 
