@@ -652,7 +652,7 @@ document.onkeyup = function(e)
         newMessage("You check your inventory...");
         if (playerObject.hasShield)
         {
-            newMessage("You are carrying a metal shield.");
+            newMessage("You are carrying a metal shield (or two.)");
         }
         else
         {
@@ -786,6 +786,7 @@ function playerInteract(value, valueX, valueY)
                 random = Math.floor(Math.random() * 2);
                 if (random === 0)
                 {
+                    playerObject.score += 10;
                     newMessage("You grab the 3 and hurl it into the distance!");
                     clobberTile(valueX, valueY);
                 }
@@ -949,11 +950,11 @@ function playerInteract(value, valueX, valueY)
         map[valueY][valueX] = 0;
         if (playerObject.greenBit)
         {
-            life += 9;
+            life += 12;
         }
         else
         {
-            life += 6;
+            life += 8;
         }
     }
     else if (value === 13)
@@ -991,7 +992,7 @@ function playerInteract(value, valueX, valueY)
         tmiss_sound.eat();
         newMessage("You snatch up the crystal and swallow it whole!");
         map[valueY][valueX] = 0;
-        life += 8;
+        life += 16;
         timer += 16;
     }
     else if (value === 19)
@@ -1022,6 +1023,7 @@ function playerInteract(value, valueX, valueY)
                 random = Math.floor(Math.random() * 3);
                 if (random === 0)
                 {
+                    playerObject.score += 100;
                     newMessage("You grab the 3 and hurl it into the distance!");
                     clobberTile(valueX, valueY);
                 }
@@ -1041,6 +1043,7 @@ function playerInteract(value, valueX, valueY)
     {
         tmiss_sound.eat();
         newMessage("You devour an aulluring looking mushroom.");
+        life += 4;
         map[valueY][valueX] = 0;
         if (playerObject.blueBit)
         {
@@ -1056,6 +1059,7 @@ function playerInteract(value, valueX, valueY)
     {
         tmiss_sound.eat();
         newMessage("You devour a scary looking mushroom.");
+        life += 4;
         if (playerObject.pinkBit)
         {
             timer += 32;
@@ -1071,6 +1075,7 @@ function playerInteract(value, valueX, valueY)
     {
         tmiss_sound.eat();
         newMessage("You devour a muscular looking mushroom.");
+        life += 4;
         if (playerObject.greenBit)
         {
             timer += 32;
