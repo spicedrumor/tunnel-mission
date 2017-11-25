@@ -967,7 +967,6 @@ function playerInteract(value, valueX, valueY)
         newMessage("You are drawn into the event horizon.");
         if (value === 16)
         {
-            playerObject.score += 5;
             yLimit = mapObject.height - 1;
             newY = playerObject.yPos + yShift;
             if (newY > yLimit)

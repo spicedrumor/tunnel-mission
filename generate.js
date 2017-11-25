@@ -10,7 +10,7 @@ var tmiss_generate = {
         var random;
         var mobValue;
         var newMob;
-        var multiplierMain = 9;
+        var multiplierMain;
 
         var mapObject = {
             mapArray: [],
@@ -77,11 +77,12 @@ var tmiss_generate = {
         };
         width = 32;
         height = 256;
+        multiplierMain = 8;
         if (difficulty === "hard")
         {
             height = 512;
             width = 30;
-            multiplierMain = 6;
+            multiplierMain = 4;
         }
         else if (difficulty === "easy")
         {

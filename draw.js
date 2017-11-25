@@ -3,6 +3,7 @@ var tmiss_draw = {
     {
         var COLOR_PINK = "#FF66FF";
         var VIEW_LENGTH_AND_WIDTH = 15;
+        var FLICKER_RATE = 20;
         var vlaw = VIEW_LENGTH_AND_WIDTH;
         var i;
         var j;
@@ -130,12 +131,26 @@ var tmiss_draw = {
                     }
                     else if (value === 16)
                     {
-                        result += '#006600">';
+                        random = Math.floor(Math.random() * FLICKER_RATE);
+                        if (random == 0)
+                        {
+                            result += '#FFFFFF">';
+                        } else
+                        {
+                            result += '#006600">';
+                        }
                         result += '*';
                     }
                     else if (value === 17)
                     {
-                        result += '#990000">';
+                        random = Math.floor(Math.random() * FLICKER_RATE);
+                        if (random == 0)
+                        {
+                            result += '#FFFFFF">';
+                        } else
+                        {
+                            result += '#990000">';
+                        }
                         result += '*';
                     }
                     else if (value === 18)
