@@ -81,13 +81,12 @@ var tmiss_generate = {
         if (difficulty === "hard")
         {
             height = 512;
-            width = 30;
+            width = 28;
             multiplierMain = 4;
         }
         else if (difficulty === "easy")
         {
-            height = 128;
-            multiplierMain = 12;
+            multiplierMain = 10;
         }
         newMap = [];
 

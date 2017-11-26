@@ -146,7 +146,7 @@ var tmiss_draw = {
                         random = Math.floor(Math.random() * FLICKER_RATE);
                         if (random == 0)
                         {
-                            result += '#FFFFFF">';
+                            result += '#000000">';
                         } else
                         {
                             result += '#990000">';

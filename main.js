@@ -229,7 +229,7 @@ function ploughThrough(originX, originY, offsetX, offsetY, value, count, slain)
         {
             slain += 1;
             sevenDown(slain);
-            life += 8;
+            life += 16;
             timer += 16;
         }
         else if (map[newY][newX] === 2)
