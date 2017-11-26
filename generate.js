@@ -76,17 +76,17 @@ var tmiss_generate = {
             }
         };
         width = 32;
-        height = 256;
-        multiplierMain = 8;
+        height = 512;
+        multiplierMain = 7;
         if (difficulty === "hard")
         {
-            height = 512;
+            height = 1024;
             width = 28;
-            multiplierMain = 4;
+            multiplierMain = 5;
         }
         else if (difficulty === "easy")
         {
-            multiplierMain = 10;
+            multiplierMain = 9;
         }
         newMap = [];
 
@@ -102,6 +102,11 @@ var tmiss_generate = {
                     mobValue = Math.floor(Math.random() * 6) + 3;
                     if (mobValue === 3)
                     {
+                        var redThreeMult = 9;
+                        if (difficulty === "hard")
+                        {
+                            redThreeMult = 6;
+                        }
                         random = Math.floor(Math.random() * 9);
                         if (random === 0)
                         {
