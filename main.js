@@ -68,7 +68,10 @@ playerObject.yPos = 0;
 playerObject.armour = 0;
 playerObject.alive = true;
 playerObject.hasShield = false;
+playerObject.shieldCount = 0;
 playerObject.powerMove = false;
+playerObject.hitRecently = 0;
+playerObject.armourReduction = 0;
 
 currentRoundCount = 0;
 
@@ -652,7 +655,7 @@ document.onkeyup = function(e)
         newMessage("You check your inventory...");
         if (playerObject.hasShield)
         {
-            newMessage("You are carrying a metal shield (or two.)");
+            newMessage("You are carrying a banged-up metal shield.");
         }
         else
         {
@@ -854,7 +857,8 @@ function playerInteract(value, valueX, valueY)
             if (playerObject.hasShield)
             {
                 newMessage("Your shield absorbs some of 5's shrapnel!");
-                random = Math.floor(Math.random() * 15) + 5;
+                random = Math.floor(Math.random() * 21) + 5;
+                random -= (4 * playerObject.shieldCount)
             }
             else
             {
@@ -903,7 +907,8 @@ function playerInteract(value, valueX, valueY)
             if (playerObject.hasShield)
             {
                 newMessage("Your shield partially blocks 7s attack!");
-                random = Math.floor(Math.random() * 77) + 7;
+                random = Math.floor(Math.random() * 52) + 49;
+                random -= (8 * playerObject.shieldCount)
                 playerHit(random);
             }
             else
@@ -996,12 +1001,17 @@ function playerInteract(value, valueX, valueY)
     }
     else if (value === 19)
     {
-        newMessage("You find an old, tarnished metal shield.");
         map[valueY][valueX] = 0;
         playerObject.score += 150;
         if (!playerObject.hasShield)
         {
+            newMessage("You find an old, tarnished metal shield.");
             playerObject.hasShield = true;
+        }
+        else
+        {
+            newMessage("Your shield wobbles and merges with its friend!");
+            playerObject.shieldCount += 1;
         }
     }
     else if (value === 103)
@@ -1199,6 +1209,29 @@ function phaseBuff()
     return result;
 }
 
+function canvasPaint()
+{
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (playerObject.armour > 0)
+    {
+        while (playerObject.armourReduction > 0)
+        {
+            smileCurSize = smileCurSize - smileReduction;
+            playerObject.armourReduction -= 1;
+        }
+
+        context.drawImage(pic, 0, 0, smileCurSize, smileCurSize);
+    }
+    if (playerObject.hitRecently > 0)
+    {
+        playerObject.hitRecently -= 1;
+        context.drawImage(scratch_pic, (canvas.width/2 - 75), (canvas.height/2 - 70), SMILESTARTSIZE, SMILESTARTSIZE);
+    }
+
+    timerPaint = setTimeout(canvasPaint, 25);
+}
+
 function armourBuff()
 {
     var result;
@@ -1208,15 +1241,13 @@ function armourBuff()
     if (playerObject.armour > 0)
     {
         newMessage("Your hard body absorbs the attack!");
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        smileCurSize = smileCurSize - smileReduction;
-        context.drawImage(pic, 0, 0, smileCurSize, smileCurSize);
         result = true;
         playerObject.armour -= 1;
+        playerObject.armourReduction += 1;
         if (playerObject.armour === 0)
         {
             newMessage("You are suddenly not so hard anymore...");
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            playerObject.armourReduction = 0;
         }
     }
 
@@ -1244,6 +1275,10 @@ function playerHit(damage)
         life -= damage;
 
         flashOn(200);
+    }
+    if (playerObject.hitRecently < 1)
+    {
+        playerObject.hitRecently = 10;
     }
 }
 
@@ -1520,7 +1555,10 @@ function newGame()
     playerObject.armour = 0;
     playerObject.score = 1;
     playerObject.hasShield = false;
+    playerObject.shieldCount = 0;
     playerObject.powerMove = false;
+    playerObject.hitRecently = 0;
+    playerObject.armourReduction = 0;
 
     currentKeys = [];
 
@@ -1620,6 +1658,7 @@ function startGame()
     timerDraw = setTimeout(drawMap, 25);
     timerInteractions = setTimeout(playerInteractions, 25);
     timerMushroom = setTimeout(randomMush, 30);
+    timerPaint = setTimeout(canvasPaint, 25);
 
     playerPhase();
 }
@@ -1640,6 +1679,13 @@ var pic;
 pic = new Image();
 pic.src = "res/no_idea.png";
 pic.onload = function()
+{
+}
+
+var scratch_pic;
+scratch_pic = new Image();
+scratch_pic.src = "res/scratch.png";
+scratch_pic.onload = function()
 {
 }
 
