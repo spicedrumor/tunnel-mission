@@ -1272,9 +1272,15 @@ function playerHit(damage)
 {
     if (!armourBuff() && !phaseBuff())
     {
-        life -= damage;
-
-        flashOn(200);
+        if (damage > 0)
+        {
+            life -= damage;
+            flashOn(200);
+        }
+        else
+        {
+            newMessage("You take no damage.");
+        }
     }
     if (playerObject.hitRecently < 1)
     {
