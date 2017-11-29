@@ -71,6 +71,7 @@ playerObject.hasShield = false;
 playerObject.shieldCount = 0;
 playerObject.powerMove = false;
 playerObject.hitRecently = 0;
+playerObject.blockRecently = 0;
 playerObject.armourReduction = 0;
 
 currentRoundCount = 0;
@@ -779,10 +780,23 @@ function playerInteract(value, valueX, valueY)
             random = Math.floor(Math.random() * 2);
         }
 
-        if (random != 0)
+        if (random === 0)
         {
-            newMessage("3 bites you with glee!");
-            playerHit(1);
+            newMessage("You narrowly evade 3's attack!");
+        }
+        else
+        {
+            random = Math.floor(Math.random() * 4);
+            if (playerObject.hasShield && random === 0)
+            {
+                newMessage("You manage to block 3's attack!");
+                playerObject.blockRecently = 15;
+            }
+            else
+            {
+                newMessage("3 bites you with glee!");
+                playerHit(1);
+            }
 
             if (life > 0 && playerObject.greenBit)
             {
@@ -797,12 +811,7 @@ function playerInteract(value, valueX, valueY)
                 {
                     newMessage("You reach for the 3 but it deftly scampers away.");
                 }
-
             }
-        }
-        else
-        {
-            newMessage("You narrowly evade 3's attack!");
         }
     }
     else if (value === 4)
@@ -858,7 +867,8 @@ function playerInteract(value, valueX, valueY)
             {
                 newMessage("Your shield absorbs some of 5's shrapnel!");
                 random = Math.floor(Math.random() * 21) + 5;
-                random -= (4 * playerObject.shieldCount)
+                random -= (2 * playerObject.shieldCount)
+                playerObject.blockRecently = 15;
             }
             else
             {
@@ -907,8 +917,9 @@ function playerInteract(value, valueX, valueY)
             if (playerObject.hasShield)
             {
                 newMessage("Your shield partially blocks 7s attack!");
+                playerObject.blockRecently = 15;
                 random = Math.floor(Math.random() * 52) + 49;
-                random -= (8 * playerObject.shieldCount)
+                random -= (4 * playerObject.shieldCount)
                 playerHit(random);
             }
             else
@@ -1010,7 +1021,7 @@ function playerInteract(value, valueX, valueY)
         }
         else
         {
-            newMessage("Your shield wobbles and merges with its friend!");
+            newMessage("Your shield wobbles merrily and merges with its friend!");
             playerObject.shieldCount += 1;
         }
     }
@@ -1022,10 +1033,23 @@ function playerInteract(value, valueX, valueY)
             random = Math.floor(Math.random() * 3);
         }
 
-        if (random != 0)
+        if (random === 0)
         {
-            newMessage("3's fangs tear off a chunk of your flesh!");
-            playerHit(Math.floor(Math.random() * 9) + 3);
+            newMessage("You just barely evade 3's attack!");
+        }
+        else
+        {
+            random = Math.floor(Math.random() * 6);
+            if (playerObject.hasShield && random === 0)
+            {
+                newMessage("You manage to block 3's attack!");
+                playerObject.blockRecently = 15;
+            }
+            else
+            {
+                newMessage("3's fangs tear off a chunk of your flesh!");
+                playerHit(Math.floor(Math.random() * 9) + 3);
+            }
 
             if (life > 0 && playerObject.greenBit)
             {
@@ -1042,10 +1066,6 @@ function playerInteract(value, valueX, valueY)
                 }
 
             }
-        }
-        else
-        {
-            newMessage("You just barely evade 3's attack!");
         }
     }
     else if (value === 300)
@@ -1223,6 +1243,13 @@ function canvasPaint()
 
         context.drawImage(pic, 0, 0, smileCurSize, smileCurSize);
     }
+
+    if (playerObject.blockRecently > 0)
+    {
+        playerObject.blockRecently -= 1;
+        context.drawImage(block_pic, (canvas.width/2 - 75), (canvas.height/2 - 70), SMILESTARTSIZE - 10, SMILESTARTSIZE - 10);
+    }
+
     if (playerObject.hitRecently > 0)
     {
         playerObject.hitRecently -= 1;
@@ -1564,6 +1591,7 @@ function newGame()
     playerObject.shieldCount = 0;
     playerObject.powerMove = false;
     playerObject.hitRecently = 0;
+    playerObject.blockRecently = 0;
     playerObject.armourReduction = 0;
 
     currentKeys = [];
@@ -1685,6 +1713,13 @@ var pic;
 pic = new Image();
 pic.src = "res/no_idea.png";
 pic.onload = function()
+{
+}
+
+var block_pic;
+block_pic = new Image();
+block_pic.src = "res/block.png";
+block_pic.onload = function()
 {
 }
 
