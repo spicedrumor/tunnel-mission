@@ -1422,7 +1422,7 @@ function gameOver(message)
     tmiss_sound.death();
     playerObject.alive = false;
     endGame();
-    window.alert("Game Over: " + message);
+    window.alert("Game Over: " + message + "\n" + "Difficulty: " + difficulty);
 }
 
 function endGame()

@@ -209,8 +209,9 @@ var tmiss_generate = {
         mapObject.mapArray = newMap;
         mapObject.width = width;
         mapObject.height = height;
+        mapObject.difficulty = difficulty;
 
-        //ensure player isn't instagib'd at start:
+        //ensure player is set correctly:
         tmiss_mapMutate.boxClobber(0, 0, 5, mapObject);
         mapObject.mapArray[0][0] = 1;
 
