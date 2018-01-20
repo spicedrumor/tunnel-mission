@@ -6,6 +6,7 @@ var KEY_CODE_W = 87;
 var KEY_CODE_A = 65;
 var KEY_CODE_S = 83;
 var KEY_CODE_D = 68;
+var KEY_CODE_E = 69;
 var MAP_VAL_EMPTY = 0;
 var MAP_VAL_PLAYER = 1;
 var MAP_VAL_MOB = 3;
@@ -69,6 +70,9 @@ playerObject.armour = 0;
 playerObject.alive = true;
 playerObject.hasShield = false;
 playerObject.shieldCount = 0;
+playerObject.hasPick = false;
+playerObject.pickCount = 0;
+playerObject.wielded = "nothing";
 playerObject.powerMove = false;
 playerObject.hitRecently = 0;
 playerObject.blockRecently = 0;
@@ -647,6 +651,26 @@ document.onkeyup = function(e)
     {
         direction = "w";
     }
+    else if (key === KEY_CODE_E)
+    {
+        if (playerObject.hasPick)
+        {
+            if (playerObject.wielded === "nothing")
+            {
+                newMessage("You wield your pick.");
+                playerObject.wielded = "pick";
+            }
+            else
+            {
+                newMessage("You stop wielding your pick.");
+                playerObject.wielded = "nothing";
+            }
+        }
+        else
+        {
+            newMessage("You have nothing to equip.");
+        }
+    }
     else if (key === 72)
     {
         tmiss_help.menu();
@@ -702,8 +726,8 @@ document.onkeyup = function(e)
 
 function drawMap()
 {
-    mapString = tmiss_draw.viewString(mapObject, playerObject);
-    document.getElementById("left").innerHTML = mapString;
+    //mapString = tmiss_draw.createHTMLString(mapObject, playerObject);
+    //document.getElementById("left").innerHTML = mapString;
     timerDraw = setTimeout(drawMap, 100);
 }
 
@@ -837,16 +861,16 @@ function playerInteract(value, valueX, valueY)
             newMessage("4 failed to propagate!");
         }
 
-        random = Math.floor(Math.random() * 2);
+        random = Math.floor(Math.random() * 3);
         if (random === 0)
-        {
-            clobberTile(valueX, valueY);
-        }
-        else
         {
             newMessage("4 metamorphosizes into 8!");
             mapObject.removeMob(valueX, valueY);
             mapObject.insertMob(valueX, valueY, 8);
+        }
+        else
+        {
+            clobberTile(valueX, valueY);
         }
     }
     else if (value === 5)
@@ -1025,6 +1049,22 @@ function playerInteract(value, valueX, valueY)
             playerObject.shieldCount += 1;
         }
     }
+    else if (value === 20)
+    {
+        map[valueY][valueX] = 0;
+        playerObject.score += 150;
+        if (!playerObject.hasPick)
+        {
+            newMessage("You find an old, tarnished metal pick.");
+            playerObject.hasPick = true;
+            playerObject.pickCount = 1;
+        }
+        else
+        {
+            newMessage("Your pick wobbles merrily and merges with its friend!");
+            playerObject.pickCount += 1;
+        }
+    }
     else if (value === 103)
     {
         random = 1;
@@ -1138,17 +1178,58 @@ function playerTeleport(newX, newY)
     playerPhase();
 }
 
+function rng(value)
+{
+    return Math.floor(Math.random() * value);
+}
+
+function mineTile(xPos, yPos)
+{
+    newMessage("The wall blows apart from your onslaught!");
+    map[yPos][xPos] = 0;
+    pickStrength = playerObject.pickCount;
+    random = rng(pickStrength * 32);
+    if (random === 0)
+    {
+        newMessage("Your pick breaks into pieces!");
+        playerObject.wielded = "nothing";
+        playerObject.hasPick = false;
+        playerObject.pickCount = 0;
+    }
+}
+
 function playerBump(value, valueX, valueY, offsetX, offsetY)
 {
-    var random;
     var i;
     var j;
-    var result;
-    var message;
-    var done;
+    var random;
     var timeOut;
 
-    if (value === 14 && playerObject.pinkBit)
+    var pick;
+    var pickCount;
+    var blue;
+    var pink;
+    var green;
+    var wallTile;
+
+    blue = playerObject.blueBit;
+    pink = playerObject.pinkBit;
+    green = playerObject.greenBit;
+    pick = (playerObject.wielded === "pick");
+    wallTile = (value === 12);
+
+    if (wallTile && (!green || pick))
+    {
+        if (!pick)
+        {
+            newMessage("You huff and you puff but the wall remains.");
+        }
+        else
+        {
+            mineTile(valueX, valueY);
+        }
+    }
+    else if (value === 14 && pink)
     {
         newMessage("You light the fuse...");
         map[valueY][valueX] = 15;
@@ -1160,12 +1241,12 @@ function playerBump(value, valueX, valueY, offsetX, offsetY)
 
         mapObject.boomAlert[valueY][valueX] = timeOut;
     }
-    else if (value === 15 && playerObject.pinkBit)
+    else if (value === 15 && pink)
     {
         newMessage("You execute your best flying dropkick!");
         bootItem(valueX, valueY, offsetX, offsetY, 3);
     }
-    else if ((value === 12 || value === 14) && playerObject.greenBit)
+    else if ((wallTile || value === 14) && green)
     {
         if (map[valueY + offsetY][valueX + offsetX] === 0)
         {
@@ -1232,6 +1313,8 @@ function phaseBuff()
 function canvasPaint()
 {
     context.clearRect(0, 0, canvas.width, canvas.height);
+
+    tmiss_draw.paintCanvas(mapObject, playerObject, context);
 
     if (playerObject.armour > 0)
     {
@@ -1320,11 +1403,6 @@ function flashOn(millisecs)
     clearTimeout(timerPlayerFlash);
     timerPlayerFlash = setTimeout(function(){playerFlash(10)}, millisecs);
     playerObject.flashBit = true;
-    /*
-    TODO
-    working on flash for phase state
-    possibly just default to making player grey during phase-protection
-    */
 }
 
 function playerFlash(counter)
@@ -1434,32 +1512,25 @@ function endGame()
     array = mapObject.boomAlert;
 
     for (i = 0; i < array.length; i++)
-    {
        if (array[i])
-        {
             for (j = 0; j < array[i].length; j++)
-            {
                 clearTimeout(array[i][j]);
-            }
-        }
-    }
 
     array = mapObject.fireAlert;
 
     for (i = 0; i < array.length; i++)
-    {
         if (array[i])
-        {
             for (j = 0; j < array[i].length; j++)
-            {
                 clearTimeout(array[i][j]);
-            }
-        }
-    }
 
-    //clear the canvas
     context.clearRect(0, 0, canvas.width, canvas.height);
 
+    clearTimeouts();
+    setTimeout(startGame, 1000);
+}
+
+function clearTimeouts()
+{
     clearTimeout(timerPlayerPhasing);
     clearTimeout(timerPlayerFlash);
     clearTimeout(timerHeart);
@@ -1470,13 +1541,16 @@ function endGame()
     clearTimeout(timerMushroom);
     clearTimeout(timerPlayerFlash);
     clearTimeout(timerMovePlayer);
-    setTimeout(startGame, 1000);
 }
 
 function doIExist()
 {
-    if (map[playerObject.yPos][playerObject.xPos] != 1)
+    var value;
+
+    value = map[playerObject.yPos][playerObject.xPos];
+    if (value != 1)
     {
+        newMessage("Overwritten by: " + value);
         gameOver("You (violently) ceased to exist.");
     }
     else
@@ -1548,7 +1622,7 @@ function updateStatusPane()
         }
     }
 
-    pane = document.getElementById("top");
+    pane = document.getElementById("bottom");
     pane.innerHTML = "";
 
     pane.innerHTML += '<font size="6" color="green">' + "Life: " + life + "</font>&emsp;";
@@ -1589,6 +1663,9 @@ function newGame()
     playerObject.score = 1;
     playerObject.hasShield = false;
     playerObject.shieldCount = 0;
+    playerObject.hasPick = false;
+    playerObject.pickCount = 0;
+    playerObject.wielded = "nothing";
     playerObject.powerMove = false;
     playerObject.hitRecently = 0;
     playerObject.blockRecently = 0;

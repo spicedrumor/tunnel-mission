@@ -73,9 +73,13 @@ var tmiss_generate = {
                 };
                 mobs.push(newMob);
                 mapArray[mobY][mobX] = value;
-            }
+            },
         };
         width = 32;
+        function rng(value)
+        {
+            return Math.floor(Math.random() * value);
+        }
         height = 512;
         multiplierMain = 7;
         if (difficulty === "hard")
@@ -96,10 +100,10 @@ var tmiss_generate = {
             for (j = 0; j < width; j++)
             {
                 random = 0;
-                random = Math.floor(Math.random() * multiplierMain);
+                random = rng(multiplierMain);
                 if (random === 0)
-                { //mob
-                    mobValue = Math.floor(Math.random() * 6) + 3;
+                { //mob generation:
+                    mobValue = rng(6) + 3;
                     if (mobValue === 3)
                     {
                         var redThreeMult = 9;
@@ -107,7 +111,7 @@ var tmiss_generate = {
                         {
                             redThreeMult = 6;
                         }
-                        random = Math.floor(Math.random() * 9);
+                        random = rng(9);
                         if (random === 0)
                         {
                             mobValue = 103;
@@ -121,24 +125,24 @@ var tmiss_generate = {
                     mapObject.mobs.push(newMob);
                 }
                 else if (random === 1)
-                { //item
-                    random = Math.floor(Math.random() * 11);
+                { //item generation:
+                    random = rng(11);
 
-                    if (random == 0)
+                    if (random === 0)
                     {
-                        random = Math.floor(Math.random() * 4);
+                        random = rng(4);
                         if (random === 0)
                         {
-                            random = Math.floor(Math.random() * 3);
-                            if (random == 0)
+                            random = rng(3);
+                            if (random === 0)
                             {
                                 row[j] = 300;
                             }
-                            else if (random == 1)
+                            else if (random === 1)
                             {
                                 row[j] = 301;
                             }
-                            else if (random == 2)
+                            else if (random === 2)
                             {
                                 row[j] = 302;
                             }
@@ -150,7 +154,7 @@ var tmiss_generate = {
                     }
                     else if (random === 1)
                     {
-                        random = Math.floor(Math.random() * 6);
+                        random = rng(6);
                         if (random === 0)
                         {
                             row[j] = 16;
@@ -166,10 +170,14 @@ var tmiss_generate = {
                     }
                     else if (random === 2)
                     {
-                        random = Math.floor(Math.random() * 32);
+                        random = rng(64);
                         if (random === 0)
                         {
                             row[j] = 19;
+                        }
+                        else if (random === 1)
+                        {
+                            row[j] = 20;
                         }
                         else
                         {
@@ -187,7 +195,7 @@ var tmiss_generate = {
                 }
                 else if (random === 2)
                 { //wall
-                        random = Math.floor(Math.random() * 10);
+                        random = rng(10);
                         if (random < 8)
                         {
                             row[j] = 12;
