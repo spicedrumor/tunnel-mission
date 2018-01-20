@@ -1339,7 +1339,7 @@ function canvasPaint()
         context.drawImage(scratch_pic, (canvas.width/2 - 75), (canvas.height/2 - 70), SMILESTARTSIZE, SMILESTARTSIZE);
     }
 
-    timerPaint = setTimeout(canvasPaint, 25);
+    timerPaint = setTimeout(canvasPaint, 100);
 }
 
 function armourBuff()

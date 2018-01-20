@@ -390,7 +390,7 @@ var tmiss_draw = {
                     else if (value === 103)
                     {
                         character = "3";
-                        fillstyle = "ff0066";
+                        fillstyle = "#ff0066";
                     }
                     else if (value === 300)
                     {
