@@ -240,7 +240,7 @@ var tmiss_draw = {
 
         centre = Math.floor(vlaw / 2);
 
-        ctx.font = "bold 30px Courier";
+        ctx.font = "bold 26px Courier";
         var imageObject = new Image();
 
         var tile = 512 / vlaw;
@@ -253,10 +253,10 @@ var tmiss_draw = {
                 viewX = (j - centre) + playerX;
                 viewY = (i - centre) + playerY;
 
+                image = false;
                 if (viewX >= 0 && viewY >= 0 && viewX < mapWidth && viewY < mapHeight)
                 {
                     value = map[viewY][viewX];
-                    image = false;
 
                     if (value === -1)
                     {
