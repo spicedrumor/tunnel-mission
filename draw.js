@@ -424,7 +424,7 @@ var tmiss_draw = {
                 else
                 {
                     imageObject.src = image;
-                    ctx.drawImage(imageObject, j*tile+edgeOffset, i*tile+edgeOffset, 32, 32);
+                    ctx.drawImage(imageObject, j*tile+edgeOffset, i*tile, 16, 16);
                 }
             }
         }
