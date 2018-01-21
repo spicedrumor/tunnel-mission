@@ -1336,7 +1336,7 @@ function canvasPaint()
     if (playerObject.hitRecently > 0)
     {
         playerObject.hitRecently -= 1;
-        context.drawImage(scratch_pic, (canvas.width/2 - 9), (canvas.height/2 - 21), 64, 64);
+        context.drawImage(scratch_pic, (canvas.width/2 - 19), (canvas.height/2 - 15), 64, 64);
     }
 
     timerPaint = setTimeout(canvasPaint, 100);
