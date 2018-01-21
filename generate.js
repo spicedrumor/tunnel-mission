@@ -11,6 +11,7 @@ var tmiss_generate = {
         var mobValue;
         var newMob;
         var multiplierMain;
+        var redThreeMult;
 
         var mapObject = {
             mapArray: [],
@@ -81,16 +82,18 @@ var tmiss_generate = {
             return Math.floor(Math.random() * value);
         }
         height = 512;
-        multiplierMain = 7;
+        multiplierMain = 8;
+        redThreeMult = 10;
         if (difficulty === "hard")
         {
             height = 1024;
             width = 28;
             multiplierMain = 5;
+            redThreeMult = 7;
         }
         else if (difficulty === "easy")
         {
-            multiplierMain = 9;
+            multiplierMain = 10;
         }
         newMap = [];
 
@@ -106,15 +109,18 @@ var tmiss_generate = {
                     mobValue = rng(6) + 3;
                     if (mobValue === 3)
                     {
-                        var redThreeMult = 9;
-                        if (difficulty === "hard")
-                        {
-                            redThreeMult = 6;
-                        }
-                        random = rng(9);
+                        random = rng(redThreeMult);
                         if (random === 0)
                         {
                             mobValue = 103;
+                        }
+                    }
+                    if (mobValue === 7)
+                    {
+                        random = rng(2);
+                        if (random === 0)
+                        {
+                            mobValue = rng(6) + 3;
                         }
                     }
                     row[j] = mobValue;
@@ -193,7 +199,7 @@ var tmiss_generate = {
                         row[j] = 0;
                     }
                 }
-                else if (random === 2)
+                else if (random === 2 || random === 3)
                 { //wall
                         random = rng(10);
                         if (random < 8)

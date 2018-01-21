@@ -1336,7 +1336,7 @@ function canvasPaint()
     if (playerObject.hitRecently > 0)
     {
         playerObject.hitRecently -= 1;
-        context.drawImage(scratch_pic, (canvas.width/2 - 75), (canvas.height/2 - 70), SMILESTARTSIZE, SMILESTARTSIZE);
+        context.drawImage(scratch_pic, (canvas.width/2 - 9), (canvas.height/2 - 21), 64, 64);
     }
 
     timerPaint = setTimeout(canvasPaint, 100);
@@ -1394,7 +1394,7 @@ function playerHit(damage)
     }
     if (playerObject.hitRecently < 1)
     {
-        playerObject.hitRecently = 10;
+        playerObject.hitRecently = 3;
     }
 }
 
@@ -1522,8 +1522,6 @@ function endGame()
         if (array[i])
             for (j = 0; j < array[i].length; j++)
                 clearTimeout(array[i][j]);
-
-    context.clearRect(0, 0, canvas.width, canvas.height);
 
     clearTimeouts();
     setTimeout(startGame, 1000);

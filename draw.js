@@ -240,7 +240,7 @@ var tmiss_draw = {
 
         centre = Math.floor(vlaw / 2);
 
-        ctx.font = "bold 26px Courier";
+        ctx.font = "bold 30px Courier";
         var imageObject = new Image();
 
         var tile = 512 / vlaw;
@@ -419,12 +419,12 @@ var tmiss_draw = {
                 if (image === false)
                 {
                     ctx.fillStyle = fillstyle;
-                    ctx.fillText(character, j*tile+edgeOffset, i*tile+edgeOffset);
+                    ctx.fillText(character, j*tile+edgeOffset-10, i*tile+edgeOffset+8);
                 }
                 else
                 {
                     imageObject.src = image;
-                    ctx.drawImage(imageObject, j*tile+edgeOffset, i*tile, 16, 16);
+                    ctx.drawImage(imageObject, j*tile+edgeOffset-10, i*tile+8, 16, 16);
                 }
             }
         }
