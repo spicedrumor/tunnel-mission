@@ -968,9 +968,6 @@ function playerInteract(value, valueX, valueY)
     else if (value === 9)
     {
         message = "9 beams at you and you get rock hard!";
-        //TODO: need to constantly 'refresh' canvas
-        //ie clearRect and then draw whatever n times per sec
-        context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(pic, 0, 0, SMILESTARTSIZE, SMILESTARTSIZE);
         smileCurSize = SMILESTARTSIZE;
         if (messageQueue[0] === message || messageQueue[1] === message)
@@ -1339,7 +1336,60 @@ function canvasPaint()
         context.drawImage(scratch_pic, (canvas.width/2 - 19), (canvas.height/2 - 15), 64, 64);
     }
 
+    canvasPrint();
     timerPaint = setTimeout(canvasPaint, 100);
+}
+
+function canvasPrint()
+{
+    var i;
+    var string;
+
+    var textCanvas = document.getElementById('canvas2');
+    var textCanvasWidth = textCanvas.width;
+    var textCanvasHeight = textCanvas.height;
+
+    var ctx = textCanvas.getContext('2d');
+
+    var textAlign;
+
+    textAlign = 10;
+
+    ctx.clearRect(0, 0, textCanvas.width, textCanvas.height);
+
+    //pane.innerHTML += '<font size="6" color="green">' + "Life: " + life + "</font>&emsp;";
+    //pane.innerHTML += '<font size="6" color="red">' + "Time: " + timer + "</font>&emsp;";
+    //pane.innerHTML += '<font size="6" color="blue">' + "Score: " + playerObject.score + "</font>&emsp;";
+    //pane.innerHTML += '<font size="6" color="yellow">' + "position: " + Math.floor(playerObject.yPos / mapObject.height * 100) + "%</font>";
+    ctx.font = "bold 20px Courier";
+    ctx.fillStyle = "white";
+    string = "Life: ";
+    ctx.fillText(string, textAlign, 30);
+    string = "";
+    ctx.fillStyle = "red";
+    string += "[";
+    for (i = life; i > 0; i -= 10)
+    {
+        string += "+";
+    }
+    string += "]";
+    ctx.fillText(string, textAlign + 60, 30);
+
+    for (i = 0; i < MESSAGE_QUEUE_MAX; i++)
+    {
+        if (i === 0)
+        {
+            ctx.font = "bold 20px Courier";
+            ctx.fillStyle = "lime";
+            ctx.fillText(messageQueue[i], textAlign, 60 + i * 20);
+        }
+        else
+        {
+            ctx.font = "bold 16px Courier";
+            ctx.fillStyle = "grey";
+            ctx.fillText(messageQueue[i], textAlign, 60 + i * 20);
+        }
+    }
 }
 
 function armourBuff()
@@ -1487,7 +1537,7 @@ function quickUpdate()
 {
     clearTimeout(timerDraw);
     drawMap();
-    updateStatusPane();
+    //updateStatusPane();
 }
 
 function gameOver(message)
@@ -1594,7 +1644,7 @@ function heartBeat()
         }
     }
 
-    updateStatusPane();
+    //updateStatusPane();
     if (!dead)
     {
         timerHeart = setTimeout(heartBeat, 500);
@@ -1683,10 +1733,10 @@ function newGame()
 
     newMessage("Type \"h\" for help <---------------");
 
-    newMessage('<font color="' + "lime" + '">Objective: Locate the '+ '</font><font color="' + COLOR_PINK + '">*</font>');
+    newMessage("Objective: Run the tunnel");
 
     life = 128;
-    timer = 1024;
+    timer = 2048;
     timerBit = false;
 }
 
