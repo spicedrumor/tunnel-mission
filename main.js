@@ -14,6 +14,7 @@ var COLOR_PINK = "#FF66FF";
 var MAX_PLOUGH = 5;
 var SEVENER_SCORE_VALUE = 15;
 var SPELL_COST = 32;
+
 var map;
 var mapString;
 var directions;
@@ -1038,11 +1039,12 @@ function playerInteract(value, valueX, valueY)
         if (!playerObject.hasShield)
         {
             newMessage("You find an old, tarnished metal shield.");
+            newMessage("You hold the shield defensively.");
             playerObject.hasShield = true;
         }
         else
         {
-            newMessage("Your shield wobbles merrily and merges with its friend!");
+            newMessage("Your shield wobbles and merges with its friend!");
             playerObject.shieldCount += 1;
         }
     }
@@ -1053,6 +1055,7 @@ function playerInteract(value, valueX, valueY)
         if (!playerObject.hasPick)
         {
             newMessage("You find an old, tarnished metal pick.");
+            newMessage("Type \"E\" to equip or unequip it.");
             playerObject.hasPick = true;
             playerObject.pickCount = 1;
         }
@@ -1353,6 +1356,8 @@ function canvasPrint()
 
     var textAlign;
 
+    var playerPosition;
+
     textAlign = 10;
 
     ctx.clearRect(0, 0, textCanvas.width, textCanvas.height);
@@ -1374,6 +1379,11 @@ function canvasPrint()
     }
     string += "]";
     ctx.fillText(string, textAlign + 60, 30);
+    playerPosition = Math.floor(playerObject.yPos / mapObject.height * 100);
+    ctx.fillStyle = "yellow";
+    string = playerPosition;
+    string += "%";
+    ctx.fillText(string, textAlign + 455, 30);
 
     for (i = 0; i < MESSAGE_QUEUE_MAX; i++)
     {
@@ -1731,9 +1741,9 @@ function newGame()
         newMessage("");
     }
 
-    newMessage("Type \"h\" for help <---------------");
+    newMessage("Type \"h\" at any time for help.");
 
-    newMessage("Objective: Run the tunnel");
+    newMessage("Objective: Run the tunnel.");
 
     life = 128;
     timer = 2048;
@@ -1767,7 +1777,7 @@ function startGame()
 {
     var input;
     var done;
-    var preset;
+    var colorSelect;
 
     newGame();
 
@@ -1782,33 +1792,37 @@ function startGame()
     {
         if (playerObject.pinkBit)
         {
-            preset = "p";
+            colorSelect = "p";
         }
         else if (playerObject.greenBit)
         {
-            preset = "g";
+            colorSelect = "g";
         }
         else
         {
-            preset = "b";
+            colorSelect = "b";
         }
 
-        input = window.prompt("Select Player: (type b for blue or p for pink or g for green or h for help)", preset);
-        if (input === "b" || input === "p" || input === "g")
-        {
-            colourPlayer(input);
-            done = true;
-        }
-        else if (input === "h")
-        {
-            tmiss_help.menu();
-        }
-        else if (input === "easy" || input === "hard" || input === "normal")
-        {
-            difficulty = input;
-            alert("Difficulty set to " + difficulty);
-            newMap(input);
-        }
+        colourPlayer(colorSelect);
+        done = true; //temp
+
+        // dep:
+        //input = window.prompt("Select Player: (type b for blue or p for pink or g for green or h for help)", preset);
+        //if (input === "b" || input === "p" || input === "g")
+        //{
+        //    colourPlayer(input);
+        //    done = true;
+        //}
+        //else if (input === "h")
+        //{
+        //    tmiss_help.menu();
+        //}
+        //else if (input === "easy" || input === "hard" || input === "normal")
+        //{
+        //    difficulty = input;
+        //    alert("Difficulty set to " + difficulty);
+        //    newMap(input);
+        //}
     }
 
     timerHeart = setTimeout(heartBeat, 500);
