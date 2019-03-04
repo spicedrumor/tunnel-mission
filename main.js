@@ -765,16 +765,6 @@ document.onkeyup = function(e) {
     }
 }
 
-function drawMap() {
-    timerDraw = setTimeout(drawMap, 100);
-}
-
-function flashMap(counter) {
-    mapString = "";
-    document.getElementById("left").innerHTML = mapString;
-    timerDraw = setTimeout(drawMap, 100);
-}
-
 function playerInteractions() {
     var i;
     var j;
@@ -983,7 +973,6 @@ function playerInteract(value, valueX, valueY) {
             }
             else
             {
-                quickUpdate();
                 newMessage("7 touches base with you.");
                 gameOver("7 8 u  :(");
                 result = -1;
@@ -1563,8 +1552,8 @@ function winGame() {
 }
 
 function quickUpdate() {
-    clearTimeout(timerDraw);
-    drawMap();
+    clearTimeout(timerPaint);
+    canvasPaint();
 }
 
 function gameOver(message) {
@@ -1785,7 +1774,6 @@ function startGame() {
     timerHeart = setTimeout(heartBeat, 500);
     timerExist = setTimeout(doIExist, 50);
     timerMoveMob = setTimeout(moveRandomMob, RANDOM_MOB_INTERVAL);
-    timerDraw = setTimeout(drawMap, 25);
     timerInteractions = setTimeout(playerInteractions, 25);
     timerMushroom = setTimeout(randomMush, 30);
     timerPaint = setTimeout(canvasPaint, 25);
