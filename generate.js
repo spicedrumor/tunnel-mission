@@ -1,4 +1,4 @@
-var tmiss_generate = {
+var trun_generate = {
     map: function(difficulty)
     {
         var width;
@@ -63,18 +63,17 @@ var tmiss_generate = {
                 return result;
             },
             insertMob: function(mobX, mobY, value){
-                var newMob;
-                var mobs = this.mobs;
-                var mapArray = this.mapArray;
+                let mobs = this.mobs;
+                let mapArray = this.mapArray;
 
-                newMob = {
+                let newMob = {
                    x: mobX,
                    y: mobY,
                    value: value
                 };
                 mobs.push(newMob);
                 mapArray[mobY][mobX] = value;
-            },
+            }
         };
         width = 32;
         function rng(value)
@@ -155,7 +154,11 @@ var tmiss_generate = {
                         }
                         else
                         {
-                            row[j] = 10;
+                            if (rng(5) === 0) {
+                                row[j] = 11;
+                            } else {
+                                row[j] = 10;
+                            }
                         }
                     }
                     else if (random === 1)

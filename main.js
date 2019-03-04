@@ -1,19 +1,20 @@
-(function ()
-{
+(function () {
 
-var MESSAGE_QUEUE_MAX = 8;
-var KEY_CODE_W = 87;
-var KEY_CODE_A = 65;
-var KEY_CODE_S = 83;
-var KEY_CODE_D = 68;
-var KEY_CODE_E = 69;
-var MAP_VAL_EMPTY = 0;
-var MAP_VAL_PLAYER = 1;
-var MAP_VAL_MOB = 3;
-var COLOR_PINK = "#FF66FF";
-var MAX_PLOUGH = 5;
-var SEVENER_SCORE_VALUE = 15;
-var SPELL_COST = 32;
+const MESSAGE_QUEUE_MAX = 8;
+const KEY_CODE_W = 87;
+const KEY_CODE_A = 65;
+const KEY_CODE_S = 83;
+const KEY_CODE_D = 68;
+const KEY_CODE_E = 69;
+const MAP_VAL_EMPTY = 0;
+const MAP_VAL_PLAYER = 1;
+const MAP_VAL_MOB = 3;
+const COLOR_PINK = "#FF66FF";
+const MAX_PLOUGH = 5;
+const SEVENER_SCORE_VALUE = 15;
+const SPELL_COST = 32;
+const RANDOM_MOB_INTERVAL = 1000;
+const PROX_MOB_INTERVAL = 500;
 
 var map;
 var mapString;
@@ -36,6 +37,7 @@ var timerInteractions;
 var timerPlayerFlash;
 var timerPlayerPhasing;
 var timerMovePlayer;
+var timerProximal;
 var currentRoundCount;
 var currentKeys;
 var difficulty;
@@ -45,10 +47,6 @@ var smileReduction = SMILESTARTSIZE / SMILEHITCOUNT;
 var smileCurSize;
 
 difficulty = "normal";
-
-//TODO: game object
-//    - contain mapObj, playerObj
-//    - contain difficulty, time, etc.
 
 var mapObject = {
 };
@@ -178,19 +176,16 @@ function validMove(newX, newY)
     return result;
 }
 
-function clobberTile(tileX, tileY)
-{
+function clobberTile(tileX, tileY) {
     mapObject.removeMob(tileX, tileY);
 }
 
-function moveRandomMob()
-{
+function moveRandomMob() {
     var randomDirection;
     var mover;
     var random;
 
-    if (mapObject.mobs.length > 0)
-    {
+    if (mapObject.mobs.length > 0) {
         randomDirection = directions[Math.floor(Math.random() * 4)];
 
         random = Math.floor(Math.random() * mapObject.mobs.length);
@@ -200,30 +195,87 @@ function moveRandomMob()
         mobMove(randomDirection, mover.x, mover.y, mover.value);
     }
 
-    timerMoveMob = setTimeout(moveRandomMob, 20);
+    timerMoveMob = setTimeout(moveRandomMob, RANDOM_MOB_INTERVAL);
 }
 
-function mobMove(direction, originX, originY, value)
-{
+function randomMobMove(originX, originY, value) {
     var result;
 
-    if (value > 100)
-    {
+    let randomDirection = directions[Math.floor(rng(4))];
+    result = mobMove(randomDirection, originX, originY, value);
+
+    return result;
+}
+
+function mobMove(direction, originX, originY, value) {
+    var result;
+
+    if (value > 100) {
         result = clingyMobMove(originX, originY, value);
         result = clingyMobMove(result[0], result[1], value);
     }
-    else
-    {
+    else {
         result = move(direction, originX, originY, value);
     }
 
     return result;
 }
 
-function ploughThrough(originX, originY, offsetX, offsetY, value, count, slain)
-{
-    if (count > 0 && validTile(originX + offsetX, originY + offsetY))
-    {
+function proximalActivate(x, y) {
+    let value = map[y][x];
+    let newPosition = null;
+    if (value === 3) {
+        newPosition = randomMobMove(x, y, 3);
+        if (!rng(3)) {
+            x = newPosition[0];
+            y = newPosition[1];
+            randomMobMove(x, y, 3);
+        }
+    } else if (value === 4) {
+        randomMobMove(x, y, 4);
+    } else if (value === 5) {
+        randomMobMove(x, y, 5);
+    } else if (value === 6) {
+        randomMobMove(x, y, 6);
+    } else if (value === 7) {
+        randomMobMove(x, y, 7);
+        let originX = playerObject.xPos;
+        let originY = playerObject.yPos;
+        let goodX = Math.abs(originX - x) < 4;
+        let goodY = Math.abs(originY - y) < 4;
+        if (goodX && goodY) {
+            newMessage("Something slimey lands on you!");
+            playerHit(5);
+        }
+    }
+}
+
+function proximalActivations() {
+    let originX = playerObject.xPos;
+    let originY = playerObject.yPos;
+    let proximalDepth = 2 ** 3;
+
+    let min = proximalDepth * (-1);
+    let max = proximalDepth;
+
+    let relativeX = null;
+    let relativeY = null;
+    let chance = null;
+    for (let i = min; i <= max; i++) {
+        for (let j = min; j <= max; j++) {
+            relativeX = originX + j;
+            relativeY = originY + i;
+            if (validTile(relativeX, relativeY) && !(rng(3))) {
+                proximalActivate(relativeX, relativeY);
+            }
+        }
+    }
+
+    timerProximal = setTimeout(proximalActivations, PROX_MOB_INTERVAL);
+}
+
+function ploughThrough(originX, originY, offsetX, offsetY, value, count, slain) {
+    if (count > 0 && validTile(originX + offsetX, originY + offsetY)) {
         tmiss_sound.magic();
         var newX;
         var newY;
@@ -234,15 +286,13 @@ function ploughThrough(originX, originY, offsetX, offsetY, value, count, slain)
         playerObject.yPos = newY;
 
         map[originY][originX] = 0;
-        if (map[newY][newX] === 7)
-        {
+        if (map[newY][newX] === 7) {
             slain += 1;
             sevenDown(slain);
             life += 16;
             timer += 16;
         }
-        else if (map[newY][newX] === 2)
-        {
+        else if (map[newY][newX] === 2) {
             winGame();
         }
         clobberTile(newX, newY);
@@ -250,19 +300,16 @@ function ploughThrough(originX, originY, offsetX, offsetY, value, count, slain)
 
         ploughThrough(newX, newY, offsetX, offsetY, value, count - 1, slain);
     }
-    else if (count === MAX_PLOUGH)
-    {
+    else if (count === MAX_PLOUGH) {
         newMessage("That would be a very bad idea... ");
     }
-    else
-    {
+    else {
         newMessage("You suddenly feel drained.");
         playerObject.powerMove = false;
     }
 }
 
-function powerMove(direction, originX, originY, value)
-{
+function powerMove(direction, originX, originY, value) {
     var offsetValues;
     var offsetX;
     var offsetY;
@@ -279,8 +326,7 @@ function powerMove(direction, originX, originY, value)
     ploughThrough(originX, originY, offsetX, offsetY, value, MAX_PLOUGH, 0);
 }
 
-function getOffset(direction)
-{
+function getOffset(direction) {
     var result;
     var offsetX;
     var offsetY;
@@ -312,8 +358,7 @@ function getOffset(direction)
     return result;
 }
 
-function clingyMobMove(originX, originY, value)
-{
+function clingyMobMove(originX, originY, value) {
     var offsetValues;
     var offsetX;
     var offsetY;
@@ -362,8 +407,7 @@ function clingyMobMove(originX, originY, value)
     return result;
 }
 
-function move(direction, originX, originY, value)
-{
+function move(direction, originX, originY, value) {
     var result;
     var offsetValues;
     var offsetX;
@@ -389,6 +433,8 @@ function move(direction, originX, originY, value)
         {
             mapObject.removeMob(originX, originY);
             mapObject.insertMob(newX, newY, value);
+            result[0] = newX;
+            result[1] = newY;
         }
         else
         {
@@ -409,8 +455,7 @@ function move(direction, originX, originY, value)
     return result;
 }
 
-function randomTile()
-{
+function randomTile() {
     var randomX;
     var randomY;
     var result;
@@ -424,8 +469,7 @@ function randomTile()
     return result;
 }
 
-function spell()
-{
+function spell() {
     var i;
     var j;
     var hit;
@@ -532,8 +576,7 @@ function spell()
 
 }
 
-function sevenDown(count)
-{
+function sevenDown(count) {
     if (count === 1)
     {
         newMessage("A 7 has fallen!");
@@ -556,8 +599,7 @@ function sevenDown(count)
     }
 }
 
-function playerMover()
-{
+function playerMover() {
     var xPos;
     var yPos;
     var moveTime = 200;
@@ -577,8 +619,7 @@ function playerMover()
     timerMovePlayer = setTimeout(playerMover, moveTime);
 }
 
-document.onkeydown = function(e)
-{
+document.onkeydown = function(e) {
     var direction;
     var newCoords;
     var key = e.keyCode ? e.keyCode : e.which;
@@ -629,8 +670,7 @@ document.onkeydown = function(e)
     }
 }
 
-document.onkeyup = function(e)
-{
+document.onkeyup = function(e) {
     var direction;
     var key = e.keyCode ? e.keyCode : e.which;
     var value;
@@ -725,22 +765,17 @@ document.onkeyup = function(e)
     }
 }
 
-function drawMap()
-{
-    //mapString = tmiss_draw.createHTMLString(mapObject, playerObject);
-    //document.getElementById("left").innerHTML = mapString;
+function drawMap() {
     timerDraw = setTimeout(drawMap, 100);
 }
 
-function flashMap(counter)
-{
+function flashMap(counter) {
     mapString = "";
     document.getElementById("left").innerHTML = mapString;
     timerDraw = setTimeout(drawMap, 100);
 }
 
-function playerInteractions()
-{
+function playerInteractions() {
     var i;
     var j;
     var current;
@@ -773,8 +808,7 @@ function playerInteractions()
     timerInteractions = setTimeout(playerInteractions, 500);
 }
 
-function playerInteract(value, valueX, valueY)
-{
+function playerInteract(value, valueX, valueY) {
     var random;
     var newX;
     var newY;
@@ -949,6 +983,7 @@ function playerInteract(value, valueX, valueY)
             }
             else
             {
+                quickUpdate();
                 newMessage("7 touches base with you.");
                 gameOver("7 8 u  :(");
                 result = -1;
@@ -995,9 +1030,13 @@ function playerInteract(value, valueX, valueY)
             life += 8;
         }
     }
-    else if (value === 13)
+    else if (value === 11)
     {
-        //reserved
+        tmiss_sound.eat();
+        newMessage("Sweet, sweet candy.");
+        playerObject.score += 4;
+        map[valueY][valueX] = 0;
+        life += 16;
     }
     else if (value === 16 || value === 17)
     {
@@ -1165,8 +1204,7 @@ function playerInteract(value, valueX, valueY)
     return result;
 }
 
-function playerTeleport(newX, newY)
-{
+function playerTeleport(newX, newY) {
     map[playerObject.yPos][playerObject.xPos] = 0;
     playerObject.xPos = newX;
     playerObject.yPos = newY;
@@ -1178,13 +1216,11 @@ function playerTeleport(newX, newY)
     playerPhase();
 }
 
-function rng(value)
-{
+function rng(value) {
     return Math.floor(Math.random() * value);
 }
 
-function mineTile(xPos, yPos)
-{
+function mineTile(xPos, yPos) {
     newMessage("The wall blows apart from your onslaught!");
     map[yPos][xPos] = 0;
     pickStrength = playerObject.pickCount;
@@ -1198,8 +1234,7 @@ function mineTile(xPos, yPos)
     }
 }
 
-function playerBump(value, valueX, valueY, offsetX, offsetY)
-{
+function playerBump(value, valueX, valueY, offsetX, offsetY) {
     var i;
     var j;
     var random;
@@ -1257,8 +1292,7 @@ function playerBump(value, valueX, valueY, offsetX, offsetY)
     }
 }
 
-function bootItem(tileX, tileY, offsetX, offsetY, travel)
-{
+function bootItem(tileX, tileY, offsetX, offsetY, travel) {
     var value;
     var newX;
     var newY;
@@ -1266,7 +1300,7 @@ function bootItem(tileX, tileY, offsetX, offsetY, travel)
 
     newX = tileX + offsetX;
     newY = tileY + offsetY;
-//TODO bug
+    //TODO
     if (map[newY][newX] === 0)
     {
         value = map[tileY][tileX];
@@ -1291,8 +1325,7 @@ function bootItem(tileX, tileY, offsetX, offsetY, travel)
     }
 }
 
-function phaseBuff()
-{
+function phaseBuff() {
     var result;
 
     result = false;
@@ -1310,8 +1343,7 @@ function phaseBuff()
     return result;
 }
 
-function canvasPaint()
-{
+function canvasPaint() {
     context.clearRect(0, 0, canvas.width, canvas.height);
 
     tmiss_draw.paintCanvas(mapObject, playerObject, context);
@@ -1343,8 +1375,7 @@ function canvasPaint()
     timerPaint = setTimeout(canvasPaint, 100);
 }
 
-function canvasPrint()
-{
+function canvasPrint() {
     var i;
     var string;
 
@@ -1362,10 +1393,6 @@ function canvasPrint()
 
     ctx.clearRect(0, 0, textCanvas.width, textCanvas.height);
 
-    //pane.innerHTML += '<font size="6" color="green">' + "Life: " + life + "</font>&emsp;";
-    //pane.innerHTML += '<font size="6" color="red">' + "Time: " + timer + "</font>&emsp;";
-    //pane.innerHTML += '<font size="6" color="blue">' + "Score: " + playerObject.score + "</font>&emsp;";
-    //pane.innerHTML += '<font size="6" color="yellow">' + "position: " + Math.floor(playerObject.yPos / mapObject.height * 100) + "%</font>";
     ctx.font = "bold 20px Courier";
     ctx.fillStyle = "white";
     string = "Life: ";
@@ -1402,8 +1429,7 @@ function canvasPrint()
     }
 }
 
-function armourBuff()
-{
+function armourBuff() {
     var result;
 
     result = false;
@@ -1424,22 +1450,19 @@ function armourBuff()
     return result;
 }
 
-function playerPhase()
-{
+function playerPhase() {
     clearTimeout(timerPlayerPhasing);
     timerPlayerPhasing = setTimeout(function(){playerPhasing()}, 2000);
     playerObject.phasing = true;
     flashOn(2000);
 }
 
-function playerPhasing()
-{
+function playerPhasing() {
     playerObject.phasing = false;
     newMessage("You fully phase into existence.");
 }
 
-function playerHit(damage)
-{
+function playerHit(damage) {
     if (!armourBuff() && !phaseBuff())
     {
         if (damage > 0)
@@ -1458,15 +1481,13 @@ function playerHit(damage)
     }
 }
 
-function flashOn(millisecs)
-{
+function flashOn(millisecs) {
     clearTimeout(timerPlayerFlash);
     timerPlayerFlash = setTimeout(function(){playerFlash(10)}, millisecs);
     playerObject.flashBit = true;
 }
 
-function playerFlash(counter)
-{
+function playerFlash(counter) {
     if (counter > 0)
     {
         if (counter % 2 === 0)
@@ -1485,8 +1506,7 @@ function playerFlash(counter)
     }
 }
 
-function randomMush()
-{
+function randomMush() {
     var millisecs;
     var random;
 
@@ -1503,8 +1523,7 @@ function randomMush()
 }
 
 
-function winGame()
-{
+function winGame() {
     quickUpdate();
     tmiss_sound.win();
     score = playerObject.score
@@ -1543,15 +1562,12 @@ function winGame()
     endGame();
 }
 
-function quickUpdate()
-{
+function quickUpdate() {
     clearTimeout(timerDraw);
     drawMap();
-    //updateStatusPane();
 }
 
-function gameOver(message)
-{
+function gameOver(message) {
     var position;
 
     //just in case player was ninja'd:
@@ -1563,8 +1579,7 @@ function gameOver(message)
     window.alert("Game Over: " + message + "\n" + "Difficulty: " + difficulty);
 }
 
-function endGame()
-{
+function endGame() {
     var i;
     var j;
     var array;
@@ -1587,8 +1602,7 @@ function endGame()
     setTimeout(startGame, 1000);
 }
 
-function clearTimeouts()
-{
+function clearTimeouts() {
     clearTimeout(timerPlayerPhasing);
     clearTimeout(timerPlayerFlash);
     clearTimeout(timerHeart);
@@ -1599,10 +1613,10 @@ function clearTimeouts()
     clearTimeout(timerMushroom);
     clearTimeout(timerPlayerFlash);
     clearTimeout(timerMovePlayer);
+    clearTimeout(timerProximal);
 }
 
-function doIExist()
-{
+function doIExist() {
     var value;
 
     value = map[playerObject.yPos][playerObject.xPos];
@@ -1617,11 +1631,10 @@ function doIExist()
     }
 }
 
-function heartBeat()
-{
+function heartBeat() {
     var dead;
 
-    //TODO hacky
+    //TODO prevent exit being overwritten:
     if (map[mapObject.height - 2][mapObject.width - 2] != 2)
     {
         mapObject.removeMob(mapObject.width - 2, mapObject.height - 2);
@@ -1654,43 +1667,13 @@ function heartBeat()
         }
     }
 
-    //updateStatusPane();
     if (!dead)
     {
         timerHeart = setTimeout(heartBeat, 500);
     }
 }
 
-function updateStatusPane()
-{
-    var pane;
-    var i;
-
-    pane = document.getElementById("bottom");
-    pane.innerHTML = "";
-    for (i = 0; i < MESSAGE_QUEUE_MAX; i++)
-    {
-        if (i != 0)
-        {
-            pane.innerHTML += '<font color="grey">' + "<h4>" + messageQueue[i] + "</h4>" + "</font>";
-        }
-        else
-        {
-            pane.innerHTML += '<font color="lime">' + "<h2>" + messageQueue[i] + "</h2>" + "</font>";
-        }
-    }
-
-    pane = document.getElementById("bottom");
-    pane.innerHTML = "";
-
-    pane.innerHTML += '<font size="6" color="green">' + "Life: " + life + "</font>&emsp;";
-    pane.innerHTML += '<font size="6" color="red">' + "Time: " + timer + "</font>&emsp;";
-    pane.innerHTML += '<font size="6" color="blue">' + "Score: " + playerObject.score + "</font>&emsp;";
-    pane.innerHTML += '<font size="6" color="yellow">' + "position: " + Math.floor(playerObject.yPos / mapObject.height * 100) + "%</font>";
-}
-
-function newMessage(message)
-{
+function newMessage(message) {
     var i;
 
     for (i = MESSAGE_QUEUE_MAX - 1; i > 0; i--)
@@ -1701,9 +1684,8 @@ function newMessage(message)
     messageQueue[0] = message;
 }
 
-function newMap()
-{
-    mapObject = tmiss_generate.map(difficulty);
+function newMap() {
+    mapObject = trun_generate.map(difficulty);
 
     map = mapObject.mapArray;
 
@@ -1711,8 +1693,7 @@ function newMap()
     mapObject.fireAlert = [];
 }
 
-function newGame()
-{
+function newGame() {
     playerObject.xPos = 0;
     playerObject.yPos = 0;
     playerObject.alive = true;
@@ -1750,8 +1731,7 @@ function newGame()
     timerBit = false;
 }
 
-function colourPlayer(colour)
-{
+function colourPlayer(colour) {
     playerObject.blueBit = false;
     playerObject.pinkBit = false;
     playerObject.greenBit = false;
@@ -1773,8 +1753,7 @@ function colourPlayer(colour)
     }
 }
 
-function startGame()
-{
+function startGame() {
     var input;
     var done;
     var colorSelect;
@@ -1788,50 +1767,29 @@ function startGame()
 
     done = false;
 
-    while (!done)
+    if (playerObject.pinkBit)
     {
-        if (playerObject.pinkBit)
-        {
-            colorSelect = "p";
-        }
-        else if (playerObject.greenBit)
-        {
-            colorSelect = "g";
-        }
-        else
-        {
-            colorSelect = "b";
-        }
-
-        colourPlayer(colorSelect);
-        done = true; //temp
-
-        // dep:
-        //input = window.prompt("Select Player: (type b for blue or p for pink or g for green or h for help)", preset);
-        //if (input === "b" || input === "p" || input === "g")
-        //{
-        //    colourPlayer(input);
-        //    done = true;
-        //}
-        //else if (input === "h")
-        //{
-        //    tmiss_help.menu();
-        //}
-        //else if (input === "easy" || input === "hard" || input === "normal")
-        //{
-        //    difficulty = input;
-        //    alert("Difficulty set to " + difficulty);
-        //    newMap(input);
-        //}
+        colorSelect = "p";
     }
+    else if (playerObject.greenBit)
+    {
+        colorSelect = "g";
+    }
+    else
+    {
+        colorSelect = "b";
+    }
+
+    colourPlayer(colorSelect);
 
     timerHeart = setTimeout(heartBeat, 500);
     timerExist = setTimeout(doIExist, 50);
-    timerMoveMob = setTimeout(moveRandomMob, 25);
+    timerMoveMob = setTimeout(moveRandomMob, RANDOM_MOB_INTERVAL);
     timerDraw = setTimeout(drawMap, 25);
     timerInteractions = setTimeout(playerInteractions, 25);
     timerMushroom = setTimeout(randomMush, 30);
     timerPaint = setTimeout(canvasPaint, 25);
+    timerProximal = setTimeout(proximalActivations, PROX_MOB_INTERVAL);
 
     playerPhase();
 }
@@ -1873,7 +1831,6 @@ scratch_pic.onload = function()
 context.fillStyle = "rgb(200,100,50)";
 
 context.strokeStyle="#FF0000";
-//context.strokeRect(50,50,500,50);
 
 context.canvas.addEventListener('mousedown', function(event)
 {

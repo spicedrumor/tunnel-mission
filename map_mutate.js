@@ -32,7 +32,8 @@ fire: function(tileX, tileY, mapObject){
     else
     {
         this.neighbourLicker(tileX, tileY, mapObject);
-        mapObject.fireAlert[tileY][tileX] = setTimeout(function(){tmiss_mapMutate.fire(tileX, tileY, mapObject)}, 1000);
+        let newTimeout = setTimeout(function(){tmiss_mapMutate.fire(tileX, tileY, mapObject)}, 1000);
+        mapObject.fireAlert[tileY][tileX] = newTimeout;
     }
 },
 neighbourLicker: function(tileX, tileY, mapObject){
