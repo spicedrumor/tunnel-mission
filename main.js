@@ -15,6 +15,7 @@ const SEVENER_SCORE_VALUE = 15;
 const SPELL_COST = 32;
 const RANDOM_MOB_INTERVAL = 1000;
 const PROX_MOB_INTERVAL = 500;
+const TIMER_PAINT = 50;
 
 var map;
 var mapString;
@@ -45,6 +46,8 @@ var SMILESTARTSIZE = 128;
 var SMILEHITCOUNT = 16;
 var smileReduction = SMILESTARTSIZE / SMILEHITCOUNT;
 var smileCurSize;
+
+let Ta = trun_anim;
 
 difficulty = "normal";
 
@@ -80,6 +83,7 @@ playerObject.armourReduction = 0;
 currentRoundCount = 0;
 
 directions = ["n", "s", "e", "w"];
+projectiles = [];
 
 function validTile(tileX, tileY)
 {
@@ -221,6 +225,22 @@ function mobMove(direction, originX, originY, value) {
     return result;
 }
 
+function projectileManager() {
+    if (projectiles.length > 0) {
+        let done = false;
+        while (projectiles.length > 0 && !done) {
+            if (!projectiles[0].alive) {
+                projectiles.shift();
+            } else {
+                done = true;
+            }
+        }
+        for (let i = 0; i < projectiles.length; i++) {
+            Ta.moveProjectile(projectiles[i]);
+        }
+    }
+}
+
 function proximalActivate(x, y) {
     let value = map[y][x];
     let newPosition = null;
@@ -244,7 +264,14 @@ function proximalActivate(x, y) {
         let goodX = Math.abs(originX - x) < 4;
         let goodY = Math.abs(originY - y) < 4;
         if (goodX && goodY) {
-            newMessage("Something slimey lands on you!");
+            let projOrigin = [];
+            projOrigin[0] = x;
+            projOrigin[1] = y;
+            let projTarget = [];
+            projTarget[0] = originX; // TODO names
+            projTarget[1] = originY; // TODO names
+            projectiles.push(Ta.newInboundProjectile(projTarget, projOrigin));
+            newMessage("Something slimy lands on you!");
             playerHit(5);
         }
     }
@@ -253,7 +280,7 @@ function proximalActivate(x, y) {
 function proximalActivations() {
     let originX = playerObject.xPos;
     let originY = playerObject.yPos;
-    let proximalDepth = 2 ** 3;
+    let proximalDepth = Math.pow(2, 3);
 
     let min = proximalDepth * (-1);
     let max = proximalDepth;
@@ -1360,8 +1387,19 @@ function canvasPaint() {
         context.drawImage(scratch_pic, (canvas.width/2 - 19), (canvas.height/2 - 15), 64, 64);
     }
 
+    if (projectiles.length > 0) {
+        projectileManager();
+        let projX = null;
+        let projY = null;
+        for (let i = 0; i < projectiles.length; i++) {
+            projX = projectiles[i].currX;
+            projY = projectiles[i].currY;
+            context.drawImage(slimy_pic, projX, projY + (8 - rng(16)), 16, 16);
+        }
+    }
+
     canvasPrint();
-    timerPaint = setTimeout(canvasPaint, 100);
+    timerPaint = setTimeout(canvasPaint, TIMER_PAINT);
 }
 
 function canvasPrint() {
@@ -1812,6 +1850,13 @@ var scratch_pic;
 scratch_pic = new Image();
 scratch_pic.src = "res/scratch.png";
 scratch_pic.onload = function()
+{
+}
+
+var slimy_pic;
+slimy_pic = new Image();
+slimy_pic.src = "res/slimy.png";
+slimy_pic.onload = function()
 {
 }
 

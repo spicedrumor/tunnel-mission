@@ -2,7 +2,7 @@
 let trun_clock = {
 
 // const
-TICKS_PER_SEC: 2 ** 2,
+TICKS_PER_SEC: Math.pow(2, 2),
 
 // var
 
@@ -14,9 +14,6 @@ timeTracker: null,
 
 initialize: function () {
 currentTicks = 0;
-// set up current time - add incoming millisecs to this for tick counting
-//     - ie it's been 59ms since last tick count:
-//        => number of ticks = 59 / 4 with a remainder of 59 % 4 ms
 timeTracker = new Date();
 },
 
