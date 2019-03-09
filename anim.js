@@ -8,15 +8,15 @@ PLAYER_X: 8,
 PLAYER_Y: 8,
 PLAYER_X_INNER_PIXEL: (512 / 16) * 8 + (512 / 16 / 2),
 PLAYER_Y_INNER_PIXEL: (512 / 16) * 8 + (512 / 16 / 2),
-PROJECTILE_SPEED: 4,
+PROJECTILE_SPEED: 32,
 
 // var
 
 // function
 
 newInboundProjectile: function (playerPosition, origin) {
-    let offX = playerPosition[0] - origin[0];
-    let offY = playerPosition[1] - origin[1];
+    let offX = playerPosition.x - origin.x;
+    let offY = playerPosition.y - origin.y;
 
     let originRelativeX = this.PLAYER_X - offX;
     let originRelativeY = this.PLAYER_Y - offY;
@@ -70,7 +70,7 @@ buildProjectile: function (origin, destination) {
     proj.currY = origin[1];
     proj.destX = destination[0];
     proj.destY = destination[1];
-    proj.speed = 16;
+    proj.speed = this.PROJECTILE_SPEED;
     proj.alive = true;
 
     return proj;
