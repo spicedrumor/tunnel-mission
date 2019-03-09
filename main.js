@@ -1558,7 +1558,7 @@ function newGame() {
         newMessage("");
     }
 
-    newMessage("Tunnel Runner version 0.44e.16");
+    newMessage("Tunnel Runner version 0.44e.17");
 
     newMessage("Type \"h\" at any time for help.");
 
@@ -1668,8 +1668,10 @@ canvas.addEventListener('mousedown', function(event) {
     yPos = playerObject.yPos;
 
     event.preventDefault();//TODO
-    let xp = event.clientX - context.canvas.offsetLeft;
-    let yp = event.clientY - context.canvas.offsetTop;
+    //let xp = event.clientX - context.canvas.offsetLeft;
+    //let yp = event.clientY - context.canvas.offsetTop;
+    var xp = event.offsetX * canvas.width / canvas.clientWidth | 0;
+    var yp = event.offsetY * canvas.height / canvas.clientHeight | 0;
 
     if (yp > (512 / 16 * 8) && yp < (512 / 16 * 9)) {
         if (xp < 512 / 16 * 8) {
