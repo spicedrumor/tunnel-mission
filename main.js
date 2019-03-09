@@ -1558,7 +1558,7 @@ function newGame() {
         newMessage("");
     }
 
-    newMessage("Tunnel Runner version 0.44d.");
+    newMessage("Tunnel Runner version 0.44e.11");
 
     newMessage("Type \"h\" at any time for help.");
 
@@ -1660,38 +1660,7 @@ context.fillStyle = "rgb(200,100,50)";
 
 context.strokeStyle="#FF0000";
 
-//context.canvas.addEventListener('mousedown', function(event) {
-//    let xPos;
-//    let yPos;
-//
-//    xPos = playerObject.xPos;
-//    yPos = playerObject.yPos;
-//
-//    event.preventDefault();//TODO
-//    let xp = event.clientX - context.canvas.offsetLeft;
-//    let yp = event.clientY - context.canvas.offsetTop;
-//
-//    if (yp > (512 / 16 * 8) && yp < (512 / 16 * 9)) {
-//        if (xp < 512 / 16 * 8) {
-//            move('w', xPos, yPos, MAP_VAL_PLAYER);
-//        } else if (xp > 512 / 16 * 9) {
-//            move('e', xPos, yPos, MAP_VAL_PLAYER);
-//        }
-//    }
-//    if (xp > (512 / 16 * 8) && xp < (512 / 16 * 9)) {
-//        if (yp < 512 / 16 * 8) {
-//            move('n', xPos, yPos, MAP_VAL_PLAYER);
-//        } else if (yp > 512 / 16 * 9) {
-//            move('s', xPos, yPos, MAP_VAL_PLAYER);
-//        }
-//    }
-//});
-
-//context.canvas.addEventListener('mouseup', function(event) {
-//});
-
-context.canvas.addEventListener("touchstart", function(event) {
-    Window.prompt("test");
+canvas.addEventListener('mousedown', function(event) {
     let xPos;
     let yPos;
 
@@ -1716,7 +1685,38 @@ context.canvas.addEventListener("touchstart", function(event) {
             move('s', xPos, yPos, MAP_VAL_PLAYER);
         }
     }
-}, true);
+});
+
+//context.canvas.addEventListener('mouseup', function(event) {
+//});
+
+//canvas.addEventListener("touchstart", function(event) {
+//    prompt("test");
+//    let xPos;
+//    let yPos;
+//
+//    xPos = playerObject.xPos;
+//    yPos = playerObject.yPos;
+//
+//    event.preventDefault();//TODO
+//    let xp = event.clientX - context.canvas.offsetLeft;
+//    let yp = event.clientY - context.canvas.offsetTop;
+//
+//    if (yp > (512 / 16 * 8) && yp < (512 / 16 * 9)) {
+//        if (xp < 512 / 16 * 8) {
+//            move('w', xPos, yPos, MAP_VAL_PLAYER);
+//        } else if (xp > 512 / 16 * 9) {
+//            move('e', xPos, yPos, MAP_VAL_PLAYER);
+//        }
+//    }
+//    if (xp > (512 / 16 * 8) && xp < (512 / 16 * 9)) {
+//        if (yp < 512 / 16 * 8) {
+//            move('n', xPos, yPos, MAP_VAL_PLAYER);
+//        } else if (yp > 512 / 16 * 9) {
+//            move('s', xPos, yPos, MAP_VAL_PLAYER);
+//        }
+//    }
+//}, true);
 
 //var elm = document.body;
 //var catcher = function(evt) {
@@ -1726,19 +1726,20 @@ context.canvas.addEventListener("touchstart", function(event) {
 //elm.addEventListener('touchstart', catcher, true);
 
 // disable double-tap zoom:
-//function preventZoom(e) {
-//  var t2 = e.timeStamp;
-//  var t1 = e.currentTarget.dataset.lastTouch || t2;
-//  var dt = t2 - t1;
-//  var fingers = e.touches.length;
-//  e.currentTarget.dataset.lastTouch = t2;
-//
-//  if (!dt || dt > 500 || fingers > 1) return; // not double-tap
-//
-//  e.preventDefault();
-//  e.target.click();
-//}
-//context.canvas.addEventListener('touchstart', preventZoom); 
+function preventZoom(e) {
+  prompt("test");
+  var t2 = e.timeStamp;
+  var t1 = e.currentTarget.dataset.lastTouch || t2;
+  var dt = t2 - t1;
+  var fingers = e.touches.length;
+  e.currentTarget.dataset.lastTouch = t2;
+
+  if (!dt || dt > 500 || fingers > 1) return; // not double-tap
+
+  e.preventDefault();
+  e.target.click();
+}
+canvas.addEventListener('touchstart', preventZoom); 
 
 startGame();
 
