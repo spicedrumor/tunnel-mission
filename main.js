@@ -1271,7 +1271,7 @@ function canvasPrint() {
     ctx.fillStyle = "yellow";
     string = playerPosition;
     string += "%";
-    ctx.fillText(string, textAlign + 455, 30);
+    ctx.fillText(string, textAlign + 435, 30);
 
     for (i = 0; i < MESSAGE_QUEUE_MAX; i++) {
         if (i === 0) {
@@ -1558,6 +1558,8 @@ function newGame() {
         newMessage("");
     }
 
+    newMessage("Tunnel Runner version 0.44a.");
+
     newMessage("Type \"h\" at any time for help.");
 
     newMessage("Objective: Run the tunnel.");
@@ -1630,7 +1632,6 @@ var canvasOffset;
 canvas = document.getElementById('canvas');
 canvasWidth = canvas.width;
 canvasHeight = canvas.height;
-canvasOffset = 100;
 
 var context = canvas.getContext('2d');
 
@@ -1670,19 +1671,20 @@ context.canvas.addEventListener('mousedown', function(event) {
     var xp = event.clientX - context.canvas.offsetLeft;
     var yp = event.clientY - context.canvas.offsetTop;
 
-    if (yp < canvasOffset) {
-        move('n', xPos, yPos, MAP_VAL_PLAYER);
+    if (yp > (512 / 16 * 8) && yp < (512 / 16 * 9)) {
+        if (xp < 512 / 16 * 8) {
+            move('w', xPos, yPos, MAP_VAL_PLAYER);
+        } else if (xp > 512 / 16 * 9) {
+            move('e', xPos, yPos, MAP_VAL_PLAYER);
+        }
     }
-    else if (yp > canvasHeight - canvasOffset) {
-        move('s', xPos, yPos, MAP_VAL_PLAYER);
+    if (xp > (512 / 16 * 8) && xp < (512 / 16 * 9)) {
+        if (yp < 512 / 16 * 8) {
+            move('n', xPos, yPos, MAP_VAL_PLAYER);
+        } else if (yp > 512 / 16 * 9) {
+            move('s', xPos, yPos, MAP_VAL_PLAYER);
+        }
     }
-    else if (xp < canvasOffset) {
-        move('w', xPos, yPos, MAP_VAL_PLAYER);
-    }
-    else if (xp > canvasWidth - canvasOffset) {
-        move('e', xPos, yPos, MAP_VAL_PLAYER);
-    }
-
 });
 
 context.canvas.addEventListener('mouseup', function(event) {
@@ -1695,9 +1697,9 @@ var catcher = function(evt) {
     if (evt.touches.length > 2)
         evt.preventDefault();
 };
-
 elm.addEventListener('touchstart', catcher, true);
 
+// disable double-tap zoom:
 function preventZoom(e) {
   var t2 = e.timeStamp;
   var t1 = e.currentTarget.dataset.lastTouch || t2;
