@@ -1558,7 +1558,7 @@ function newGame() {
         newMessage("");
     }
 
-    newMessage("Tunnel Runner version 0.44b.");
+    newMessage("Tunnel Runner version 0.44c.");
 
     newMessage("Type \"h\" at any time for help.");
 
