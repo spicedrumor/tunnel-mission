@@ -1558,7 +1558,7 @@ function newGame() {
         newMessage("");
     }
 
-    newMessage("Tunnel Runner version 0.44e.11");
+    newMessage("Tunnel Runner version 0.44e.12");
 
     newMessage("Type \"h\" at any time for help.");
 
@@ -1739,7 +1739,7 @@ function preventZoom(e) {
   e.preventDefault();
   e.target.click();
 }
-canvas.addEventListener('touchstart', preventZoom); 
+document.addEventListener('touchstart', preventZoom); 
 
 startGame();
 
