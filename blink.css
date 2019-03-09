@@ -1,3 +1,8 @@
+/* disable tap zooming */
+* {
+touch-action: manipulation;
+}
+
 canvas {
   position:absolute;
   top:0;
