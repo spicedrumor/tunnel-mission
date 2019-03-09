@@ -1661,15 +1661,15 @@ context.fillStyle = "rgb(200,100,50)";
 context.strokeStyle="#FF0000";
 
 context.canvas.addEventListener('mousedown', function(event) {
-    var xPos;
-    var yPos;
+    let xPos;
+    let yPos;
 
     xPos = playerObject.xPos;
     yPos = playerObject.yPos;
 
     event.preventDefault();//TODO
-    var xp = event.clientX - context.canvas.offsetLeft;
-    var yp = event.clientY - context.canvas.offsetTop;
+    let xp = event.clientX - context.canvas.offsetLeft;
+    let yp = event.clientY - context.canvas.offsetTop;
 
     if (yp > (512 / 16 * 8) && yp < (512 / 16 * 9)) {
         if (xp < 512 / 16 * 8) {
@@ -1690,6 +1690,32 @@ context.canvas.addEventListener('mousedown', function(event) {
 context.canvas.addEventListener('mouseup', function(event) {
 });
 
+addEventListener("touchstart", function(event) {
+    let xPos;
+    let yPos;
+
+    xPos = playerObject.xPos;
+    yPos = playerObject.yPos;
+
+    event.preventDefault();//TODO
+    let xp = event.clientX - context.canvas.offsetLeft;
+    let yp = event.clientY - context.canvas.offsetTop;
+
+    if (yp > (512 / 16 * 8) && yp < (512 / 16 * 9)) {
+        if (xp < 512 / 16 * 8) {
+            move('w', xPos, yPos, MAP_VAL_PLAYER);
+        } else if (xp > 512 / 16 * 9) {
+            move('e', xPos, yPos, MAP_VAL_PLAYER);
+        }
+    }
+    if (xp > (512 / 16 * 8) && xp < (512 / 16 * 9)) {
+        if (yp < 512 / 16 * 8) {
+            move('n', xPos, yPos, MAP_VAL_PLAYER);
+        } else if (yp > 512 / 16 * 9) {
+            move('s', xPos, yPos, MAP_VAL_PLAYER);
+        }
+    }
+}, true);
 
 var elm = document.body;
 
@@ -1700,19 +1726,19 @@ var catcher = function(evt) {
 elm.addEventListener('touchstart', catcher, true);
 
 // disable double-tap zoom:
-//function preventZoom(e) {
-//  var t2 = e.timeStamp;
-//  var t1 = e.currentTarget.dataset.lastTouch || t2;
-//  var dt = t2 - t1;
-//  var fingers = e.touches.length;
-//  e.currentTarget.dataset.lastTouch = t2;
-//
-//  if (!dt || dt > 500 || fingers > 1) return; // not double-tap
-//
-//  e.preventDefault();
-//  e.target.click();
-//}
-//context.canvas.addEventListener('touchstart', preventZoom); 
+function preventZoom(e) {
+  var t2 = e.timeStamp;
+  var t1 = e.currentTarget.dataset.lastTouch || t2;
+  var dt = t2 - t1;
+  var fingers = e.touches.length;
+  e.currentTarget.dataset.lastTouch = t2;
+
+  if (!dt || dt > 500 || fingers > 1) return; // not double-tap
+
+  e.preventDefault();
+  e.target.click();
+}
+context.canvas.addEventListener('touchstart', preventZoom); 
 
 startGame();
 
