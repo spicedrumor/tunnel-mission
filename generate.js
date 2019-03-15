@@ -1,6 +1,5 @@
 var trun_generate = {
-    map: function(difficulty)
-    {
+    map: function(difficulty) {
         var width;
         var height;
         var i;
@@ -44,17 +43,14 @@ var trun_generate = {
                 result = false;
 
                 found = false;
-                for (var i = 0; i < mobs.length; i++)
-                {
-                    if (mobs[i].x == mobX && mobs[i].y == mobY)
-                    {
+                for (var i = 0; i < mobs.length; i++) {
+                    if (mobs[i].x == mobX && mobs[i].y == mobY) {
                         found = true;
                         break;
                     }
                 }
 
-                if (found)
-                {
+                if (found) {
                     mobs.splice(i, 1);
                     mapArray[mobY][mobX] = 0;
                     result = true;
@@ -76,49 +72,38 @@ var trun_generate = {
             }
         };
         width = 32;
-        function rng(value)
-        {
+        function rng(value) {
             return Math.floor(Math.random() * value);
         }
         height = 512;
         multiplierMain = 8;
         redThreeMult = 10;
-        if (difficulty === "hard")
-        {
+        if (difficulty === "hard") {
             height = 1024;
             width = 28;
             multiplierMain = 5;
             redThreeMult = 7;
-        }
-        else if (difficulty === "easy")
-        {
+        } else if (difficulty === "easy") {
             multiplierMain = 10;
         }
         newMap = [];
 
-        for (i = 0; i < height; i++)
-        {
+        for (i = 0; i < height; i++) {
             row = [];
-            for (j = 0; j < width; j++)
-            {
+            for (j = 0; j < width; j++) {
                 random = 0;
                 random = rng(multiplierMain);
-                if (random === 0)
-                { //mob generation:
+                if (random === 0) { //mob generation:
                     mobValue = rng(6) + 3;
-                    if (mobValue === 3)
-                    {
+                    if (mobValue === 3) {
                         random = rng(redThreeMult);
-                        if (random === 0)
-                        {
+                        if (random === 0) {
                             mobValue = 103;
                         }
                     }
-                    if (mobValue === 7)
-                    {
+                    if (mobValue === 7) {
                         random = rng(2);
-                        if (random === 0)
-                        {
+                        if (random === 0) {
                             mobValue = rng(6) + 3;
                         }
                     }
@@ -128,94 +113,59 @@ var trun_generate = {
                     newMob.x = j;
                     newMob.y = i;
                     mapObject.mobs.push(newMob);
-                }
-                else if (random === 1)
-                { //item generation:
+                } else if (random === 1) { //item generation:
                     random = rng(11);
 
-                    if (random === 0)
-                    {
+                    if (random === 0) {
                         random = rng(4);
-                        if (random === 0)
-                        {
+                        if (random === 0) {
                             random = rng(3);
-                            if (random === 0)
-                            {
+                            if (random === 0) {
                                 row[j] = 300;
-                            }
-                            else if (random === 1)
-                            {
+                            } else if (random === 1) {
                                 row[j] = 301;
-                            }
-                            else if (random === 2)
-                            {
+                            } else if (random === 2) {
                                 row[j] = 302;
                             }
-                        }
-                        else
-                        {
+                        } else {
                             if (rng(5) === 0) {
                                 row[j] = 11;
                             } else {
                                 row[j] = 10;
                             }
                         }
-                    }
-                    else if (random === 1)
-                    {
+                    } else if (random === 1) {
                         random = rng(6);
-                        if (random === 0)
-                        {
+                        if (random === 0) {
                             row[j] = 16;
-                        }
-                        else if (random === 1)
-                        {
+                        } else if (random === 1) {
                             row[j] = 17;
-                        }
-                        else
-                        {
+                        } else {
                             row[j] = 0;
                         }
-                    }
-                    else if (random === 2)
-                    {
+                    } else if (random === 2) {
                         random = rng(64);
-                        if (random === 0)
-                        {
+                        if (random === 0) {
                             row[j] = 19;
-                        }
-                        else if (random === 1)
-                        {
+                        } else if (random === 1) {
                             row[j] = 20;
-                        }
-                        else
-                        {
+                        } else {
                             row[j] = 0;
                         }
-                    }
-                    else if (random > 2 && random < 4)
-                    {
+                    } else if (random > 2 && random < 4) {
                         row[j] = 14;
-                    }
-                    else
-                    {
+                    } else {
                         row[j] = 0;
                     }
                 }
-                else if (random === 2 || random === 3)
-                { //wall
+                else if (random === 2 || random === 3) { //wall
                         random = rng(10);
-                        if (random < 8)
-                        {
+                        if (random < 8) {
                             row[j] = 12;
-                        }
-                        else
-                        {
+                        } else {
                             row[j] = 0;
                         }
-                }
-                else
-                {
+                } else {
                     row[j] = 0;
                 }
             }
