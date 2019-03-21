@@ -2,7 +2,7 @@
 
 Play: http://spicedrumor.github.io/tunnel-runner/
 
-*** note that most recent code will be on the gh-pages branch
+*** note that the most recent code will be on the gh-pages branch
 
 How to Play
 ---

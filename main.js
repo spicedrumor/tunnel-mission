@@ -14,7 +14,7 @@ const MAX_PLOUGH = 5;
 const SEVENER_SCORE_VALUE = 15;
 const SPELL_COST = 32;
 const RANDOM_MOB_INTERVAL = 1000;
-const PROX_MOB_INTERVAL = 500;
+const PROX_MOB_INTERVAL = 1000;
 const TIMER_PAINT = 100;
 
 var map;
@@ -291,7 +291,7 @@ function proximalActivations() {
 
 function ploughThrough(originX, originY, offsetX, offsetY, value, count, slain) {
     if (count > 0 && validTile(originX + offsetX, originY + offsetY)) {
-        tmiss_sound.magic();
+        trun_sound.magic();
         var newX;
         var newY;
 
@@ -516,7 +516,7 @@ function spell() {
             }
         }
     } else if (playerObject.greenBit) {
-        tmiss_sound.magic();
+        trun_sound.magic();
         newMessage("You focus on your chi... ");
         hit = false;
         slain = 0;
@@ -854,7 +854,7 @@ function playerInteract(value, valueX, valueY) {
         }
         playerObject.armour = 16;
     } else if (value === 10) {
-        tmiss_sound.eat();
+        trun_sound.eat();
         newMessage("You devour a curious looking mushroom.");
         playerObject.score += 4;
         map[valueY][valueX] = 0;
@@ -864,7 +864,7 @@ function playerInteract(value, valueX, valueY) {
             life += 8;
         }
     } else if (value === 11) {
-        tmiss_sound.eat();
+        trun_sound.eat();
         newMessage("Sweet, sweet candy.");
         playerObject.score += 4;
         map[valueY][valueX] = 0;
@@ -886,9 +886,9 @@ function playerInteract(value, valueX, valueY) {
         }
 
         playerTeleport(playerObject.xPos, newY);
-        tmiss_sound.magic();
+        trun_sound.magic();
     } else if (value === 18) {
-        tmiss_sound.eat();
+        trun_sound.eat();
         newMessage("You snatch up the crystal and swallow it whole!");
         map[valueY][valueX] = 0;
         life += 16;
@@ -947,7 +947,7 @@ function playerInteract(value, valueX, valueY) {
             }
         }
     } else if (value === 300) {
-        tmiss_sound.eat();
+        trun_sound.eat();
         newMessage("You devour an aulluring looking mushroom.");
         life += 4;
         map[valueY][valueX] = 0;
@@ -958,7 +958,7 @@ function playerInteract(value, valueX, valueY) {
             colourPlayer("b");
         }
     } else if (value === 301) {
-        tmiss_sound.eat();
+        trun_sound.eat();
         newMessage("You devour a scary looking mushroom.");
         life += 4;
         if (playerObject.pinkBit) {
@@ -969,7 +969,7 @@ function playerInteract(value, valueX, valueY) {
         }
         map[valueY][valueX] = 0;
     } else if (value === 302) {
-        tmiss_sound.eat();
+        trun_sound.eat();
         newMessage("You devour a muscular looking mushroom.");
         life += 4;
         if (playerObject.greenBit) {
@@ -1276,7 +1276,7 @@ function randomMush() {
 
 function winGame() {
     quickUpdate();
-    tmiss_sound.win();
+    trun_sound.win();
     score = playerObject.score
     score += (timer * 10);
     score += life;
@@ -1321,7 +1321,7 @@ function gameOver(message) {
     //just in case player was ninja'd:
     quickUpdate();
 
-    tmiss_sound.death();
+    trun_sound.death();
     playerObject.alive = false;
     endGame();
     window.alert("Game Over: " + message + "\n" + "Difficulty: " + difficulty);

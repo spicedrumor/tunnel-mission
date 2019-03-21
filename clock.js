@@ -1,4 +1,4 @@
-//var vs let? TODO
+// var vs let? TODO
 let trun_clock = {
 
 // const
@@ -26,7 +26,7 @@ let newHand = {};
 newHand.task = task;
 newHand.ticks = ticks;
 newHand.nextHand = null;
-//insert newHand
+// insert newHand
 },
 
 pause: function () {
@@ -35,4 +35,4 @@ pause: function () {
 unpause: function () {
 }
 
-} //trun_clock
+} // trun_clock
