@@ -3,7 +3,7 @@ var tmiss_help = {
 
 menu: function()
 {
-    alert("Movement:\n-Use WASD keys\n-Tap or click the edges of the game map");
+    alert("Movement:\n-Use WASD keys\n-Tap or click around your position");
     alert("Other commands:\n-Hit \"i\" to check inventory\n-Hit \"h\" to return to help menu\n-'p' will pause the the action\n'q' will permit you to trade energy for cosmic intuition");
     alert("Gameplay:\n-Non-Player Characters (i.e. numbers) will \"interact\" with you if they are in close proximity\n-You will automatically grab and eat nearby mushrooms\n-The game is won by making it to the bottom of the map and locating the pink \"*\"\n-Green event horizons go forward, red backward\n -Time, difficulty and life remaining is considered in your final grade");
     alert("Player Characters:\n-Blue is fast and good at dodging\n-Pink can activate and kick the red o's on the map by bumping into them\n-Green can push certain things around and is quite hardy");
