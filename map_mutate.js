@@ -79,7 +79,7 @@ explosion: function(tileX, tileY, mapObject, playerObject, validTile, newMessage
 
     if (playerObject.alive) {
         newMessage("Giant explosion!"); 
-        tmiss_sound.explode();
+        trun_sound.explode();
 
         array = mapObject.fireAlert;
         if (array[tileY] === undefined) {
