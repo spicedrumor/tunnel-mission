@@ -1229,7 +1229,14 @@ function gameOver(message) {
   trun_sound.death();
   playerObject.alive = false;
   endGame();
+  setTimeout( function() {
+    gameOverAlert(message);
+  }, 500);
+}
+
+function gameOverAlert(message) {
   window.alert("Game Over: " + message + "\n" + "Difficulty: " + difficulty);
+  setTimeout(startGame, 500);
 }
 
 function endGame() {
@@ -1252,7 +1259,6 @@ function endGame() {
         clearTimeout(array[i][j]);
 
   clearTimeouts();
-  setTimeout(startGame, 1000);
 }
 
 function clearTimeouts() {
@@ -1361,7 +1367,7 @@ function newGame() {
     newMessage("");
   }
 
-  newMessage("Tunnel Runner version 0.44e.18");
+  newMessage("Tunnel Runner version 0.44e.19");
 
   newMessage("Type \"h\" at any time for help.");
 
