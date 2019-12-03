@@ -18,6 +18,7 @@ const PROX_MOB_INTERVAL = 1000;
 const TIMER_PAINT = 100;
 const SMILESTARTSIZE = 128;
 const SMILEHITCOUNT = 16;
+const DEFAULT_LIFE = 128;
 
 var map;
 var mapString;
@@ -49,11 +50,12 @@ let Ta = trun_anim;
 difficulty = "normal";
 
 var mapObject = {
+  map : map,
+  mobs : []
 };
-mapObject.map = map;
-mapObject.mobs = [];
 
 playerObject = initPlayerObj();
+players = { player1: playerObject };
 
 currentRoundCount = 0;
 
@@ -165,7 +167,11 @@ function mobMove(direction, originX, originY, value) {
   var result;
   if (value > 100) {
     result = clingyMobMove(originX, originY, value);
-    result = clingyMobMove( result[0], result[1], value );
+    if ( rng(3) ) {
+      result = clingyMobMove( result[0], result[1], value );
+    } else {
+      result = move(direction, result[0], result[1], value);
+    }
   } else {
     result = move(direction, originX, originY, value);
   }
@@ -188,7 +194,7 @@ function projectileManager() {
 
 function proximalActivate(x, y) {
   let value = map[y][x];
-  let newPosition = null;
+  let newPosition;
   if (value === 3) {
     newPosition = randomMobMove(x, y, 3);
     if ( !rng(3) ) {
@@ -203,6 +209,8 @@ function proximalActivate(x, y) {
     randomMobMove(x, y, 6);
   } else if (value === 7) {
     sevenActivate(x, y);
+  } else if (value === 103) {
+    randomMobMove(x, y, 103);
   }
 }
 
@@ -304,7 +312,7 @@ function clingyMobMove(originX, originY, value) {
   newX = originX + offsetX;
   newY = originY + offsetY;
   if ( validSmash(newX, newY) ) {
-    result[newX, newY];
+    result = [newX, newY];
     mapObject.removeMob(originX, originY);
     mapObject.insertMob(newX, newY, value);
   }
@@ -439,9 +447,8 @@ function playerMover() {
   xPos = playerObject.xPos;
   yPos = playerObject.yPos;
   if (playerObject.blueBit) moveTime = 80;
-  if (currentKeys.length > 0) {
+  if (currentKeys.length > 0)
     move( currentKeys[currentKeys.length - 1], xPos, yPos, MAP_VAL_PLAYER );
-  }
   timerMovePlayer = setTimeout(playerMover, moveTime);
 }
 
@@ -1170,10 +1177,10 @@ function newGame() {
   messageQueue = [];
   for (var i = 0; i < MESSAGE_QUEUE_MAX; i++)
     newMessage("");
-  newMessage("Tunnel Runner version 0.44e.19");
+  newMessage("Tunnel Runner version 0.44e.20");
   newMessage("Type \"h\" at any time for help.");
   newMessage("Objective: Run the tunnel.");
-  [life, timer] = [ 128, Math.pow(2, 2 * 16) ];
+  [life, timer] = [ DEFAULT_LIFE, Math.pow(2, 2 * 16) ];
   timerBit = false;
 }
 
