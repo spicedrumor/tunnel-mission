@@ -1,5 +1,8 @@
 ( function () {
 
+const Ta = trun_anim;
+const Msg = trun_message;
+
 const MESSAGE_QUEUE_MAX = 8;
 const KEY_CODE_W = 87;
 const KEY_CODE_A = 65;
@@ -19,73 +22,30 @@ const TIMER_PAINT = 100;
 const SMILESTARTSIZE = 128;
 const SMILEHITCOUNT = 16;
 const DEFAULT_LIFE = 128;
+const DIRECTIONS = ["n", "s", "e", "w"];
 
-var map;
-var mapString;
-var directions;
-var messageQueue;
-var life;
-var hitSound;
+let map;
+let mapString;
+let life;
+let messageQueue;
+let hitSound;
 let timer, timerBit;
-let blueBit, pinkBit, greenBit;
-var mobList;
-var timerHeart;
-var timerExist;
-var timerMoveMob;
-var timerDraw;
-var timerMushroom;
-var timerInteractions;
-var timerPlayerFlash;
-var timerPlayerPhasing;
-var timerMovePlayer;
-var timerProximal;
-var currentRoundCount;
-var currentKeys;
-var difficulty;
-var smileReduction = SMILESTARTSIZE / SMILEHITCOUNT;
-var smileCurSize;
+let mobList;
+let currentKeys, smileCurSize;
+let timerHeart, timerExist, timerMoveMob, timerDraw, timerMushroom;
+let timerInteractions, timerPlayerFlash, timerPlayerPhasing;
+let timerMovePlayer, timerProximal;
 
-let Ta = trun_anim;
-
-difficulty = "normal";
-
-var mapObject = {
-  map : map,
-  mobs : []
-};
-
-playerObject = initPlayerObj();
-players = { player1: playerObject };
-
-currentRoundCount = 0;
-
-directions = ["n", "s", "e", "w"];
-projectiles = [];
+let smileReduction = SMILESTARTSIZE / SMILEHITCOUNT;
+let difficulty = "normal";
+let mapObject = { map: map, mobs: [] };
+let playerObject = initPlayerObj();
+let players = { player1: playerObject };
+let currentRoundCount = 0;
+let projectiles = [];
 
 function initPlayerObj() {
-  return {
-    colour          : "#00FFFF",
-    blueBit         : true,
-    pinkBit         : false,
-    greenBit        : false,
-    flashing        : false,
-    flashBit        : false,
-    phasing         : false,
-    score           : 1,
-    xPos            : 0,
-    yPos            : 0,
-    armour          : 0,
-    alive           : true,
-    hasShield       : false,
-    shieldCount     : 0,
-    hasPick         : false,
-    pickCount       : 0,
-    wielded         : "nothing",
-    powerMove       : false,
-    hitRecently     : 0,
-    blockRecently   : 0,
-    armourReduction : 0
-  };
+  return trun_player.init();
 }
 
 function validTile(tileX, tileY) {
@@ -132,12 +92,7 @@ function validSmash(newX, newY) {
 }
 
 function validMove(newX, newY) {
-  var result = false;
-  if ( validTile(newX, newY) )
-    if ( emptyTile(newX, newY) )
-      result = true;
-
-  return result;
+  return validTile(newX, newY) && emptyTile(newX, newY);
 }
 
 function clobberTile(tileX, tileY) {
@@ -147,7 +102,7 @@ function clobberTile(tileX, tileY) {
 function moveRandomMob() {
   var randomDirection, mover, random;
   if (mapObject.mobs.length > 0) {
-    randomDirection = directions[ Math.floor( Math.random() * 4 ) ];
+    randomDirection = DIRECTIONS[ rng(4) ];
     random = Math.floor( Math.random() * mapObject.mobs.length );
     mover = mapObject.mobs[random];
     mobMove(randomDirection, mover.x, mover.y, mover.value);
@@ -157,7 +112,7 @@ function moveRandomMob() {
 
 function randomMobMove(originX, originY, value) {
   var result;
-  let randomDirection = directions[ Math.floor( rng(4) ) ];
+  let randomDirection = DIRECTIONS[ rng(4) ];
   result = mobMove(randomDirection, originX, originY, value);
 
   return result;
@@ -170,7 +125,7 @@ function mobMove(direction, originX, originY, value) {
     if ( rng(3) ) {
       result = clingyMobMove( result[0], result[1], value );
     } else {
-      result = move(direction, result[0], result[1], value);
+      result = move( direction, result[0], result[1], value );
     }
   } else {
     result = move(direction, originX, originY, value);
@@ -181,11 +136,11 @@ function mobMove(direction, originX, originY, value) {
 
 function projectileManager() {
   if (projectiles.length > 0) {
-    let done = false;
     let pState;
+    let done = false;
     while (projectiles.length > 0 && !done) {
       pState = projectiles[0].alive;
-      (pState) ? done = true : projectiles.shift();
+      pState ? done = true : projectiles.shift();
     }
     for (let i = 0; i < projectiles.length; i++)
       Ta.moveProjectile( projectiles[i] );
@@ -223,7 +178,7 @@ function sevenActivate(x, y) {
     let projOrigin = buildCoordObject(x, y);
     let projTarget = buildCoordObject(px, py);
     projectiles.push( Ta.newInboundProjectile(projTarget, projOrigin) );
-    newMessage("Something slimy lands on you!");
+    newMessage("Something burn-y lands on you!");
     playerHit(5);
   }
 }
@@ -263,7 +218,6 @@ function ploughThrough(originX, originY, offsetX, offsetY, value, count, slain) 
       slain += 1;
       sevenDown(slain);
       life += 16;
-      timer += 16;
     } else if ( map[newY][newX] === 2 ) {
       winGame();
     }
@@ -292,8 +246,8 @@ function powerMove(direction, originX, originY, value) {
 
 function getOffset(direction) {
   var result;
-  let offsetX = { n: 0, e: 1, s: 0, w: -1 }[direction];
-  let offsetY = { n: -1, e: 0, s: 1, w: 0 }[direction];
+  let offsetX = { n:  0, e: 1, s: 0, w: -1 }[direction];
+  let offsetY = { n: -1, e: 0, s: 1, w:  0 }[direction];
   result = [offsetX, offsetY];
 
   return result;
@@ -334,15 +288,13 @@ function move(direction, originX, originY, value) {
     if (value != 1) {
       mapObject.removeMob(originX, originY);
       mapObject.insertMob(newX, newY, value);
-      result[0] = newX;
-      result[1] = newY;
+      result = [newX, newY];
     } else {
       playerObject.xPos = newX;
       playerObject.yPos = newY;
       map[originY][originX] = 0;
       map[newY][newX] = value;
-      result[0] = newX;
-      result[1] = newY;
+      result = [newX, newY];
     }
   } else if ( validTile(newX, newY) && value === 1 ) {
     target = map[newY][newX];
@@ -353,13 +305,10 @@ function move(direction, originX, originY, value) {
 }
 
 function randomTile() {
-  var result;
-  var randomX, randomY;
-  result = [];
+  var result, randomX, randomY;
   randomX = Math.floor( Math.random() * map[0].length );
   randomY = Math.floor( Math.random() * map.length );
-  result[0] = randomX;
-  result[1] = randomY;
+  result = [randomX, randomY];
 
   return result;
 }
@@ -533,10 +482,7 @@ document.onkeyup = function(e) {
 }
 
 function playerInteractions() {
-  var current;
-  var rc;
-  var tileX, tileY;
-
+  var rc, current, tileX, tileY;
   for (let i = -1; i < 2; i++)
     for (let j = -1; j < 2; j++) {
       tileX = playerObject.xPos + j;
@@ -548,22 +494,13 @@ function playerInteractions() {
       }
       if (rc === -1) return;
     }
-
   timerInteractions = setTimeout(playerInteractions, 500);
 }
 
 function playerInteract(value, valueX, valueY) {
-  var random;
-  var newX, newY;
-  var i, j;
-  var result;
-  var message;
-  var done;
-  var timeOut;
+  var damage, newX, newY;
+  var result, message, done, timeOut;
   let player = playerObject;
-  let isBlue = player.blueBit;
-  let isPink = player.pinkBit;
-  let isGreen = player.greenBit;
   result = 0;
   if (value === -1) {
     newMessage("The flames lick at you!");
@@ -572,94 +509,51 @@ function playerInteract(value, valueX, valueY) {
     winGame();
     result = -1;
   } else if (value === 3) {
-    random = 1;
-    if (isBlue) random = rng(2);
-    if (random === 0) {
+    if ( player.isBlue() && rng(2) ) {
       newMessage("You narrowly evade 3's attack!");
     } else {
-      random = rng(4);
-      if (player.hasShield && random === 0) {
-        newMessage("You manage to block 3's attack!");
-        player.blockRecently = 15;
+      if ( player.hasShield && !rng(4) ) {
+        block("You manage to block 3's attack!");
       } else {
         newMessage("3 bites you with glee!");
         playerHit(1);
       }
-      if (life > 0 && isGreen) {
-        random = rng(2);
-        if (random === 0) {
+      if ( life > 0 && player.isGreen() )
+        if ( !rng(2) ) {
           player.score += 10;
           newMessage("You grab the 3 and hurl it into the distance!");
           clobberTile(valueX, valueY);
         } else {
           newMessage("You reach for the 3 but it deftly scampers away.");
         }
-      }
     }
   } else if (value === 4) {
-    newMessage("4 begins to shimmer...");
-    i = j = 0;
-    while (i < 4) {
-      random = randomTile();
-      if ( emptyTile( random[0], random[1] ) ) {
-        mapObject.insertMob( random[0], random[1], 4 );
-        j += 1;
-      }
-      i += 1;
-    }
-    if (j === 0) newMessage("4 failed to propagate!");
-    random = rng(3);
-    if (random === 0) {
-      newMessage("4 metamorphosizes into 8!");
-      mapObject.removeMob(valueX, valueY);
-      mapObject.insertMob(valueX, valueY, 8);
-    } else {
-      clobberTile(valueX, valueY);
-    }
+    shimmering(valueX, valueY);
   } else if (value === 5) {
-    random = 1;
-    if (isBlue) {
-      random = rng(2);
-    }
-    if (random === 0) {
-      newMessage("You narrowly evade 5 as it shatters apart!");
+    if ( player.isBlue() && rng(2) ) {
+      newMessage("You narrowly evade 5's shards!");
     } else {
       if (player.hasShield) {
-        newMessage("Your shield absorbs some of 5's shrapnel!");
-        random = rng(21) + 5;
-        random -= (2 * player.shieldCount)
-        player.blockRecently = 15;
+        block("Your shield absorbs some of 5's shrapnel!");
+        damage = ( rng(21) + 5 ) - (4 * player.shieldCount);
       } else {
         newMessage("5 shatters in your general direction!");
-        random = rng(21) + 5;
+        damage = rng(21) + 5;
       }
-      playerHit(random);
+      playerHit(damage);
     }
-
     mapObject.removeMob(valueX, valueY);
   } else if (value === 6) {
-    newMessage("6 whistles a funeral dirge and evaporates.");
-    i = 0;
-    while (i < 6) {
-      random = randomTile();
-      if ( emptyTile( random[0], random[1] ) ) {
-        mapObject.insertMob( random[0], random[1], 7 );
-      }
-      i += 1;
-    }
-    mapObject.removeMob(valueX, valueY);
+    funeral(valueX, valueY);
   } else if (value === 7) {
-    random = isBlue ? rng(3) : 1;
-    if (random === 0) {
+    if ( player.isBlue() && !rng(3) ) {
       newMessage("7 hisses as you just barely dodge its attack!");
     } else if ( phaseBuff() ) {
     } else {
       if (player.hasShield) {
-        newMessage("Your shield partially blocks 7s attack!");
-        player.blockRecently = 15;
-        random = rng(52) + 49;
-        random -= (4 * player.shieldCount)
-        playerHit(random);
+        block("Your shield partially blocks 7s attack!");
+        damage = ( rng(52) + 49 ) - (8 * player.shieldCount);
+        playerHit(damage);
       } else {
         newMessage("7 touches base with you.");
         gameOver("7 8 u  :(");
@@ -670,82 +564,53 @@ function playerInteract(value, valueX, valueY) {
     message = "8 grins mischievously.";
     throttledMessage(message);
   } else if (value === 9) {
-    message = "9 lays a blessing of protection!";
+    message = "9 lays a blessing of protection.";
     context.drawImage(pic, 0, 0, SMILESTARTSIZE, SMILESTARTSIZE);
     smileCurSize = SMILESTARTSIZE;
     throttledMessage(message);
     player.armour = 16;
   } else if (value === 10) {
-    trun_sound.eat();
-    newMessage("You devour a curious looking mushroom.");
+    eat(valueX, valueY, 8, "You devour a curious looking mushroom.");
+    if ( player.isGreen() ) life += 4;
     player.score += 4;
-    map[valueY][valueX] = 0;
-    life += isGreen ? 12 : 8;
   } else if (value === 11) {
-    trun_sound.eat();
-    newMessage("Sweet, sweet candy.");
+    eat(valueX, valueY, 16, "Sweet, sweet candy.");
     player.score += 4;
-    map[valueY][valueX] = 0;
-    life += 16;
   } else if (value === 16 || value === 17) {
-    yShift = ( rng(16) + 16 );
-    newMessage("You are drawn into the event horizon.");
-    if (value === 16) {
-      yLimit = mapObject.height - 1;
-      newY = player.yPos + yShift;
-      if (newY > yLimit) newY = yLimit;
-    } else {
-      newY = player.yPos - yShift;
-      if (newY < 0) newY = 0;
-    }
-    playerTeleport(player.xPos, newY);
-    trun_sound.magic();
+    teleport(player, value);
   } else if (value === 18) {
-    trun_sound.eat();
-    newMessage("You snatch up the crystal and swallow it whole!");
-    map[valueY][valueX] = 0;
-    life += 16;
-    timer += 16;
+    eat("You snatch up the crystal and swallow it whole!");
+    consume(valueX, valueY, 16);
   } else if (value === 19) {
-    map[valueY][valueX] = 0;
-    player.score += 150;
+    recover(valueX, valueY, player, 150);
     if (!player.hasShield) {
       newMessage("You find an old, tarnished metal shield.");
       newMessage("You hold the shield defensively.");
-      player.hasShield = true;
     } else {
-      newMessage("Your shield is upgraded.");
-      player.shieldCount += 1;
+      newMessage("You manage to upgrade your shield with scavenged parts.");
     }
+    player.addShield();
   } else if (value === 20) {
-    map[valueY][valueX] = 0;
-    player.score += 150;
+    recover(valueX, valueY, player, 150);
     if (!player.hasPick) {
       newMessage("You find an old, tarnished metal pick.");
       newMessage("Type \"E\" to equip or unequip it.");
-      player.hasPick = true;
-      player.pickCount = 1;
     } else {
-      newMessage("Your pick is upgraded.");
-      player.pickCount += 1;
+      newMessage("You manage to upgrade your pick with scavenged parts.");
     }
+    player.addPick();
   } else if (value === 103) {
-    random = 1;
-    if (isBlue) random = rng(3);
-    if (random === 0) {
+    if ( player.isBlue() && !rng(3) ) {
       newMessage("You just barely evade 3's attack!");
     } else {
-      random = rng(6);
-      if (player.hasShield && random === 0) {
-        newMessage("You manage to block 3's attack!");
-        player.blockRecently = 15;
+      if ( player.hasShield && !rng(6) ) {
+        block("You manage to block 3's attack!");
       } else {
         newMessage("3's fangs tear off a chunk of your flesh!");
         playerHit( rng(9) + 3 );
       }
-      if (life > 0 && isGreen) {
-        random = rng(3);
-        if (random === 0) {
+      if ( life > 0 && player.isGreen() ) {
+        if ( !rng(3) ) {
           player.score += 100;
           newMessage("You grab the 3 and hurl it into the distance!");
           clobberTile(valueX, valueY);
@@ -755,42 +620,93 @@ function playerInteract(value, valueX, valueY) {
       }
     }
   } else if (value === 300) {
-    trun_sound.eat();
-    newMessage("You devour an aulluring looking mushroom.");
-    life += 4;
-    map[valueY][valueX] = 0;
-    if (isBlue) {
-      timer += 32;
-    } else {
-      newMessage("You feel much lighter!");
-      colourPlayer("b");
-    }
+    eat(valueX, valueY, 4, Msg.eat.blueMush);
+    player.isBlue() ? life += 2 : blueify();
   } else if (value === 301) {
-    trun_sound.eat();
-    newMessage("You devour a scary looking mushroom.");
-    life += 4;
-    if (isPink) {
-      timer += 32;
-    } else {
-      newMessage("You feel much angrier!");
-      colourPlayer("p");
-    }
-    map[valueY][valueX] = 0;
+    eat(valueX, valueY, 4, Msg.eat.pinkMush);
+    player.isPink() ? life += 2 : pinkify();
   } else if (value === 302) {
-    trun_sound.eat();
-    newMessage("You devour a muscular looking mushroom.");
-    life += 4;
-    if (isGreen) {
-      timer += 32;
-    } else {
-      newMessage("You feel like you live in a world made of cardboard!");
-      colourPlayer("g");
-    }
-    map[valueY][valueX] = 0;
+    eat(valueX, valueY, 4, Msg.eat.greenMush);
+    player.isGreen() ? life += 2 : greenify();
   }
   if (life < 1) result = -1;
 
   return result;
+}
+
+function shimmering(x, y) {
+  newMessage("4 begins to shimmer...");
+  for (let i = j = 0; i < 4; i++) {
+    var tile = randomTile();
+    if ( emptyTile( tile[0], tile[1] ) ) {
+      mapObject.insertMob( tile[0], tile[1], 4 );
+      j += 1;
+    }
+  }
+  if (!j) newMessage("4 failed to propagate!");
+  if ( !rng(3) ) {
+    newMessage("4 metamorphosizes!");
+    mapObject.removeMob(x, y);
+    mapObject.insertMob(x, y, 8);
+  } else {
+    clobberTile(x, y);
+  }
+}
+
+function funeral(x, y) {
+  newMessage("6 whistles a funeral dirge and evaporates.");
+  let tile;
+  for (let i = 0; i < 6; i++) {
+    tile = randomTile();
+    if ( emptyTile( tile[0], tile[1] ) )
+      mapObject.insertMob( tile[0], tile[1], 7 );
+  }
+  mapObject.removeMob(x, y);
+}
+
+function teleport(player, type) {
+  yShift = ( rng(16) + 32 );
+  newMessage("You are drawn into the event horizon.");
+  if (type === 16) {
+    yLimit = mapObject.height - 1;
+    newY = player.yPos + yShift;
+    if (newY > yLimit) newY = yLimit;
+  } else {
+    newY = player.yPos - yShift;
+    if (newY < 0) newY = 0;
+  }
+  playerTeleport(player.xPos, newY);
+  trun_sound.magic();
+}
+
+function blueify() {
+  newMessage("You feel much lighter!");
+  colourPlayer("b");
+}
+function pinkify() {
+  newMessage("You feel much angrier!");
+  colourPlayer("p");
+}
+function greenify() {
+  newMessage("You feel like you live in a world made of cardboard!");
+  colourPlayer("g");
+}
+
+function eat(x, y, amount, message) {
+  trun_sound.eat();
+  newMessage(message);
+  map[y][x] = 0;
+  life += amount;
+}
+
+function recover(x, y, player, score) {
+  map[y][x] = 0;
+  player.score += score;
+}
+
+function block(message) {
+  player.blockRecently = 15;
+  newMessage(message);
 }
 
 function rng(value) {
@@ -817,9 +733,8 @@ function playerTeleport(newX, newY) {
 function mineTile(xPos, yPos) {
   newMessage("The wall blows apart from your onslaught!");
   map[yPos][xPos] = 0;
-  pickStrength = playerObject.pickCount;
-  random = rng(pickStrength * 32);
-  if (random === 0) {
+  let pickStrength = playerObject.pickCount;
+  if ( !rng(pickStrength * 32) ) {
     newMessage("Your pick breaks into pieces!");
     playerObject.wielded = "nothing";
     playerObject.hasPick = false;
@@ -830,21 +745,16 @@ function mineTile(xPos, yPos) {
 function playerBump(value, valueX, valueY, offsetX, offsetY) {
   var random;
   var timeOut;
-  var pick;
-  var pickCount;
-  var blue;
-  var pink;
-  var green;
+  var pick, pickCount;
   var wallTile;
-  blue = playerObject.blueBit;
-  pink = playerObject.pinkBit;
-  green = playerObject.greenBit;
+  blue = playerObject.isBlue();
+  pink = playerObject.isPink();
+  green = playerObject.isGreen();
   pick = (playerObject.wielded === "pick");
   wallTile = (value === 12);
-
   if ( wallTile && (!green || pick) ) {
     if (!pick) {
-      newMessage("You huff and you puff but the wall remains.");
+      throttledMessage("You huff and you puff but the wall remains.");
     } else {
       mineTile(valueX, valueY);
     }
@@ -854,10 +764,8 @@ function playerBump(value, valueX, valueY, offsetX, offsetY) {
     timeOut = setTimeout( function() {
       tmiss_mapMutate.explosion(valueX, valueY, mapObject, playerObject, validTile, newMessage, true)
     }, 5000 );
-    if (mapObject.boomAlert[valueY] === undefined) {
+    if (mapObject.boomAlert[valueY] === undefined)
       mapObject.boomAlert[valueY] = [];
-    }
-
     mapObject.boomAlert[valueY][valueX] = timeOut;
   } else if (value === 15 && pink) {
     newMessage("You execute your best flying dropkick!");
@@ -875,7 +783,6 @@ function bootItem(tileX, tileY, offsetX, offsetY, travel) {
   var value,  array;
   let newX = tileX + offsetX;
   let newY = tileY + offsetY;
-  //TODO
   if ( map[newY][newX] === 0 ) {
     value = map[tileY][tileX];
     map[tileY][tileX] = 0;
@@ -952,7 +859,8 @@ function canvasPrint() {
   string = "";
   ctx.fillStyle = "red";
   string += "[";
-  for (let i = life; i > 0; i -= 10) string += "+";
+  for (let i = life; i > 0; i -= 10)
+    string += "+";
   string += "]";
   ctx.fillText(string, textAlign + 60, 30);
   playerPosition = Math.floor(playerObject.yPos / mapObject.height * 100);
@@ -1073,7 +981,6 @@ function quickUpdate() {
 }
 
 function gameOver(message) {
-  //just in case player was ninja'd:
   quickUpdate();
   trun_sound.death();
   playerObject.alive = false;
@@ -1086,6 +993,7 @@ function gameOver(message) {
 function gameOverAlert(message) {
   let string = "Game Over: " + message;
   string += "\n" + "Difficulty: " + difficulty;
+  string += "\n" + "Score: " + playerObject.score;
   window.alert(string);
   setTimeout(startGame, 500);
 }
@@ -1130,29 +1038,22 @@ function doIExist() {
 }
 
 function heartBeat() {
-  //TODO prevent exit being overwritten:
   if ( map[mapObject.height - 2][mapObject.width - 2] != 2 ) {
     mapObject.removeMob(mapObject.width - 2, mapObject.height - 2);
     map[mapObject.height - 2][mapObject.width - 2] = 2;
   }
-
   let dead = false;
   if (life < 1) {
-    gameOver('You collapsed.');
+    gameOver("You collapsed.");
     dead = true;
   }
   if (timer < 1) {
     gameOver("You didn't make it in time.");
     dead = true;
   } else {
-    if (timerBit) {
-      timer -= 1;
-      timerBit = false;
-    } else {
-      timerBit = true;
-    }
+    if (timerBit) timer -= 1;
+    timerBit = !timerBit;
   }
-
   if (!dead) timerHeart = setTimeout(heartBeat, 500);
 }
 
@@ -1203,19 +1104,18 @@ function restartPlayer() {
 }
 
 function colourPlayer(colour) {
-  playerObject.blueBit = false;
-  playerObject.pinkBit = false;
+  playerObject.blueBit  = false;
+  playerObject.pinkBit  = false;
   playerObject.greenBit = false;
-
   if (colour === "b") {
     playerObject.blueBit = true;
-    playerObject.colour = "#00FFFF";
+    playerObject.colour  = "#00FFFF";
   } else if (colour === "p") {
     playerObject.pinkBit = true;
-    playerObject.colour = COLOR_PINK;
+    playerObject.colour  = COLOR_PINK;
   } else if (colour === "g") {
     playerObject.greenBit = true;
-    playerObject.colour = "#00FF00";
+    playerObject.colour   = "#00FF00";
   }
 }
 
@@ -1243,13 +1143,6 @@ function startGame() {
   playerPhase();
 }
 
-let canvasWidth, canvasHeight;
-let canvas, canvasOffset;
-canvas = document.getElementById('canvas');
-canvasWidth = canvas.width;
-canvasHeight = canvas.height;
-let context = canvas.getContext('2d');
-
 let pic = new Image();
 pic.src = "res/no_idea.png";
 pic.onload = function() { }
@@ -1263,13 +1156,17 @@ let slimy_pic = new Image();
 slimy_pic.src = "res/slimy.png";
 slimy_pic.onload = function() { }
 
+let canvas = document.getElementById('canvas');
+let canvasWidth = canvas.width;
+let canvasHeight = canvas.height;
+
+let context = canvas.getContext('2d');
 context.fillStyle = "rgb(200,100,50)";
 context.strokeStyle="#FF0000";
 
 canvas.addEventListener( "mousedown", function(event) {
-  let xPos = playerObject.xPos;
-  let yPos = playerObject.yPos;
-  event.preventDefault();//TODO
+  let [xPos, yPos] = [playerObject.xPos, playerObject.yPos];
+  event.preventDefault();
   var xp = event.offsetX * canvas.width / canvas.clientWidth | 0;
   var yp = event.offsetY * canvas.height / canvas.clientHeight | 0;
   if ( yp > (512 / 16 * 8) && yp < (512 / 16 * 9) )

@@ -4,30 +4,31 @@
 <HEAD>
 <link rel="icon" href="res/fav.ico" type="image/x-icon" />
 <meta charset="utf-8"/>
-    <link rel="stylesheet" type="text/css" href="style.css">
     <TITLE> Tunnel Runner </TITLE>
 </HEAD>
 <BODY>
 <body bgcolor="#000000">
-<canvas id="canvas" width="512" height="512" style="border:solid red 1px">
-  Your browser does not support canvas element.
-</canvas>
-
-<div id='c1' style="position:absolute; top:512px; left:0px">
+<div id='b1' style="position:absolute; top:0px; left:0px">
+  <canvas id="canvas" width="512" height="512" style="border:solid red 1px">
+    Your browser does not support canvas element.
+  </canvas>
+</div>
+<div id='c1' style="position:absolute; top:515px; left:0px">
     <canvas id="canvas2" width="512" height="220" style="border:solid blue 1px">
       Your browser does not support canvas element.
     </canvas>
 </div>
+<div id="top">
+</div>
+<div id="left" style="float:left;width:38%">
+</div>
+<div id="right" style="float:left">
+</div>
+<div id="bottom">
+</div>
 
-<div id ="top">
-</div>
-<div id ="left" style ="float:left;width:38%">
-</div>
-<div id ="right" style ="float:left">
-</div>
-<div id ="bottom">
-</div>
-
+<script src="message.js" type="text/javascript"></script>
+<script src="player.js" type="text/javascript"></script>
 <script src="anim.js" type="text/javascript"></script>
 <script src="help.js" type="text/javascript"></script>
 <script src="validate.js" type="text/javascript"></script>
