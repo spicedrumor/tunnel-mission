@@ -35,7 +35,6 @@ let currentKeys, smileCurSize;
 let timerHeart, timerExist, timerMoveMob, timerDraw, timerMushroom;
 let timerInteractions, timerPlayerFlash, timerPlayerPhasing;
 let timerMovePlayer, timerProximal;
-
 let smileReduction = SMILESTARTSIZE / SMILEHITCOUNT;
 let difficulty = "normal";
 let mapObject = { map: map, mobs: [] };
@@ -579,8 +578,8 @@ function playerInteract(value, valueX, valueY) {
   } else if (value === 16 || value === 17) {
     teleport(player, value);
   } else if (value === 18) {
-    eat("You snatch up the crystal and swallow it whole!");
-    consume(valueX, valueY, 16);
+    eat(valueX, valueY, 16, "You snatch up the crystal and swallow it whole!");
+    player.score += 4;
   } else if (value === 19) {
     recover(valueX, valueY, player, 150);
     if (!player.hasShield) {
@@ -695,6 +694,9 @@ function greenify() {
 function eat(x, y, amount, message) {
   trun_sound.eat();
   newMessage(message);
+  console.log("x: %s y: %s", x, y)
+  console.log("map[y]: %s", map[y])
+  console.log("map[y][x]: %s", map[y][x])
   map[y][x] = 0;
   life += amount;
 }
@@ -705,6 +707,7 @@ function recover(x, y, player, score) {
 }
 
 function block(message) {
+  let player = playerObject;
   player.blockRecently = 15;
   newMessage(message);
 }

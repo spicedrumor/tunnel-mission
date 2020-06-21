@@ -35,10 +35,10 @@ init : function() {
       return this.blueBit;
     },
     isPink          : function() {
-      return this.blueBit;
+      return this.pinkBit;
     },
     isGreen          : function() {
-      return this.blueBit;
+      return this.greenBit;
     }
   };
 }
